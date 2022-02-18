@@ -7,4 +7,11 @@ export default {
   competition_code: 'Code de la compétition',
   validate: 'Valider',
   via_local_file: 'Via un fichier local',
+  date: 'Date',
+  discipline: 'Epreuve',
+  competition: 'Compétition',
+  status: 'Statut',
+  action: 'Action',
+  competitionSheetempty: 'Code compétition vide',
+  no_imported_competitions: 'Aucun concours importé',
 };

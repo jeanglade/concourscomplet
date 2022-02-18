@@ -7,4 +7,11 @@ export default {
   competition_code: 'Competition code',
   validate: 'Validate',
   via_local_file: 'Via a local file',
+  date: 'Date',
+  discipline: 'Discipline',
+  competition: 'Competition',
+  status: 'Status',
+  action: 'Action',
+  competitionSheetempty: 'Competition code empty',
+  no_imported_competitions: 'No imported competitions',
 };

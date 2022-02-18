@@ -12,6 +12,10 @@ target 'concourscomplet' do
     :hermes_enabled => false
   )
 
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+
   target 'concourscompletTests' do
     inherit! :complete
     # Pods for testing

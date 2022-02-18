@@ -6,13 +6,13 @@ import R from '../../assets/R';
 
 const LogoHeaderBar = () => {
   return (
-    <View style={{flex: 1, justifyContent: 'center'}}>
+    <View style={{justifyContent: 'center'}}>
       <Image
         source={R.images.logo_ffa}
         style={{
           width: 40,
           height: 40,
-          marginLeft: 10,
+          marginHorizontal: 10,
         }}
       />
     </View>

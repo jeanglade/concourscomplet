@@ -7,7 +7,6 @@ import {
   Image,
   TouchableWithoutFeedback,
   Pressable,
-  Modal,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {useTranslation} from 'react-i18next';
@@ -42,8 +41,8 @@ function InfoApp() {
             borderColor: R.colors.black,
             borderWidth: 1,
             position: 'absolute',
-            right: 50,
-            top: 56,
+            right: 100,
+            top: 6,
           }}>
           <Pressable onPress={() => setModalVisible(!modalVisible)}>
             <Text

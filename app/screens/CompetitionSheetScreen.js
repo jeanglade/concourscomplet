@@ -1,6 +1,7 @@
 import React from 'react';
-import {Text, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import {StyleSheet, Text, SafeAreaView, ScrollView} from 'react-native';
 import {useTranslation} from 'react-i18next';
+
 import R from '../assets/R';
 
 function CompetitionSheetScreen(props) {
