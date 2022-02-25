@@ -11,9 +11,9 @@ import {
 import {Picker} from '@react-native-picker/picker';
 import {useTranslation} from 'react-i18next';
 
-import R from '../../assets/R';
+import R from '../assets/R';
 
-function InfoApp() {
+function InfoStackNav() {
   const {i18n} = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -77,4 +77,4 @@ function InfoApp() {
   );
 }
 
-export default InfoApp;
+export default InfoStackNav;

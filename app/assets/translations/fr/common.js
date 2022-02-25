@@ -1,6 +1,7 @@
 export default {
   app_name: 'concoursComplet',
   app_title: 'Concours complet',
+  no_imported_competitions: 'Aucun concours importé',
   competition_sheet: 'Feuille de concours',
   open_competion_sheets: "Ouvrir les concours d'une compétition",
   list_competion_sheets: 'Liste des concours',
@@ -14,4 +15,5 @@ export default {
   action: 'Action',
   competitionSheetempty: 'Code compétition vide',
   no_imported_competitions: 'Aucun concours importé',
+  required: 'Obligatoire',
 };

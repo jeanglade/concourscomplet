@@ -7,11 +7,11 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="e7666e01-5efc-4146-abe8-759905fabd62"
+    Name="17eb2065-678a-4a37-8150-cf13b54eccff"
     Publisher="CN=jeana"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="e7666e01-5efc-4146-abe8-759905fabd62" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="17eb2065-678a-4a37-8150-cf13b54eccff" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>concourscomplet</DisplayName>

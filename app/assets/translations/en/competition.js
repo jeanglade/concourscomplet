@@ -1,0 +1,15 @@
+export default {
+  order: 'Order',
+  number: 'Number',
+  athlete: 'Athlete',
+  performance: 'Performance',
+  place: 'Place',
+  name: 'Name',
+  firstname: 'Firstname',
+  sex: 'Sex',
+  birth_date: 'Birth Date',
+  licence_number: 'Licence number',
+  club: 'Club',
+  category: 'Category',
+  add_an_athlete: 'Add an athlete',
+};

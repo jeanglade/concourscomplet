@@ -23,9 +23,9 @@ const LANGUAGE_DETECTOR = {
       // display errors when in DEV mode as console statements
       if (err || !language) {
         if (err) {
-          console.log('Error fetching Languages from asyncstorage ', err);
+          console.error('Error fetching Languages from asyncstorage ', err);
         } else {
-          console.log('No language is set, choosing English as fallback');
+          console.info('No language is set, choosing French as fallback');
         }
         const findBestAvailableLanguage =
           RNLocalize.findBestAvailableLanguage(LANG_CODES);

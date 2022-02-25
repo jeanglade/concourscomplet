@@ -1,14 +1,14 @@
 import React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {View, Image} from 'react-native';
+import {createStackNavigator} from '@react-navigation/stack';
 import {useTranslation} from 'react-i18next';
 
 import HomeScreen from '../HomeScreen';
 import CompetitionSheetScreen from '../CompetitionSheetScreen';
-import LogoHeaderBar from './LogoHeaderBar';
-import InfoApp from './InfoApp';
+import InfoStackNav from './InfoStackNav';
 import R from '../../assets/R';
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
 function StackNav() {
   const [t] = useTranslation();
@@ -29,8 +29,19 @@ function StackNav() {
         component={HomeScreen}
         options={{
           title: t('common:app_title'),
-          headerLeft: () => <LogoHeaderBar />,
-          headerRight: () => <InfoApp />,
+          headerLeft: () => (
+            <View style={{justifyContent: 'center'}}>
+              <Image
+                source={R.images.logo_ffa}
+                style={{
+                  width: 40,
+                  height: 40,
+                  marginHorizontal: 10,
+                }}
+              />
+            </View>
+          ),
+          headerRight: () => <InfoStackNav />,
         }}
       />
       <Stack.Screen

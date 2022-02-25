@@ -1,0 +1,15 @@
+export default {
+  order: 'Ordre',
+  number: 'Dossard',
+  athlete: 'Athlète',
+  performance: 'Performance',
+  place: 'Place',
+  name: 'Nom',
+  firstname: 'Prénom',
+  sex: 'Sexe',
+  birth_date: 'Date de naissance',
+  licence_number: 'Numéro de licence',
+  club: 'Club',
+  category: 'Catégorie',
+  add_an_athlete: 'Ajouter un athlète',
+};

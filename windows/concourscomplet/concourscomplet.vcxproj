@@ -6,7 +6,7 @@
     <CppWinRTOptimized>true</CppWinRTOptimized>
     <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
     <MinimalCoreWin>true</MinimalCoreWin>
-    <ProjectGuid>{4b9c965d-2217-4639-961e-4ceb8a34f29e}</ProjectGuid>
+    <ProjectGuid>{852d4bc9-96af-4bed-8d82-9142d8b8f170}</ProjectGuid>
     <ProjectName>concourscomplet</ProjectName>
     <RootNamespace>concourscomplet</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>

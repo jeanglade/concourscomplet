@@ -1,6 +1,7 @@
 export default {
   app_name: 'concoursComplet',
   app_title: 'Competition',
+  no_imported_competitions: 'No imported competitions',
   competition_sheet: 'Competition sheet',
   open_competion_sheets: 'Open the competition forms',
   list_competion_sheets: 'List of the competition forms',
@@ -12,6 +13,5 @@ export default {
   competition: 'Competition',
   status: 'Status',
   action: 'Action',
-  competitionSheetempty: 'Competition code empty',
-  no_imported_competitions: 'No imported competitions',
+  required: 'Required',
 };

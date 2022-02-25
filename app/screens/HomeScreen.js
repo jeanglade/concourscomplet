@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -8,20 +8,45 @@ import {
   SafeAreaView,
   Dimensions,
   ScrollView,
+  Alert,
 } from 'react-native';
+import i18n from 'i18next';
+import moment from 'moment';
 import {useTranslation} from 'react-i18next';
 import {useToast} from 'react-native-toast-notifications';
+import ReactNativeBlobUtil from 'react-native-blob-util';
 import DocumentPicker from 'react-native-document-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Table, Row, Cell, TableWrapper} from 'react-native-table-component';
 
 import R from '../assets/R';
-import DataTable from './DataTable';
+import {
+  getAllKeys,
+  getFile,
+  getFiles,
+  setFile,
+  removeFile,
+} from '../api/MyAsyncStorage';
 
-const HomeScreen = () => {
+const HomeScreen = props => {
+  // Initialisation des variables
   const [t] = useTranslation();
   const toast = useToast();
+
   const [codeCompetition, onChangeTextCodeComp] = useState();
-  const tableFlexColumn = [1, 1, 1, 1, 0.5];
+  const [tableData, setTableData] = useState([]);
+
+  // Chargement des concours existants
+  const getAllSeries = async () => {
+    const keys = await getAllKeys();
+    await addSeriesDataTable(keys.filter(key => key.match(/.+\.json/g)));
+  };
+
+  useEffect(() => {
+    getAllSeries();
+  }, []);
+
+  // Configuration du tableau Liste des concours
+  const tableFlexColumn = [1, 1, 1, 1, 1];
   var tableState = {
     flexColumn: tableFlexColumn,
     headerTitles: [
@@ -31,13 +56,12 @@ const HomeScreen = () => {
       t('common:status'),
       t('common:action'),
     ],
-    sumFlexValue: tableFlexColumn.reduce((partialSum, a) => partialSum + a, 0),
-    columnCount: tableFlexColumn,
-    maxWidth: Dimensions.get('window').width - 20, //padding left/right
-    data: [],
-    columnType: ['text', 'text', 'text', 'text', 'button'],
+    sumFlexValue: tableFlexColumn.reduce((sum, a) => sum + a, 0),
+    maxWidth: Dimensions.get('window').width - 20, //20 : padding left/right
+    columnType: ['text', 'text', 'text', 'text', 'actionHome'],
   };
 
+  // Gère le champs code de la compétition
   const validateCompetitionCode = () => {
     if (codeCompetition != null)
       toast.show('TODO: récupérer à partir WebService', {
@@ -45,48 +69,79 @@ const HomeScreen = () => {
         placement: 'top',
       });
     else
-      toast.show(t('common:competitionSheetempty'), {
+      toast.show(t('toast:competition_sheet_empty'), {
         type: 'danger',
         placement: 'top',
       });
   };
 
-  const getAllCompetitions = async () => {
-    const keys = await getAllKeys();
-    keys.forEach(async value => {
-      await setOneRowTableData(value);
-    });
+  const getInfoSerie = serie => {
+    const formatDate =
+      i18n.language == 'fr' ? 'DD/MM/YYYY - h:mm' : 'MM/DD/YYYY - h:mm';
+    const infoConcours = JSON.parse(serie[1]);
+    // serie contient déjà la clé (nom du fichier json) et son contenu
+    serie.push(
+      // Date épreuve
+      moment(
+        infoConcours.EpreuveConcoursComplet.TourConcoursComplet.SerieConcoursComplet.DateHeureSerie.toString(),
+        moment.ISO_8601,
+      ).format(formatDate),
+      // Nom épreuve
+      'Nom épreuve - ' +
+        infoConcours.EpreuveConcoursComplet.TourConcoursComplet
+          .SerieConcoursComplet.Libelle +
+        ' \\ ' +
+        infoConcours.EpreuveConcoursComplet.Categorie +
+        infoConcours.EpreuveConcoursComplet.Sexe,
+      // Nom compétition
+      infoConcours.NomCompetition,
+      // Status épreuve
+      'Concours futur',
+      // Action
+      ['Editer', 'Supprimer'],
+      /*<Image source={R.images.logo_ffa} style={{width: 10, height: 10}} />,*/
+    );
+    return serie;
   };
 
-  const getAllKeys = async () => {
-    try {
-      const keys = await AsyncStorage.getAllKeys();
-      return keys;
-    } catch (e) {
-      console.error(e);
+  const addOneSerieDataTable = async key => {
+    // Vérification de la clé (nom de fichier .json)
+    if (key.match(/.+\.json/g)) {
+      // Vérification que la série n'existe pas dans le tableau
+      if (tableData.filter(row => row[0] == key).length == 0) {
+        const contentFile = await getFile(key);
+        setTableData([...tableData, getInfoSerie([key, contentFile])]);
+      }
     }
   };
 
-  const getOneFile = async key => {
-    try {
-      const item = await AsyncStorage.getItem(key);
-      return item;
-    } catch (e) {
-      console.error(e);
+  const addSeriesDataTable = async keys => {
+    if (keys.length > 0) {
+      const listKeyValue = await getFiles(
+        keys.filter(
+          key =>
+            // Vérification que la série n'existe pas dans le tableau
+            tableData.filter(row => row[0] === key).length === 0,
+        ),
+      );
+      listKeyValue.forEach(keyValue => {
+        setTableData(tableData => [...tableData, getInfoSerie(keyValue)]);
+      });
     }
   };
 
   const saveFile = async (fileName, content) => {
     try {
-      const contentFile = await getOneFile(fileName);
+      const contentFile = await getFile(fileName);
       if (contentFile != null) {
-        toast.show('Fichier déjà existant', {
+        toast.show(t('toast:file_already_exist'), {
           type: 'warning',
           placement: 'top',
         });
       } else {
-        await AsyncStorage.setItem(fileName, contentFile);
-        toast.show('Fichier récupéré', {
+        await setFile(fileName, content);
+        await addOneSerieDataTable(fileName);
+        toast.show(t('toast:uploaded_file'), {
           type: 'success',
           placement: 'top',
         });
@@ -97,22 +152,23 @@ const HomeScreen = () => {
   };
 
   const readFile = async newFile => {
-    var RNFS = require('react-native-fs');
     try {
       if (newFile != null) {
         if (newFile.type == 'application/json') {
-          await RNFS.readFile(newFile.uri.toString())
+          await ReactNativeBlobUtil.fs
+            .readFile(newFile.uri.toString())
             .then(content => {
               saveFile(newFile.name, content);
             })
             .catch(e => {
+              console.error(e);
               toast.show("Erreur d'import", {
                 type: 'danger',
                 placement: 'top',
               });
             });
         } else {
-          toast.show('Le fichier doit être au format JSON', {
+          toast.show(t('toast:json_format'), {
             type: 'warning',
             placement: 'top',
           });
@@ -129,52 +185,131 @@ const HomeScreen = () => {
         presentationStyle: 'fullScreen',
         copyTo: 'cachesDirectory',
       });
-      readFile(newFile);
+      if (newFile.type == 'application/zip') {
+        const newPath =
+          Platform.OS === 'android'
+            ? '/data/user/0/com.concourscomplet/files'
+            : '/';
+        unzip(newFile.fileCopyUri.substring(5), newPath)
+          .then(path => {
+            ReactNativeBlobUtil.fs
+              .ls('file:' + path)
+              .then(files => {
+                files.forEach(file => {
+                  if (file.match(/.+\.json/g)) {
+                    readFile({
+                      type: 'application/json',
+                      name: file,
+                      uri: '/data/user/0/com.concourscomplet/files/' + file,
+                    });
+                  }
+                });
+              })
+              .catch(e => console.error(e));
+          })
+          .catch(e => console.error(e));
+      } else readFile(newFile);
     } catch (e) {
-      console.error(e);
       if (DocumentPicker.isCancel(e)) {
-        toast.show('Récupération du fichier annulée', {
+        toast.show(t('toast:loading_cancelled'), {
           type: 'warning',
           placement: 'top',
         });
       }
+      console.error(e);
     }
   }
 
-  const setOneRowTableData = async key => {
-    // Vérification de la clé (nom de fichier.json)
-    if (key.match(/.+\.json/g)) {
-      const serie = JSON.parse(await getOneFile(key));
-      if (serie !== null) {
-        const rowSeries = [];
-        // Date épreuve
-        rowSeries.push(
-          serieJSON.EpreuveConcoursComplet.TourConcoursComplet
-            .SerieConcoursComplet.DateHeureSerie,
+  function componentTable(index, data, type) {
+    code = '';
+    switch (type) {
+      case 'actionHome':
+        code = (
+          <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                props.navigation.navigate('CompetitionSheet', {
+                  competitionData: tableData[index],
+                });
+              }}>
+              <View style={styles.cell}>
+                <Text style={styles.cellButton}>{data[0]}</Text>
+              </View>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                Alert.alert(
+                  'Voulez-vous supprimer ce concours?',
+                  JSON.parse(tableData[index][1]).NomCompetition,
+                  [
+                    {
+                      text: 'Annuler',
+                    },
+                    {
+                      text: 'OK',
+                      onPress: async () => {
+                        try {
+                          await removeFile(tableData[index][0]);
+                          setTableData(
+                            tableData.filter(
+                              (item, itemIndex) => index !== itemIndex,
+                            ),
+                          );
+                          toast.show(t('toast:file_deleted'), {
+                            type: 'success',
+                            placement: 'top',
+                          });
+                        } catch (e) {
+                          console.error(e);
+                        }
+                      },
+                    },
+                  ],
+                );
+              }}>
+              <View style={styles.cell}>
+                <Text style={styles.cellButton}>{data[1]}</Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
         );
-        // Nom épreuve
-        rowData.push(
-          'Nom épreuve - ' +
-            serieJSON.EpreuveConcoursComplet.TourConcoursComplet
-              .SerieConcoursComplet.Libelle +
-            ' \\ ' +
-            serieJSON.EpreuveConcoursComplet.Categorie +
-            serieJSON.EpreuveConcoursComplet.Sexe,
+        break;
+      case 'button':
+        code = (
+          <TouchableWithoutFeedback>
+            <View style={styles.cell}>
+              <Text style={styles.cellButton}>{data}</Text>
+            </View>
+          </TouchableWithoutFeedback>
         );
-        // Nom compétition
-        rowData.push(serieJSON.NomCompetition);
-        // Status épreuve
-        rowData.push('Concours futur');
-        // Action
-        rowData.push(
-          'Editer',
-          /*<Image source={R.images.logo_ffa} style={{width: 10, height: 10}} />,*/
+        break;
+      case 'text':
+        code = (
+          <View style={styles.cell}>
+            <Text style={styles.cellText}>{data}</Text>
+          </View>
         );
-        // Ajout de la ligne dans tableState
-        tableState.data.push(rowData);
-      }
+        break;
+      case 'textAthlete':
+        code = (
+          <View style={styles.cell}>
+            <Text style={styles.cellText}>{data}</Text>
+          </View>
+        );
+        break;
+      case 'textInput':
+        code = (
+          <View style={styles.cell}>
+            <TextInput style={styles.cellTextInput} value={data} />
+          </View>
+        );
+        break;
+      default:
+        code = <Text>TODO</Text>;
+        break;
     }
-  };
+    return code;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -192,8 +327,6 @@ const HomeScreen = () => {
           <TextInput
             style={styles.textinput}
             onChangeText={onChangeTextCodeComp}
-            placeholder="1234567"
-            placeholderTextColor={R.colors.muted}
             value={codeCompetition}
           />
           <TouchableWithoutFeedback onPress={validateCompetitionCode}>
@@ -207,12 +340,49 @@ const HomeScreen = () => {
             </View>
           </TouchableWithoutFeedback>
         </View>
-        {/* Listes des concours */}
         <Text style={styles.titleText}>
           {t('common:list_competion_sheets')}
         </Text>
-        {tableState.data.length > 0 ? (
-          <DataTable tableState={tableState} />
+        {tableData.length > 0 ? (
+          <View>
+            <Table style={styles.headerTable}>
+              <Row
+                data={tableState.headerTitles}
+                textStyle={styles.textHeaderTable}
+                flexArr={tableState.flexColumn}
+              />
+            </Table>
+            <ScrollView>
+              <Table>
+                {tableData.map((rowData, index) => {
+                  return (
+                    <TableWrapper key={index} style={styles.row}>
+                      {rowData
+                        .filter(
+                          (cellData, cellIndex) =>
+                            cellIndex != 0 && cellIndex != 1,
+                        )
+                        .map((cellData, cellIndex) => (
+                          <Cell
+                            key={cellIndex}
+                            width={
+                              (tableState.maxWidth *
+                                tableState.flexColumn[cellIndex]) /
+                              tableState.sumFlexValue
+                            }
+                            data={componentTable(
+                              index,
+                              cellData,
+                              tableState.columnType[cellIndex],
+                            )}
+                          />
+                        ))}
+                    </TableWrapper>
+                  );
+                })}
+              </Table>
+            </ScrollView>
+          </View>
         ) : (
           <Text style={styles.text}>
             {t('common:no_imported_competitions') + '...'}
@@ -259,6 +429,41 @@ const styles = StyleSheet.create({
     borderColor: R.colors.black,
     borderRadius: 5,
   },
+  headerTable: {
+    width: Dimensions.get('window').width - 20,
+    paddingBottom: 10,
+  },
+  textHeaderTable: {
+    color: R.colors.ffa_blue_light,
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  row: {
+    paddingVertical: 10,
+    marginBottom: 5,
+    backgroundColor: '#E7E6E1',
+    width: Dimensions.get('window').width - 20,
+    flexDirection: 'row',
+    borderRadius: 5,
+    maxHeight: 100,
+  },
+  cellText: {color: R.colors.black, fontSize: 16},
+  cellButton: {
+    backgroundColor: R.colors.ffa_blue_light,
+    color: R.colors.white,
+    padding: 5,
+    borderRadius: 5,
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  cellTextInput: {
+    borderWidth: 1,
+    color: R.colors.black,
+    fontSize: 16,
+    borderColor: R.colors.black,
+    borderRadius: 5,
+  },
+  cell: {paddingHorizontal: 10},
 });
 
 export default HomeScreen;
