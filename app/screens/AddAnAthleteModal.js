@@ -5,13 +5,11 @@ import {
   TouchableWithoutFeedback,
   Text,
   View,
-  SafeAreaView,
+  Image,
   Modal,
   ScrollView,
-  Pressable,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {useToast} from 'react-native-toast-notifications';
 import {Picker} from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import i18n from 'i18next';
@@ -20,12 +18,8 @@ import moment from 'moment';
 import R from '../assets/R';
 
 const AddAnAthleteModal = props => {
-  // Initialisation des variables
   const [t] = useTranslation();
-  const toast = useToast();
   const [dateTimePickerVisible, setDateTimePickerVisible] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-
   // Champs obligatoires
   const [nameAthlete, onChangeNameAthlete] = useState();
   const [firstnameAthlete, onChangeFirstnameAthlete] = useState();
@@ -44,13 +38,13 @@ const AddAnAthleteModal = props => {
       sexAthlete == '' ||
       birthDateAthlete == null
     ) {
-      toast.show(t('toast:required_fields_error'), {
+      props.toast.show(t('toast:required_fields_error'), {
         type: 'danger',
         placement: 'top',
       });
     } else {
-      props.setAthletesData(athletesData => [
-        ...athletesData,
+      props.setAthletesData([
+        ...props.athletesData,
         {
           $id: (
             Math.max(
@@ -80,7 +74,7 @@ const AddAnAthleteModal = props => {
           NumCouloir: 1,
         },
       ]);
-      toast.show(t('toast:athlete_added'), {
+      props.toast.show(t('toast:athlete_added'), {
         type: 'success',
         placement: 'top',
       });
@@ -88,135 +82,136 @@ const AddAnAthleteModal = props => {
   };
 
   return (
-    <View style={styles.centeredView}>
-      <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
-        <Text style={styles.button}>Show Modal</Text>
-      </TouchableWithoutFeedback>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(!modalVisible)}>
-        <SafeAreaView style={styles.container}>
-          <ScrollView>
-            {/* Ouvrir les concours d'une compétition */}
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={props.modalVisible}
+      onRequestClose={() => props.setModalVisible(!props.modalVisible)}>
+      <View style={styles.centeredView}>
+        <ScrollView style={styles.modalView}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingBottom: 20,
+            }}>
             <Text style={styles.titleText}>
               {t('competition:add_an_athlete')}
             </Text>
-            <View style={styles.fieldForm}>
-              <Text style={styles.text}>{t('competition:firstname')} :</Text>
-              <TextInput
-                style={styles.textinput}
-                onChangeText={onChangeFirstnameAthlete}
-                value={firstnameAthlete}
-              />
-              <Text style={{color: 'red', paddingLeft: 10}}>*</Text>
-            </View>
-            <View style={styles.fieldForm}>
-              <Text style={styles.text}>{t('competition:name')} :</Text>
-              <TextInput
-                style={styles.textinput}
-                onChangeText={onChangeNameAthlete}
-                value={nameAthlete}
-              />
-              <Text style={{color: 'red', paddingLeft: 10}}>*</Text>
-            </View>
-            <View style={styles.fieldForm}>
-              <Text style={styles.text}>{t('competition:sex')} :</Text>
-              <View style={styles.dropdown}>
-                <Picker
-                  selectedValue={sexAthlete}
-                  dropdownIconColor={R.colors.black}
-                  onValueChange={value => {
-                    onChangeSexAthlete(value);
-                  }}
-                  mode="dropdown">
-                  <Picker.Item style={styles.dropdownItem} label="" value="" />
-                  <Picker.Item
-                    style={styles.dropdownItem}
-                    label="H"
-                    value="H"
-                  />
-                  <Picker.Item
-                    style={styles.dropdownItem}
-                    label="F"
-                    value="F"
-                  />
-                </Picker>
-              </View>
-              <Text style={{color: 'red', paddingLeft: 10}}>*</Text>
-            </View>
-            <View style={styles.fieldForm}>
-              <Text style={styles.text}>{t('competition:birth_date')} :</Text>
-              <TouchableWithoutFeedback
-                onPress={() =>
-                  setDateTimePickerVisible(!dateTimePickerVisible)
-                }>
-                <Text style={styles.textinput}>{birthDateAthleteFormat}</Text>
-              </TouchableWithoutFeedback>
-              {dateTimePickerVisible && (
-                <DateTimePicker
-                  style={styles.text}
-                  value={birthDateAthlete}
-                  maximumDate={new Date()}
-                  onChange={(event, selectedDate) => {
-                    onChangeBirthDateAthleteFormat(
-                      moment(selectedDate, moment.ISO_8601)
-                        .format(
-                          i18n.language == 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY',
-                        )
-                        .toString(),
-                    );
-                    onChangeBirthDateAthlete(selectedDate);
-                    setDateTimePickerVisible(false);
+            <TouchableWithoutFeedback
+              onPress={() => props.setModalVisible(false)}>
+              <View>
+                <Image
+                  source={R.images.close_icon}
+                  style={{
+                    width: 20,
+                    height: 20,
                   }}
                 />
-              )}
-              <Text style={{color: 'red', paddingLeft: 10}}>*</Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+          <View style={styles.fieldForm}>
+            <Text style={styles.text}>{t('competition:firstname')} :</Text>
+            <TextInput
+              style={styles.textinput}
+              onChangeText={onChangeFirstnameAthlete}
+              value={firstnameAthlete}
+            />
+            <Text style={{color: 'red', paddingLeft: 10}}>*</Text>
+          </View>
+          <View style={styles.fieldForm}>
+            <Text style={styles.text}>{t('competition:name')} :</Text>
+            <TextInput
+              style={styles.textinput}
+              onChangeText={onChangeNameAthlete}
+              value={nameAthlete}
+            />
+            <Text style={{color: 'red', paddingLeft: 10}}>*</Text>
+          </View>
+          <View style={styles.fieldForm}>
+            <Text style={styles.text}>{t('competition:sex')} :</Text>
+            <View style={styles.dropdown}>
+              <Picker
+                selectedValue={sexAthlete}
+                dropdownIconColor={R.colors.black}
+                onValueChange={value => {
+                  onChangeSexAthlete(value);
+                }}
+                mode="dropdown">
+                <Picker.Item style={styles.dropdownItem} label="" value="" />
+                <Picker.Item style={styles.dropdownItem} label="H" value="H" />
+                <Picker.Item style={styles.dropdownItem} label="F" value="F" />
+              </Picker>
             </View>
-            <View style={styles.fieldForm}>
-              <Text style={styles.text}>
-                {t('competition:licence_number')} :
-              </Text>
-              <TextInput
-                style={styles.textinput}
-                onChangeText={onChangeLicenceNumberAthlete}
-                value={licenceNumberAthlete}
-                keyboardType="numeric"
-                maxLength={7}
+            <Text style={{color: 'red', paddingLeft: 10}}>*</Text>
+          </View>
+          <View style={styles.fieldForm}>
+            <Text style={styles.text}>{t('competition:birth_date')} :</Text>
+            <TouchableWithoutFeedback
+              onPress={() => setDateTimePickerVisible(!dateTimePickerVisible)}>
+              <Text style={styles.textinput}>{birthDateAthleteFormat}</Text>
+            </TouchableWithoutFeedback>
+            {dateTimePickerVisible && (
+              <DateTimePicker
+                style={styles.text}
+                value={birthDateAthlete}
+                maximumDate={new Date()}
+                onChange={(event, selectedDate) => {
+                  onChangeBirthDateAthleteFormat(
+                    moment(selectedDate, moment.ISO_8601)
+                      .format(
+                        i18n.language == 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY',
+                      )
+                      .toString(),
+                  );
+                  onChangeBirthDateAthlete(selectedDate);
+                  setDateTimePickerVisible(false);
+                }}
               />
-            </View>
-            <View style={styles.fieldForm}>
-              <Text style={styles.text}>{t('competition:club')} :</Text>
-              <TextInput
-                style={styles.textinput}
-                onChangeText={onChangeClubAthlete}
-                value={clubAthlete}
-              />
-            </View>
-            <View style={styles.fieldForm}>
-              <Text style={styles.text}>{t('competition:category')} :</Text>
-              <TextInput
-                style={styles.textinput}
-                onChangeText={onChangeCategoryAthlete}
-                value={categoryAthlete}
-              />
-            </View>
-            <Text
-              style={{width: 500, color: R.colors.black, textAlign: 'right'}}>
-              * : {t('common:required')}
-            </Text>
-            <View style={{marginTop: 15, maxWidth: 500}}>
-              <TouchableWithoutFeedback onPress={validateFormAthlete}>
-                <View style={styles.button}>
-                  <Text>{t('common:validate')}</Text>
-                </View>
-              </TouchableWithoutFeedback>
-            </View>
-          </ScrollView>
-        </SafeAreaView>
-      </Modal>
-    </View>
+            )}
+            <Text style={{color: 'red', paddingLeft: 10}}>*</Text>
+          </View>
+          <View style={styles.fieldForm}>
+            <Text style={styles.text}>{t('competition:licence_number')} :</Text>
+            <TextInput
+              style={styles.textinput}
+              onChangeText={onChangeLicenceNumberAthlete}
+              value={licenceNumberAthlete}
+              keyboardType="numeric"
+              maxLength={7}
+            />
+          </View>
+          <View style={styles.fieldForm}>
+            <Text style={styles.text}>{t('competition:club')} :</Text>
+            <TextInput
+              style={styles.textinput}
+              onChangeText={onChangeClubAthlete}
+              value={clubAthlete}
+            />
+          </View>
+          <View style={styles.fieldForm}>
+            <Text style={styles.text}>{t('competition:category')} :</Text>
+            <TextInput
+              style={styles.textinput}
+              onChangeText={onChangeCategoryAthlete}
+              value={categoryAthlete}
+            />
+          </View>
+          <Text style={{width: 500, color: R.colors.black, textAlign: 'right'}}>
+            * : {t('common:required')}
+          </Text>
+          <View style={{marginTop: 15, maxWidth: 500}}>
+            <TouchableWithoutFeedback onPress={validateFormAthlete}>
+              <View style={styles.button}>
+                <Text>{t('common:validate')}</Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </ScrollView>
+      </View>
+    </Modal>
   );
 };
 
@@ -273,37 +268,20 @@ const styles = StyleSheet.create({
     color: R.colors.black,
     backgroundColor: R.colors.white,
   },
-
   centeredView: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
+    backgroundColor: 'rgba(52, 52, 52, 0.8)',
   },
   modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    backgroundColor: R.colors.white,
+    borderRadius: 15,
+    padding: 30,
+    shadowColor: R.colors.black,
     shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3',
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
+    elevation: 100,
+    maxHeight: 640,
   },
 });
 

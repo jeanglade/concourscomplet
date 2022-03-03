@@ -3,12 +3,51 @@
 #include "pch.h"
 #include "AutolinkedNativeModules.g.h"
 
+// Includes from @react-native-async-storage/async-storage
+#include <winrt/ReactNativeAsyncStorage.h>
+
+// Includes from @react-native-community/datetimepicker
+#include <winrt/DateTimePicker.h>
+
+// Includes from @react-native-picker/picker
+#include <winrt/ReactNativePicker.h>
+
+// Includes from react-native-blob-util
+#include <winrt/ReactNativeBlobUtil.h>
+
+// Includes from react-native-device-info
+#include <winrt/RNDeviceInfoCPP.h>
+
+// Includes from react-native-document-picker
+#include <winrt/ReactNativeDocumentPicker.h>
+
+// Includes from react-native-localize
+#include <winrt/RNLocalize.h>
+
+// Includes from react-native-screens
+#include <winrt/RNScreens.h>
+
 namespace winrt::Microsoft::ReactNative
 {
 
 void RegisterAutolinkedNativeModulePackages(winrt::Windows::Foundation::Collections::IVector<winrt::Microsoft::ReactNative::IReactPackageProvider> const& packageProviders)
 { 
-    UNREFERENCED_PARAMETER(packageProviders);
+    // IReactPackageProviders from @react-native-async-storage/async-storage
+    packageProviders.Append(winrt::ReactNativeAsyncStorage::ReactPackageProvider());
+    // IReactPackageProviders from @react-native-community/datetimepicker
+    packageProviders.Append(winrt::DateTimePicker::ReactPackageProvider());
+    // IReactPackageProviders from @react-native-picker/picker
+    packageProviders.Append(winrt::ReactNativePicker::ReactPackageProvider());
+    // IReactPackageProviders from react-native-blob-util
+    packageProviders.Append(winrt::ReactNativeBlobUtil::ReactPackageProvider());
+    // IReactPackageProviders from react-native-device-info
+    packageProviders.Append(winrt::RNDeviceInfoCPP::ReactPackageProvider());
+    // IReactPackageProviders from react-native-document-picker
+    packageProviders.Append(winrt::ReactNativeDocumentPicker::ReactPackageProvider());
+    // IReactPackageProviders from react-native-localize
+    packageProviders.Append(winrt::RNLocalize::ReactPackageProvider());
+    // IReactPackageProviders from react-native-screens
+    packageProviders.Append(winrt::RNScreens::ReactPackageProvider());
 }
 
 }

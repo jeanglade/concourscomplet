@@ -14,4 +14,5 @@ export default {
   status: 'Status',
   action: 'Action',
   required: 'Required',
+  options: 'Options',
 };

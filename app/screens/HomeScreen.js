@@ -2,12 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   TextInput,
-  TouchableWithoutFeedback,
   Text,
   View,
   SafeAreaView,
   Dimensions,
   ScrollView,
+  TouchableWithoutFeedback,
   Alert,
 } from 'react-native';
 import i18n from 'i18next';
@@ -17,6 +17,7 @@ import {useToast} from 'react-native-toast-notifications';
 import ReactNativeBlobUtil from 'react-native-blob-util';
 import DocumentPicker from 'react-native-document-picker';
 import {Table, Row, Cell, TableWrapper} from 'react-native-table-component';
+import {unzip} from 'react-native-zip-archive';
 
 import R from '../assets/R';
 import {
@@ -31,9 +32,24 @@ const HomeScreen = props => {
   // Initialisation des variables
   const [t] = useTranslation();
   const toast = useToast();
-
   const [codeCompetition, onChangeTextCodeComp] = useState();
   const [tableData, setTableData] = useState([]);
+  // Configuration du tableau Liste des concours
+  //const tableFlexColumn = [1, 1, 1, 1, 1];
+  var tableState = {
+    //flexColumn: tableFlexColumn,
+    maxWidthColumn: [160, 200, 160, 90, 160],
+    headerTitles: [
+      t('common:date'),
+      t('common:discipline'),
+      t('common:competition'),
+      t('common:status'),
+      t('common:action'),
+    ],
+    //sumFlexValue: tableFlexColumn.reduce((sum, a) => sum + a, 0),
+    maxWidth: Dimensions.get('window').width - 20, //20 : padding left/right
+    columnType: ['text', 'text', 'text', 'textStatutConcours', 'actionHome'],
+  };
 
   // Chargement des concours existants
   const getAllSeries = async () => {
@@ -44,22 +60,6 @@ const HomeScreen = props => {
   useEffect(() => {
     getAllSeries();
   }, []);
-
-  // Configuration du tableau Liste des concours
-  const tableFlexColumn = [1, 1, 1, 1, 1];
-  var tableState = {
-    flexColumn: tableFlexColumn,
-    headerTitles: [
-      t('common:date'),
-      t('common:discipline'),
-      t('common:competition'),
-      t('common:status'),
-      t('common:action'),
-    ],
-    sumFlexValue: tableFlexColumn.reduce((sum, a) => sum + a, 0),
-    maxWidth: Dimensions.get('window').width - 20, //20 : padding left/right
-    columnType: ['text', 'text', 'text', 'text', 'actionHome'],
-  };
 
   // Gère le champs code de la compétition
   const validateCompetitionCode = () => {
@@ -110,7 +110,10 @@ const HomeScreen = props => {
       // Vérification que la série n'existe pas dans le tableau
       if (tableData.filter(row => row[0] == key).length == 0) {
         const contentFile = await getFile(key);
-        setTableData([...tableData, getInfoSerie([key, contentFile])]);
+        setTableData(tableData => [
+          ...tableData,
+          getInfoSerie([key, contentFile]),
+        ]);
       }
     }
   };
@@ -155,6 +158,8 @@ const HomeScreen = props => {
     try {
       if (newFile != null) {
         if (newFile.type == 'application/json') {
+          console.log(newFile);
+          console.log(newFile.uri.toString());
           await ReactNativeBlobUtil.fs
             .readFile(newFile.uri.toString())
             .then(content => {
@@ -162,7 +167,7 @@ const HomeScreen = props => {
             })
             .catch(e => {
               console.error(e);
-              toast.show("Erreur d'import", {
+              toast.show(newFile.name.toString(), {
                 type: 'danger',
                 placement: 'top',
               });
@@ -225,7 +230,11 @@ const HomeScreen = props => {
     switch (type) {
       case 'actionHome':
         code = (
-          <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+            }}>
             <TouchableWithoutFeedback
               onPress={() => {
                 props.navigation.navigate('CompetitionSheet', {
@@ -268,19 +277,12 @@ const HomeScreen = props => {
                 );
               }}>
               <View style={styles.cell}>
-                <Text style={styles.cellButton}>{data[1]}</Text>
+                <Text style={[styles.cellButton, styles.backRed]}>
+                  {data[1]}
+                </Text>
               </View>
             </TouchableWithoutFeedback>
           </View>
-        );
-        break;
-      case 'button':
-        code = (
-          <TouchableWithoutFeedback>
-            <View style={styles.cell}>
-              <Text style={styles.cellButton}>{data}</Text>
-            </View>
-          </TouchableWithoutFeedback>
         );
         break;
       case 'text':
@@ -290,28 +292,24 @@ const HomeScreen = props => {
           </View>
         );
         break;
-      case 'textAthlete':
+      case 'textStatutConcours':
+        const colorText = R.colors.ffa_blue_dark;
         code = (
           <View style={styles.cell}>
-            <Text style={styles.cellText}>{data}</Text>
+            <Text style={{color: colorText, fontWeight: 'bold', fontSize: 16}}>
+              {data}
+            </Text>
           </View>
         );
-        break;
-      case 'textInput':
-        code = (
-          <View style={styles.cell}>
-            <TextInput style={styles.cellTextInput} value={data} />
-          </View>
-        );
-        break;
-      default:
-        code = <Text>TODO</Text>;
         break;
     }
     return code;
   }
 
   return (
+    // <View>
+    //   <Button title="Button" onPress={() => {}} />
+    // </View>
     <SafeAreaView style={styles.container}>
       <ScrollView>
         {/* Ouvrir les concours d'une compétition */}
@@ -321,6 +319,7 @@ const HomeScreen = props => {
         <View
           style={{
             flexDirection: 'row',
+            flexWrap: 'wrap',
             alignItems: 'center',
           }}>
           <Text style={styles.text}>{t('common:competition_code')} :</Text>
@@ -349,7 +348,8 @@ const HomeScreen = props => {
               <Row
                 data={tableState.headerTitles}
                 textStyle={styles.textHeaderTable}
-                flexArr={tableState.flexColumn}
+                widthArr={tableState.maxWidthColumn}
+                //flexArr={tableState.flexColumn}
               />
             </Table>
             <ScrollView>
@@ -365,11 +365,12 @@ const HomeScreen = props => {
                         .map((cellData, cellIndex) => (
                           <Cell
                             key={cellIndex}
-                            width={
+                            width={tableState.maxWidthColumn[cellIndex]}
+                            /*width={
                               (tableState.maxWidth *
                                 tableState.flexColumn[cellIndex]) /
                               tableState.sumFlexValue
-                            }
+                            }*/
                             data={componentTable(
                               index,
                               cellData,
@@ -451,10 +452,13 @@ const styles = StyleSheet.create({
   cellButton: {
     backgroundColor: R.colors.ffa_blue_light,
     color: R.colors.white,
-    padding: 5,
+    padding: 10,
     borderRadius: 5,
     fontSize: 16,
     textAlign: 'center',
+  },
+  backRed: {
+    backgroundColor: R.colors.red,
   },
   cellTextInput: {
     borderWidth: 1,

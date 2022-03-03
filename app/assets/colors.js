@@ -5,4 +5,5 @@ export default {
   muted: '#AAA',
   black: 'black',
   white: 'white',
+  red: '#8B0000',
 };

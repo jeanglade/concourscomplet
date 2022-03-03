@@ -16,4 +16,5 @@ export default {
   competitionSheetempty: 'Code compétition vide',
   no_imported_competitions: 'Aucun concours importé',
   required: 'Obligatoire',
+  options: 'Options',
 };

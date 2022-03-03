@@ -4,14 +4,15 @@
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  IgnorableNamespaces="uap mp">
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  IgnorableNamespaces="uap mp uap3">
 
   <Identity
-    Name="17eb2065-678a-4a37-8150-cf13b54eccff"
+    Name="49b5b1e8-a02b-49e3-96e5-eda7e606a03e"
     Publisher="CN=jeana"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="17eb2065-678a-4a37-8150-cf13b54eccff" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="49b5b1e8-a02b-49e3-96e5-eda7e606a03e" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>concourscomplet</DisplayName>
@@ -33,18 +34,35 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="concourscomplet.App">
       <uap:VisualElements
-        DisplayName="concourscomplet"
+        DisplayName="Concours complet FFA"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="concourscomplet"
+        Description="Saisie de concours complet - Fédération Française d&apos;Athlétisme"
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape"/>
+          <uap:Rotation Preference="portrait"/>
+          <uap:Rotation Preference="landscapeFlipped"/>
+          <uap:Rotation Preference="portraitFlipped"/></uap:InitialRotationPreference>
       </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.fileOpenPicker">
+          <uap:FileOpenPicker>
+            <uap:SupportedFileTypes>
+              <uap:FileType>.json</uap:FileType>
+              <uap:FileType>.zip</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileOpenPicker>
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
 
   <Capabilities>
     <Capability Name="internetClient" />
+    <uap:Capability Name="removableStorage"/>
+    <uap:Capability Name="picturesLibrary"/>
   </Capabilities>
 </Package>
