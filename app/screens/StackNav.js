@@ -32,11 +32,11 @@ function StackNav() {
           headerLeft: () => (
             <View style={{justifyContent: 'center'}}>
               <Image
-                source={R.images.logo_ffa}
+                source={R.images.logo_ffa_40}
                 style={{
                   width: 40,
                   height: 40,
-                  marginHorizontal: 10,
+                  marginStart: 10,
                 }}
               />
             </View>

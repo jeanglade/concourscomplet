@@ -28,8 +28,8 @@ function InfoStackNav() {
           <Image
             source={R.images.info_icon}
             style={{
-              width: 40,
-              height: 40,
+              width: 35,
+              height: 35,
             }}
           />
         </View>
@@ -38,11 +38,8 @@ function InfoStackNav() {
         <View
           style={{
             backgroundColor: R.colors.white,
-            borderColor: R.colors.black,
-            borderWidth: 1,
             position: 'absolute',
             right: 100,
-            top: 6,
           }}>
           <Pressable onPress={() => setModalVisible(!modalVisible)}>
             <Text

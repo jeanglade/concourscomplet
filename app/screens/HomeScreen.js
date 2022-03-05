@@ -87,14 +87,15 @@ const HomeScreen = props => {
         moment.ISO_8601,
       ).format(formatDate),
       // Nom épreuve
-      'Nom épreuve - ' +
+      infoConcours.EpreuveConcoursComplet.Nom +
+        ' - ' +
         infoConcours.EpreuveConcoursComplet.TourConcoursComplet
           .SerieConcoursComplet.Libelle +
         ' \\ ' +
         infoConcours.EpreuveConcoursComplet.Categorie +
         infoConcours.EpreuveConcoursComplet.Sexe,
       // Nom compétition
-      infoConcours.NomCompetition,
+      infoConcours.NomCompetition + '\n' + infoConcours.Stade,
       // Status épreuve
       'Concours futur',
       // Action
@@ -158,10 +159,18 @@ const HomeScreen = props => {
     try {
       if (newFile != null) {
         if (newFile.type == 'application/json') {
+          /*await ReactNativeBlobUtil.fs
+            .exists(newFile.uri.toString())
+            .then(exist => {
+              console.log(`file ${exist ? '' : 'not'} exists`);
+            })
+            .catch(() => {
+              console.log('cejsdlkjsl');
+            });
           console.log(newFile);
-          console.log(newFile.uri.toString());
+          console.log(newFile.uri.toString());*/
           await ReactNativeBlobUtil.fs
-            .readFile(newFile.uri.toString())
+            .readFile(newFile.uri.toString(), 'utf8')
             .then(content => {
               saveFile(newFile.name, content);
             })
@@ -307,9 +316,6 @@ const HomeScreen = props => {
   }
 
   return (
-    // <View>
-    //   <Button title="Button" onPress={() => {}} />
-    // </View>
     <SafeAreaView style={styles.container}>
       <ScrollView>
         {/* Ouvrir les concours d'une compétition */}
@@ -330,12 +336,14 @@ const HomeScreen = props => {
           />
           <TouchableWithoutFeedback onPress={validateCompetitionCode}>
             <View style={styles.button}>
-              <Text>{t('common:validate')}</Text>
+              <Text style={styles.textButton}>{t('common:validate')}</Text>
             </View>
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback onPress={() => pickOneDeviceFile()}>
             <View style={styles.button}>
-              <Text>{t('common:via_local_file')}</Text>
+              <Text style={styles.textButton}>
+                {t('common:via_local_file')}
+              </Text>
             </View>
           </TouchableWithoutFeedback>
         </View>
@@ -344,6 +352,15 @@ const HomeScreen = props => {
         </Text>
         {tableData.length > 0 ? (
           <View>
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                paddingVertical: 15,
+              }}>
+              <Text style={styles.textHeaderTable}>Filtres : </Text>
+            </View>
             <Table style={styles.headerTable}>
               <Row
                 data={tableState.headerTitles}
@@ -411,6 +428,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontSize: 16,
   },
+  textButton: {
+    color: R.colors.white,
+  },
   titleText: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -423,19 +443,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   textinput: {
-    borderWidth: 1,
-    paddingStart: 10,
+    fontSize: 16,
+    padding: 10,
     width: 200,
+    height: 45,
     color: R.colors.black,
+    backgroundColor: R.colors.white,
     borderColor: R.colors.black,
+    borderWidth: 1,
     borderRadius: 5,
   },
   headerTable: {
     width: Dimensions.get('window').width - 20,
     paddingBottom: 10,
+    paddingStart: 10,
   },
   textHeaderTable: {
-    color: R.colors.ffa_blue_light,
+    color: R.colors.black,
     fontWeight: 'bold',
     fontSize: 16,
   },

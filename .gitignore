@@ -126,6 +126,7 @@ local.properties
 /android/app/debug.keystore
 /android/app/BUCK
 /android/app/build_defs.bzl
+/android/app/src/debug
 
 # Node
 node_modules
