@@ -4,7 +4,7 @@ export default {
   no_imported_competitions: 'Aucun concours importé',
   competition_sheet: 'Feuille de concours',
   open_competion_sheets: "Ouvrir les concours d'une compétition",
-  list_competion_sheets: 'Liste des concours',
+  list_competion_sheets: 'Concours',
   competition_code: 'Code de la compétition',
   validate: 'Valider',
   via_local_file: 'Via un fichier local',
@@ -17,6 +17,7 @@ export default {
   no_imported_competitions: 'Aucun concours importé',
   required: 'Obligatoire',
   options: 'Options',
-  new_epreuve: 'Nouvelle épreuve ou compétition',
+  new_epreuve: 'Nouvelle épreuve',
   code: 'Code',
+  filters: 'Filtres',
 };

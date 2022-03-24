@@ -15,20 +15,21 @@ import {pickOneDeviceFile} from '../../utils/localservice';
 
 const OpenJson = props => {
   const [t] = useTranslation();
+  const [codeCompetition, setCodeCompetition] = useState(null);
 
   const manageCode = async () => {
     const myjson = await validateCompetitionCode(
-      props.codeCompetition,
+      codeCompetition,
       t,
       props.showMessage,
     );
     if (myjson != null) {
-      const fileName = props.codeCompetition + '.json';
+      const fileName = codeCompetition + '.json';
       const result = saveJsonFile(fileName, myjson, t, props.showMessage);
       if (result) props.addOneSerieDataTable(fileName, myjson);
     }
     Keyboard.dismiss();
-    props.setCodeCompetition(null);
+    setCodeCompetition(null);
   };
 
   return (
@@ -37,8 +38,8 @@ const OpenJson = props => {
       <View style={styles.row}>
         <TextInput
           style={styles.textinput}
-          onChangeText={props.setCodeCompetition}
-          value={props.codeCompetition}
+          onChangeText={setCodeCompetition}
+          value={codeCompetition}
           placeholder={t('common:code')}
           placeholderTextColor={colors.muted}
         />
@@ -77,7 +78,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.white,
-    padding: 5,
+    marginHorizontal: 20,
+    paddingBottom: 20,
   },
   titleText: {
     fontSize: 20,
@@ -95,14 +97,14 @@ const styles = StyleSheet.create({
     width: 130,
     color: colors.black,
     backgroundColor: colors.white,
-    borderColor: colors.black,
+    borderColor: colors.muted,
     borderWidth: 1,
   },
   button: {
     alignItems: 'center',
     backgroundColor: colors.ffa_blue_dark,
     paddingHorizontal: 20,
-    paddingVertical: 11, //Same height than TextInput
+    paddingVertical: 13, //Same height than TextInput
     marginHorizontal: 15,
     borderWidth: 3,
     borderColor: colors.ffa_blue_light,

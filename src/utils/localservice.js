@@ -61,7 +61,6 @@ const readFile = async (newFile, t, showMessage, addOneSerieDataTable) => {
   try {
     if (newFile != null) {
       if (newFile.type == 'application/json') {
-        console.log(newFile);
         switch (Platform.OS) {
           case 'android':
             await ReactNativeBlobUtil.fs

@@ -1,4 +1,5 @@
 import base64 from 'react-native-base64';
+import {Keyboard} from 'react-native';
 import {getFile, setFile} from '../../utils/myasyncstorage';
 
 export const validateCompetitionCode = async (
@@ -33,6 +34,7 @@ export const validateCompetitionCode = async (
         message: t('toast:wrong_code'),
         type: 'danger',
       });
+      Keyboard.dismiss();
     });
     const {headers, body, statusCode} = response;
     if (statusCode === 200) {
@@ -47,6 +49,7 @@ export const validateCompetitionCode = async (
         message: t('toast:import_error'),
         type: 'danger',
       });
+      Keyboard.dismiss();
     }
   } else {
     console.error(t('toast:competition_sheet_empty'));
@@ -54,6 +57,7 @@ export const validateCompetitionCode = async (
       message: t('toast:competition_sheet_empty'),
       type: 'danger',
     });
+    Keyboard.dismiss();
   }
   return res;
 };
@@ -67,6 +71,8 @@ export const saveJsonFile = async (fileName, content, t, showMessage) => {
         message: t('toast:file_already_exist'),
         type: 'warning',
       });
+      Keyboard.dismiss();
+
       //TODO Popup overwrite dans le fichier ?
     } else {
       await setFile(fileName, content);
@@ -75,10 +81,13 @@ export const saveJsonFile = async (fileName, content, t, showMessage) => {
         message: t('toast:uploaded_file'),
         type: 'success',
       });
+      Keyboard.dismiss();
     }
     return result;
   } catch (e) {
     console.error(e);
+    Keyboard.dismiss();
+
     return false;
   }
 };

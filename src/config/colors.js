@@ -7,4 +7,6 @@ export default {
   black: '#000000',
   white: '#FFFFFF',
   red: '#8B0000',
+  red_light: '#e62020',
+  gray_light: '#E7E6E1',
 };

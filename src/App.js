@@ -10,7 +10,6 @@ import Navigations from './navigations';
 
 LogBox.ignoreLogs([
   "[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!",
-  'Warning: Failed prop type: Invalid prop `textStyle` of type `array` supplied to `Cell`, expected `object`.',
 ]);
 
 const queryClient = new QueryClient();

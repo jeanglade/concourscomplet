@@ -4,7 +4,7 @@ export default {
   no_imported_competitions: 'No imported competitions',
   competition_sheet: 'Competition sheet',
   open_competion_sheets: 'Open the competition forms',
-  list_competion_sheets: 'List of the competition forms',
+  list_competion_sheets: 'Competition forms',
   competition_code: 'Competition code',
   validate: 'Validate',
   via_local_file: 'Via a local file',
@@ -17,4 +17,5 @@ export default {
   options: 'Options',
   new_epreuve: 'New competition',
   code: 'Code',
+  filters: 'Filters',
 };

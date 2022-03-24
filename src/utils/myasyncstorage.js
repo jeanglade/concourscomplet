@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const getAllKeys = async () => {
   try {
-    AsyncStorage.clear();
+    //await AsyncStorage.clear();
     const keys = await AsyncStorage.getAllKeys();
     return keys;
   } catch (e) {

@@ -3,396 +3,273 @@ import {
   StyleSheet,
   Text,
   View,
-  Dimensions,
-  ScrollView,
   TouchableWithoutFeedback,
+  Image,
   Alert,
   FlatList,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {Table, Row, Cell, TableWrapper} from 'react-native-table-component';
 import {colors} from '_config';
+import {Picker} from '@react-native-picker/picker';
 import {removeFile} from '../../utils/myasyncstorage';
+import {useOrientation} from '../../utils/useOrientation';
 
 const TableHome = props => {
   const [t] = useTranslation();
-  const [competitionName, setCompetitionName] = useState();
-  const [competitionDate, setCompetitionDate] = useState();
+  const orientation = useOrientation();
 
-  // Configuration du tableau Liste des concours
-  var tableState = {
-    minWidthColumn: [
-      160,
-      200,
-      Dimensions.get('window').width - (620 + 20 + 10),
-      100,
-      160,
-    ],
-    headerTitles: [
-      t('common:date'),
-      t('common:discipline'),
-      '',
-      t('common:status'),
-      t('common:action'),
-    ],
-    maxWidth: Dimensions.get('window').width - 20, //20 : padding left/right
-    columnType: ['text', 'text', 'text', 'textStatutConcours', 'actionHome'],
-  };
+  const [competition, setCompetition] = useState('coucou');
 
-  function componentTable(index, data, type) {
-    code = '';
-    switch (type) {
-      case 'actionHome':
-        code = (
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-            }}>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                props.navigation.navigate('CompetitionSheet', {
-                  competitionData: props.tableData[index],
-                });
-              }}>
-              <View style={styles.cell}>
-                <Text style={styles.cellButton}>{data[0]}</Text>
-              </View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                Alert.alert(
-                  'Voulez-vous supprimer ce concours?',
-                  JSON.parse(props.tableData[index][1]).NomCompetition,
-                  [
-                    {
-                      text: 'Annuler',
-                    },
-                    {
-                      text: 'OK',
-                      onPress: async () => {
-                        try {
-                          await removeFile(props.tableData[index][0]);
-                          props.setTableData(
-                            props.tableData.filter(
-                              (item, itemIndex) => index !== itemIndex,
-                            ),
-                          );
-                          props.showMessage({
-                            message: t('toast:file_deleted'),
-                            type: 'success',
-                          });
-                        } catch (e) {
-                          console.error(e);
-                        }
-                      },
-                    },
-                  ],
-                );
-              }}>
-              <View style={styles.cell}>
-                <Text style={[styles.cellButton, styles.backRed]}>
-                  {data[1]}
-                </Text>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        );
+  const getImageEpreuve = epreuve => {
+    var res = '';
+    switch (epreuve) {
+      case 'Hauteur':
+        res = require('../../icons/epreuves/SautEnHauteur_Dark.png');
         break;
-      case 'text':
-        code = (
-          <View style={styles.cell}>
-            <Text style={styles.cellText}>{data}</Text>
-          </View>
-        );
+      case 'Perche':
+        res = require('../../icons/epreuves/SautALaPerche_Dark.png');
         break;
-      case 'textStatutConcours':
-        const colorText = colors.ffa_blue_dark;
-        code = (
-          <View style={styles.cell}>
-            <Text style={{color: colorText, fontWeight: 'bold', fontSize: 16}}>
-              {data}
-            </Text>
-          </View>
-        );
+      case 'Longueur':
+        res = require('../../icons/epreuves/SautEnLongueur_Dark.png');
+        break;
+      case 'Triple':
+        res = require('../../icons/epreuves/SautEnLongueur_Dark.png');
+        break;
+      case 'Poids':
+        res = require('../../icons/epreuves/LancerDePoids_Dark.png');
+        break;
+      case 'Javelot':
+        res = require('../../icons/epreuves/Javelot_Dark.png');
+        break;
+      case 'Marteau':
+        res = require('../../icons/epreuves/LancerDeMarteau_Dark.png');
+        break;
+      case 'Disque':
+        res = require('../../icons/epreuves/LancerDeDisque_Dark.png');
         break;
     }
-    return code;
-  }
+    return res;
+  };
 
-  const DATA = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'First Item',
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'Second Item',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      title: 'Third Item',
-    },
-  ];
-
-  const Item = ({date, epreuve, statut, action}) => (
-    <View style={styles.item}>
-      <View style={styles.cell}>
-        <Text style={styles.cellText}>{date}</Text>
-      </View>
-      <Text>{epreuve}</Text>
-      <View style={styles.cell}>
-        <Text style={{color: colorText, fontWeight: 'bold', fontSize: 16}}>
-          {statut}
-        </Text>
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-        }}>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            props.navigation.navigate('CompetitionSheet', {
-              competitionData: props.tableData[index],
-            });
+  const Item = ({id, data, date, epreuve, statut, index}) => (
+    <>
+      <View style={styles.item}>
+        <View style={{flex: 2}}>
+          <Text style={styles.text}>{date}</Text>
+        </View>
+        <View
+          style={{
+            flex: 4,
+            flexDirection: 'row',
+            alignItems: 'center',
+            flexWrap: 'wrap',
           }}>
-          <View style={styles.cell}>
-            <Text style={styles.cellButton}>{action[0]}</Text>
-          </View>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            Alert.alert(
-              'Voulez-vous supprimer ce concours?',
-              JSON.parse(props.tableData[index][1]).NomCompetition,
-              [
-                {
-                  text: 'Annuler',
-                },
-                {
-                  text: 'OK',
-                  onPress: async () => {
-                    try {
-                      await removeFile(props.tableData[index][0]);
-                      props.setTableData(
-                        props.tableData.filter(
-                          (item, itemIndex) => index !== itemIndex,
-                        ),
-                      );
-                      props.showMessage({
-                        message: t('toast:file_deleted'),
-                        type: 'success',
-                      });
-                    } catch (e) {
-                      console.error(e);
-                    }
+          <Image
+            style={{
+              width: 30,
+              height: 30,
+              marginRight: 5,
+            }}
+            source={getImageEpreuve(epreuve.split(' - ')[0])}
+          />
+          <Text style={styles.text}>{epreuve}</Text>
+        </View>
+        <View style={{flex: 2}}>
+          <Text style={[styles.text, {fontWeight: 'bold'}]}>{statut}</Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            flex: 2,
+          }}>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              props.navigation.navigate('CompetitionSheet', {
+                competitionData: data,
+              });
+            }}>
+            <View style={[styles.cellButton]}>
+              <Image
+                style={{
+                  width: 20,
+                  height: 20,
+                }}
+                source={require('../icons/list.png')}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              Alert.alert(
+                'Voulez-vous supprimer ce concours?',
+                JSON.parse(data).NomCompetition,
+                [
+                  {
+                    text: 'Annuler',
                   },
-                },
-              ],
-            );
-          }}>
-          <View style={styles.cell}>
-            <Text style={[styles.cellButton, styles.backRed]}>{action[1]}</Text>
-          </View>
-        </TouchableWithoutFeedback>
+                  {
+                    text: 'OK',
+                    onPress: async () => {
+                      try {
+                        await removeFile(id);
+                        props.setTableData(
+                          props.tableData.filter(
+                            (item, itemIndex) => item.id !== id,
+                          ),
+                        );
+                        props.showMessage({
+                          message: t('toast:file_deleted'),
+                          type: 'success',
+                        });
+                      } catch (e) {
+                        console.error(e);
+                      }
+                    },
+                  },
+                ],
+              );
+            }}>
+            <View style={[styles.cellButton, styles.backRed]}>
+              <Image
+                style={{
+                  width: 20,
+                  height: 20,
+                }}
+                source={require('../icons/delete.png')}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
       </View>
-    </View>
+    </>
   );
 
-  const renderItem = ({item}) => (
+  const renderItem = ({item, index}) => (
     <Item
+      id={item.id}
+      data={item.data}
       date={item.date}
-      epreuve={item.title}
-      statut={item.title}
-      action={item.title}
+      epreuve={item.epreuve}
+      statut={item.statut}
+      index={index}
     />
   );
 
   return (
-    <>
-      <View style={styles.containerCenter}>
-        <Text style={styles.titleText}>
-          {t('common:list_competion_sheets')}
-        </Text>
-
-        {props.tableData.length > 0 ? (
-          <ScrollView>
-            <FlatList
-              data={DATA}
-              renderItem={renderItem}
-              keyExtractor={item => item.id}
-            />
-            <View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  alignItems: 'center',
-                  paddingVertical: 15,
-                }}>
-                {/* <Text style={styles.textHeaderTable}>Filtres : </Text>
-                <View style={styles.dropdown}>
-                <Picker
-                selectedValue={competitionDate}
-                dropdownIconColor={colors.black}
-                onValueChange={value => {
-                    setCompetitionDate(value);
-                }}
-                mode="dropdown">
-                {tableData.map((rowData, index) => {
-                    return (
-                        <></>
-                        // <Picker.Item
-                        //   style={styles.dropdownItem}
-                        //   label={rowData.DateHeureSerie}
-                        //   value={rowData.DateHeureSerie}
-                        // />
-                        );
-                    })}
-                    </Picker>
-                </View> */}
-              </View>
-              <Text style={[styles.textHeaderTable, {textAlign: 'center'}]}>
-                {competitionName}
-              </Text>
-              <Table style={styles.headerTable}>
-                <Row
-                  data={tableState.headerTitles}
-                  textStyle={styles.textHeaderTable}
-                  widthArr={tableState.minWidthColumn}
-                  //flexArr={tableState.flexColumn}
-                />
-              </Table>
-              <ScrollView>
-                <Table>
-                  {props.tableData.map((rowData, index) => {
-                    return (
-                      <TableWrapper key={index} style={styles.row}>
-                        {rowData
-                          .filter(
-                            (cellData, cellIndex) =>
-                              cellIndex != 0 && cellIndex != 1,
-                          )
-                          .map((cellData, cellIndex) => (
-                            <Cell
-                              key={cellIndex}
-                              width={tableState.minWidthColumn[cellIndex]}
-                              /*width={
-                                      (tableState.maxWidth *
-                                        tableState.flexColumn[cellIndex]) /
-                                        tableState.sumFlexValue
-                                    }*/
-                              data={componentTable(
-                                index,
-                                cellData,
-                                tableState.columnType[cellIndex],
-                              )}
-                            />
-                          ))}
-                      </TableWrapper>
-                    );
-                  })}
-                </Table>
-              </ScrollView>
+    <View
+      style={[
+        styles.containerCenter,
+        orientation === 'LANDSCAPE' && {width: '80%', marginLeft: '10%'},
+      ]}>
+      <Text style={styles.titleText}>
+        {t('common:list_competion_sheets')} -{' '}
+        {props.tableData.length > 0
+          ? competition
+          : t('common:no_imported_competitions') + '...'}
+      </Text>
+      {props.tableData.length > 0 ? (
+        <View>
+          <Text style={styles.text}>{t('common:filters')}</Text>
+          <View>
+            <Picker
+              selectedValue={competition}
+              onValueChange={value => {
+                setCompetition(value);
+              }}
+              mode="dropdown">
+              {props.tableData.map((rowData, index) => {
+                return (
+                  <></>
+                  // <Picker.Item
+                  //   style={styles.dropdownItem}
+                  //   label={rowData.DateHeureSerie}
+                  //   value={rowData.DateHeureSerie}
+                  // />
+                );
+              })}
+            </Picker>
+          </View>
+          <View style={styles.headerTable}>
+            <View style={{flex: 2}}>
+              <Text style={styles.text}>{t('common:date')}</Text>
             </View>
-          </ScrollView>
-        ) : (
-          <Text style={styles.text}>
-            {t('common:no_imported_competitions') + '...'}
-          </Text>
-        )}
-      </View>
-    </>
+            <View style={{flex: 4}}>
+              <Text style={styles.text}>{t('common:discipline')}</Text>
+            </View>
+            <View style={{flex: 2}}>
+              <Text style={styles.text}>{t('common:status')}</Text>
+            </View>
+            <View style={{flex: 2}}>
+              <Text style={styles.text}>{t('common:action')}</Text>
+            </View>
+          </View>
+          <FlatList
+            data={props.tableData}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => {
+              return item.id;
+            }}
+          />
+        </View>
+      ) : (
+        <></>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   containerCenter: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.white,
-    padding: 5,
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    marginHorizontal: 20,
+    borderColor: colors.muted,
+    borderTopWidth: 1,
+    borderWidth: 0,
   },
   titleText: {
     fontSize: 20,
     color: colors.ffa_blue_light,
     margin: 15,
+    textAlign: 'center',
+    paddingVertical: 10,
   },
   text: {
     color: colors.ffa_blue_light,
     fontSize: 14,
     paddingHorizontal: 10,
   },
-
-  buttonClassic: {
+  item: {
+    flexDirection: 'row',
+    backgroundColor: colors.gray_light,
+    margin: 1,
+    paddingHorizontal: 10,
     alignItems: 'center',
-    backgroundColor: colors.ffa_blue_dark,
-    paddingHorizontal: 20,
-    paddingVertical: 13,
-    marginHorizontal: 15,
-    borderWidth: 2,
-    borderColor: colors.ffa_blue_light_2,
   },
-  button: {
-    alignItems: 'center',
+  headerTable: {
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+    paddingBottom: 5,
+  },
+  text: {
+    color: colors.black,
+    fontSize: 16,
+  },
+  cellButton: {
     backgroundColor: colors.ffa_blue_dark,
-    padding: 20,
-    marginHorizontal: 15,
+    padding: 10,
+    margin: 5,
     borderWidth: 2,
     borderColor: colors.ffa_blue_light,
   },
-  iconButton: {width: 30, height: 30},
-  textButton: {
-    color: colors.white,
-  },
-
-  textinput: {
-    fontSize: 16,
-    padding: 10,
-    width: 130,
-    color: colors.black,
-    backgroundColor: colors.white,
-    borderColor: colors.black,
-    borderWidth: 1,
-  },
-  headerTable: {
-    width: Dimensions.get('window').width - 20,
-    paddingBottom: 10,
-    paddingStart: 10,
-  },
-  textHeaderTable: {
-    color: colors.black,
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  row: {
-    paddingVertical: 10,
-    marginBottom: 5,
-    backgroundColor: '#E7E6E1',
-    width: Dimensions.get('window').width - 20,
-    flexDirection: 'row',
-    maxHeight: 100,
-  },
-  cellText: {color: colors.black, fontSize: 16},
-  cellButton: {
-    backgroundColor: colors.ffa_blue_light,
-    color: colors.white,
-    padding: 10,
-    fontSize: 16,
-    textAlign: 'center',
-  },
   backRed: {
     backgroundColor: colors.red,
+    borderColor: colors.red_light,
   },
-  cellTextInput: {
-    borderWidth: 1,
-    color: colors.black,
-    fontSize: 16,
-    borderColor: colors.black,
-  },
-  cell: {paddingHorizontal: 10},
-  dropdown: {
+
+  /* width: Dimensions.get('window').width - 20,*/
+  /*dropdown: {
     fontSize: 14,
     width: 200,
     color: colors.black,
@@ -403,7 +280,7 @@ const styles = StyleSheet.create({
   dropdownItem: {
     color: colors.black,
     backgroundColor: colors.white,
-  },
+  },*/
 });
 
 export default TableHome;
