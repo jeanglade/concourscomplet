@@ -5,7 +5,11 @@
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
-  IgnorableNamespaces="uap mp uap3">
+  xmlns:iot="http://schemas.microsoft.com/appx/manifest/iot/windows10"
+  xmlns:uap6="http://schemas.microsoft.com/appx/manifest/uap/windows10/6"
+  xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
+  xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2"
+  IgnorableNamespaces="uap mp uap3 iot uap6 uap4 uap2">
 
   <Identity
     Name="49b5b1e8-a02b-49e3-96e5-eda7e606a03e"
@@ -37,7 +41,7 @@
         DisplayName="Concours complet FFA"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="Saisie de concours complet - Fédération Française d&apos;Athlétisme"
+        Description="Saisie de concours complet - Federation Française d Athletisme"
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png"  BackgroundColor="white"/>
@@ -51,8 +55,7 @@
         <uap:Extension Category="windows.fileOpenPicker">
           <uap:FileOpenPicker>
             <uap:SupportedFileTypes>
-              <uap:FileType>.json</uap:FileType>
-              <uap:FileType>.zip</uap:FileType>
+              <uap:SupportsAnyFileType/>
             </uap:SupportedFileTypes>
           </uap:FileOpenPicker>
         </uap:Extension>
@@ -64,5 +67,39 @@
     <Capability Name="internetClient" />
     <uap:Capability Name="removableStorage"/>
     <uap:Capability Name="picturesLibrary"/>
+    <uap:Capability Name="chat"/>
+    <iot:Capability Name="lowLevelDevices"/>
+    <Capability Name="allJoyn"/>
+    <uap:Capability Name="phoneCall"/>
+    <uap:Capability Name="voipCall"/>
+    <iot:Capability Name="systemManagement"/>
+    <uap6:Capability Name="graphicsCapture"/>
+    <uap4:Capability Name="offlineMapsManagement"/>
+    <uap2:Capability Name="phoneCallHistoryPublic"/>
+    <uap:Capability Name="userAccountInformation"/>
+    <Capability Name="internetClientServer"/>
+    <uap3:Capability Name="backgroundMediaPlayback"/>
+    <uap:Capability Name="blockedChatMessages"/>
+    <uap:Capability Name="objects3D"/>
+    <uap2:Capability Name="spatialPerception"/>
+    <uap:Capability Name="appointments"/>
+    <Capability Name="privateNetworkClientServer"/>
+    <Capability Name="codeGeneration"/>
+    <uap3:Capability Name="userNotificationListener"/>
+    <uap:Capability Name="contacts"/>
+    <uap:Capability Name="sharedUserCertificates"/>
+    <uap:Capability Name="enterpriseAuthentication"/>
+    <uap:Capability Name="musicLibrary"/>
+    <uap3:Capability Name="remoteSystem"/>
+    <uap4:Capability Name="userDataTasks"/>
+    <uap:Capability Name="videosLibrary"/>
+    <DeviceCapability Name="microphone"/>
+    <DeviceCapability Name="pointOfService"/>
+    <DeviceCapability Name="proximity"/>
+    <DeviceCapability Name="gazeInput"/>
+    <DeviceCapability Name="location"/>
+    <DeviceCapability Name="bluetooth"/>
+    <DeviceCapability Name="lowLevel"/>
+    <DeviceCapability Name="webcam"/>
   </Capabilities>
 </Package>

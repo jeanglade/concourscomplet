@@ -9,7 +9,7 @@
     <ProjectGuid>{6208d162-ae25-4156-9e0a-6c24fd14c612}</ProjectGuid>
     <ProjectName>concourscomplet</ProjectName>
     <RootNamespace>concourscomplet</RootNamespace>
-    <DefaultLanguage>fr-FR</DefaultLanguage>
+    <DefaultLanguage>en-us</DefaultLanguage>
     <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>
