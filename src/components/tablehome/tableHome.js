@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Alert,
+  FlatList,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {Table, Row, Cell, TableWrapper} from 'react-native-table-component';
@@ -119,6 +120,95 @@ const TableHome = props => {
     return code;
   }
 
+  const DATA = [
+    {
+      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+      title: 'First Item',
+    },
+    {
+      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+      title: 'Second Item',
+    },
+    {
+      id: '58694a0f-3da1-471f-bd96-145571e29d72',
+      title: 'Third Item',
+    },
+  ];
+
+  const Item = ({date, epreuve, statut, action}) => (
+    <View style={styles.item}>
+      <View style={styles.cell}>
+        <Text style={styles.cellText}>{date}</Text>
+      </View>
+      <Text>{epreuve}</Text>
+      <View style={styles.cell}>
+        <Text style={{color: colorText, fontWeight: 'bold', fontSize: 16}}>
+          {statut}
+        </Text>
+      </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+        }}>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            props.navigation.navigate('CompetitionSheet', {
+              competitionData: props.tableData[index],
+            });
+          }}>
+          <View style={styles.cell}>
+            <Text style={styles.cellButton}>{action[0]}</Text>
+          </View>
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            Alert.alert(
+              'Voulez-vous supprimer ce concours?',
+              JSON.parse(props.tableData[index][1]).NomCompetition,
+              [
+                {
+                  text: 'Annuler',
+                },
+                {
+                  text: 'OK',
+                  onPress: async () => {
+                    try {
+                      await removeFile(props.tableData[index][0]);
+                      props.setTableData(
+                        props.tableData.filter(
+                          (item, itemIndex) => index !== itemIndex,
+                        ),
+                      );
+                      props.showMessage({
+                        message: t('toast:file_deleted'),
+                        type: 'success',
+                      });
+                    } catch (e) {
+                      console.error(e);
+                    }
+                  },
+                },
+              ],
+            );
+          }}>
+          <View style={styles.cell}>
+            <Text style={[styles.cellButton, styles.backRed]}>{action[1]}</Text>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+    </View>
+  );
+
+  const renderItem = ({item}) => (
+    <Item
+      date={item.date}
+      epreuve={item.title}
+      statut={item.title}
+      action={item.title}
+    />
+  );
+
   return (
     <>
       <View style={styles.containerCenter}>
@@ -128,6 +218,11 @@ const TableHome = props => {
 
         {props.tableData.length > 0 ? (
           <ScrollView>
+            <FlatList
+              data={DATA}
+              renderItem={renderItem}
+              keyExtractor={item => item.id}
+            />
             <View>
               <View
                 style={{
