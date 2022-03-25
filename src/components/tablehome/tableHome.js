@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,15 +10,13 @@ import {
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
-import {Picker} from '@react-native-picker/picker';
 import {removeFile} from '../../utils/myasyncstorage';
 import {useOrientation} from '../../utils/useOrientation';
+import {DropdownCompetition} from '_components';
 
 const TableHome = props => {
   const [t] = useTranslation();
   const orientation = useOrientation();
-
-  const [competition, setCompetition] = useState('coucou');
 
   const getImageEpreuve = epreuve => {
     var res = '';
@@ -101,34 +99,26 @@ const TableHome = props => {
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback
             onPress={() => {
-              Alert.alert(
-                'Voulez-vous supprimer ce concours?',
-                JSON.parse(data).NomCompetition,
-                [
-                  {
-                    text: 'Annuler',
+              Alert.alert(t('toast:confirm_delete'), epreuve, [
+                {
+                  text: t('toast:cancel'),
+                },
+                {
+                  text: t('toast:ok'),
+                  onPress: async () => {
+                    await removeFile(id);
+                    props.setTableData(
+                      props.tableData.filter(
+                        (item, itemIndex) => item.id !== id,
+                      ),
+                    );
+                    props.showMessage({
+                      message: t('toast:file_deleted'),
+                      type: 'success',
+                    });
                   },
-                  {
-                    text: 'OK',
-                    onPress: async () => {
-                      try {
-                        await removeFile(id);
-                        props.setTableData(
-                          props.tableData.filter(
-                            (item, itemIndex) => item.id !== id,
-                          ),
-                        );
-                        props.showMessage({
-                          message: t('toast:file_deleted'),
-                          type: 'success',
-                        });
-                      } catch (e) {
-                        console.error(e);
-                      }
-                    },
-                  },
-                ],
-              );
+                },
+              ]);
             }}>
             <View style={[styles.cellButton, styles.backRed]}>
               <Image
@@ -147,9 +137,10 @@ const TableHome = props => {
 
   const renderItem = ({item, index}) => (
     <Item
+      key={index}
       id={item.id}
       data={item.data}
-      date={item.date}
+      date={item.dateInfo}
       epreuve={item.epreuve}
       statut={item.statut}
       index={index}
@@ -162,34 +153,30 @@ const TableHome = props => {
         styles.containerCenter,
         orientation === 'LANDSCAPE' && {width: '80%', marginLeft: '10%'},
       ]}>
-      <Text style={styles.titleText}>
-        {t('common:list_competion_sheets')} -{' '}
-        {props.tableData.length > 0
-          ? competition
-          : t('common:no_imported_competitions') + '...'}
-      </Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text style={styles.titleText}>
+          {t('common:list_competion_sheets')} {' - '}
+          {props.tableData.length > 0
+            ? props.allCompetitions.length == 1
+              ? props.competition.nomCompetition
+              : null
+            : t('common:no_imported_competitions') + '...'}
+        </Text>
+        {props.allCompetitions.length >= 2 && (
+          <DropdownCompetition
+            competition={props.competition}
+            setCompetition={props.setCompetition}
+            allCompetitions={props.allCompetitions}
+          />
+        )}
+      </View>
       {props.tableData.length > 0 ? (
-        <View>
-          <Text style={styles.text}>{t('common:filters')}</Text>
-          <View>
-            <Picker
-              selectedValue={competition}
-              onValueChange={value => {
-                setCompetition(value);
-              }}
-              mode="dropdown">
-              {props.tableData.map((rowData, index) => {
-                return (
-                  <></>
-                  // <Picker.Item
-                  //   style={styles.dropdownItem}
-                  //   label={rowData.DateHeureSerie}
-                  //   value={rowData.DateHeureSerie}
-                  // />
-                );
-              })}
-            </Picker>
-          </View>
+        <View style={{flex: 1}}>
           <View style={styles.headerTable}>
             <View style={{flex: 2}}>
               <Text style={styles.text}>{t('common:date')}</Text>
@@ -204,13 +191,23 @@ const TableHome = props => {
               <Text style={styles.text}>{t('common:action')}</Text>
             </View>
           </View>
-          <FlatList
-            data={props.tableData}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => {
-              return item.id;
-            }}
-          />
+          <View style={{flex: 1}}>
+            <FlatList
+              contentContainerStyle={{
+                flexGrow: 1,
+              }}
+              data={props.tableData.filter(x => {
+                return (
+                  JSON.parse(x.data).GuidCompetition ==
+                  props.competition?.idCompetition
+                );
+              })}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => {
+                return index;
+              }}
+            />
+          </View>
         </View>
       ) : (
         <></>
@@ -222,11 +219,13 @@ const TableHome = props => {
 const styles = StyleSheet.create({
   containerCenter: {
     flexDirection: 'column',
+    justifyContent: 'flex-start',
     alignItems: 'stretch',
     marginHorizontal: 20,
     borderColor: colors.muted,
     borderTopWidth: 1,
     borderWidth: 0,
+    flex: 1,
   },
   titleText: {
     fontSize: 20,
@@ -267,20 +266,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.red,
     borderColor: colors.red_light,
   },
-
-  /* width: Dimensions.get('window').width - 20,*/
-  /*dropdown: {
-    fontSize: 14,
-    width: 200,
-    color: colors.black,
-    backgroundColor: colors.white,
-    borderColor: colors.black,
-    borderWidth: 1,
-  },
-  dropdownItem: {
-    color: colors.black,
-    backgroundColor: colors.white,
-  },*/
 });
 
 export default TableHome;

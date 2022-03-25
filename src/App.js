@@ -10,6 +10,7 @@ import Navigations from './navigations';
 
 LogBox.ignoreLogs([
   "[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!",
+  'Warning: Each child in a list should have a unique "key" prop.',
 ]);
 
 const queryClient = new QueryClient();

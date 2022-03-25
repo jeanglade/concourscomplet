@@ -31,12 +31,6 @@ const styles = StyleSheet.create({
   pickerItem: {
     //backgroundColor: colors.ffa_blue_light,
   },
-  chevronDown: {
-    display: 'none',
-  },
-  chevronUp: {
-    display: 'none',
-  },
 });
 
 export default DropdownLanguage;

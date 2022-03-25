@@ -39,11 +39,10 @@ export const validateCompetitionCode = async (
     const {headers, body, statusCode} = response;
     if (statusCode === 200) {
       const xmlResponse = new XMLParser().parseFromString(body);
-      const myjson = base64.decode(
+      res = base64.decode(
         xmlResponse.getElementsByTagName('GetFileConcoursCompletResult')[0]
           .value,
       );
-      res = myjson;
     } else {
       showMessage({
         message: t('toast:import_error'),
@@ -72,7 +71,6 @@ export const saveJsonFile = async (fileName, content, t, showMessage) => {
         type: 'warning',
       });
       Keyboard.dismiss();
-
       //TODO Popup overwrite dans le fichier ?
     } else {
       await setFile(fileName, content);

@@ -9,38 +9,56 @@ import {OpenJson, TableHome} from '_components';
 import {getAllKeys, getFile, getFiles} from '../../utils/myasyncstorage';
 
 const Home = props => {
+  //Tableau avec toutes les données concours complet
   const [tableData, setTableData] = useState([]);
-
+  //Information de la compétition des concours affichés
+  const [competition, setCompetition] = useState({});
+  //Liste des compétitions
+  const [allCompetitions, setAllCompetitions] = useState([]);
   // Chargement des concours existants
   const getAllSeries = async () => {
     const keys = await getAllKeys();
     await addSeriesDataTable(keys.filter(key => key.match(/.+\.json/g)));
   };
+  // Initialise la liste des concours complets déjà présents
   useEffect(() => {
     getAllSeries();
-  }, []);
+    const competitions = getAllCompetitionsInfo();
+    setAllCompetitions(competitions);
+    setCompetition(getLastCompetition(competitions));
+  }, [tableData]);
 
+  // Ajoute plusieurs concours
   const addSeriesDataTable = async keys => {
     if (keys.length > 0) {
+      // Récupère les clés/valeurs des concours non chargés
       const listKeyValue = await getFiles(
-        keys.filter(
-          key => tableData.filter(row => row.id === key).length === 0,
-        ),
+        keys.filter(key => tableData.find(x => (x.key = key)) === undefined),
       );
       listKeyValue.forEach(keyValue => {
-        setTableData(tableData => [
-          ...tableData,
-          getInfoSerie(keyValue[0], keyValue[1]),
-        ]);
+        //Met à jour les données des concours en triant par ordre croissant par date
+        setTableData(tableData =>
+          [...tableData, getInfoSerie(keyValue[0], keyValue[1])].sort(
+            (a, b) => {
+              return a.date > b.date;
+            },
+          ),
+        );
       });
     }
   };
 
+  // Ajoute 1 concours
   const addOneSerieDataTable = async (key, data = null) => {
     if (key.match(/.+\.json/g)) {
       if (tableData.filter(row => row.id == key).length === 0) {
         if (data == null) data = await getFile(key);
-        setTableData(tableData => [...tableData, getInfoSerie(key, data)]);
+        //Met à jour les données des concours en triant par ordre croissant par date
+        setTableData(tableData =>
+          [...tableData, getInfoSerie(key, data)].sort((a, b) => {
+            return a.date > b.date;
+          }),
+        );
       }
     }
   };
@@ -52,12 +70,13 @@ const Home = props => {
     return {
       id: key,
       data: data,
-      date:
+      date: dateConcours,
+      dateInfo:
         moment(dateConcours, moment.ISO_8601).format(
           i18n.language == 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY',
         ) +
         ' - ' +
-        moment(dateConcours, moment.ISO_8601).format('h:mm'),
+        moment(dateConcours, moment.ISO_8601).format('H:mm'),
       epreuve:
         infoConcours.EpreuveConcoursComplet.Nom +
         ' - ' +
@@ -70,11 +89,63 @@ const Home = props => {
     };
   };
 
+  const getAllCompetitionsInfo = () => {
+    var result = [];
+    tableData.forEach(compete => {
+      // Si la compétition n'est pas déjà présente dans result
+      if (
+        !result
+          .map(a => a.idCompetition)
+          .includes(JSON.parse(compete.data).GuidCompetition)
+      )
+        result.push(getCompetitionInfo(compete.data));
+    });
+    return result;
+  };
+
+  // Récupère la compétition la plus récente à partir de maintenant
+  const getLastCompetition = competitions => {
+    var result = null;
+    if (competitions.length > 0) {
+      competitions.sort((a, b) => {
+        a.dateCompetition > b.dateCompetition;
+      });
+      result = competitions[0];
+      const recentC = competitions.filter(a => {
+        a.dateCompetition > moment();
+      });
+      if (recentC.length > 0) result = recentC[0];
+    }
+    return result;
+  };
+
+  const getCompetitionInfo = compete => {
+    compete = JSON.parse(compete);
+    return {
+      idCompetition: compete.GuidCompetition,
+      /*idEpreuve:
+        compete.EpreuveConcoursComplet.TourConcoursComplet
+          .SerieConcoursComplet.GuidSerie,*/
+      dateCompetition: compete.DateDebutCompetition,
+      /*dateEpreuve:
+        compete.EpreuveConcoursComplet.TourConcoursComplet
+          .SerieConcoursComplet.DateHeureSerie,*/
+      nomCompetition: compete.NomCompetition,
+      competitionInfo:
+        moment(compete.DateDebutCompetition.toString(), moment.ISO_8601).format(
+          i18n.language == 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY',
+        ) +
+        ' - ' +
+        compete.NomCompetition,
+    };
+  };
+
   return (
     <SafeAreaView
       style={{
         flex: 1,
         backgroundColor: colors.white,
+        padding: 10,
       }}>
       <OpenJson
         addOneSerieDataTable={addOneSerieDataTable}
@@ -85,6 +156,9 @@ const Home = props => {
         tableData={tableData}
         setTableData={setTableData}
         navigation={props.navigation}
+        competition={competition}
+        allCompetitions={allCompetitions}
+        setCompetition={setCompetition}
       />
     </SafeAreaView>
   );

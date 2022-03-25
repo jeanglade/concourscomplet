@@ -9,4 +9,7 @@ export default {
   required_fields_error: 'Required fields not filled in',
   athlete_added: 'Athlete added',
   wrong_code: 'No competition matches this code',
+  confirm_delete: 'Do you want to delete this competition?',
+  cancel: 'Cancel',
+  ok: 'OK',
 };
