@@ -23,7 +23,7 @@ const Home = props => {
   // Initialise la liste des concours complets déjà présents
   useEffect(() => {
     getAllSeries();
-    const competitions = getAllCompetitionsInfo();
+    var competitions = getAllCompetitionsInfo();
     setAllCompetitions(competitions);
     setCompetition(getLastCompetition(competitions));
   }, [tableData]);
@@ -66,7 +66,7 @@ const Home = props => {
   const getInfoSerie = (key, data) => {
     const infoConcours = JSON.parse(data);
     const dateConcours =
-      infoConcours.EpreuveConcoursComplet.TourConcoursComplet.SerieConcoursComplet.DateHeureSerie.toString();
+      infoConcours.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].DateHeureSerie.toString();
     return {
       id: key,
       data: data,
@@ -81,7 +81,7 @@ const Home = props => {
         infoConcours.EpreuveConcoursComplet.Nom +
         ' - ' +
         infoConcours.EpreuveConcoursComplet.TourConcoursComplet
-          .SerieConcoursComplet.Libelle +
+          .LstSerieConcoursComplet[0].Libelle +
         ' \\ ' +
         infoConcours.EpreuveConcoursComplet.Categorie +
         infoConcours.EpreuveConcoursComplet.Sexe,
@@ -125,11 +125,11 @@ const Home = props => {
       idCompetition: compete.GuidCompetition,
       /*idEpreuve:
         compete.EpreuveConcoursComplet.TourConcoursComplet
-          .SerieConcoursComplet.GuidSerie,*/
+          .LstSerieConcoursComplet[0].GuidSerie,*/
       dateCompetition: compete.DateDebutCompetition,
       /*dateEpreuve:
         compete.EpreuveConcoursComplet.TourConcoursComplet
-          .SerieConcoursComplet.DateHeureSerie,*/
+          .LstSerieConcoursComplet[0].DateHeureSerie,*/
       nomCompetition: compete.NomCompetition,
       competitionInfo:
         moment(compete.DateDebutCompetition.toString(), moment.ISO_8601).format(
@@ -151,15 +151,17 @@ const Home = props => {
         addOneSerieDataTable={addOneSerieDataTable}
         showMessage={showMessage}
       />
-      <TableHome
-        showMessage={showMessage}
-        tableData={tableData}
-        setTableData={setTableData}
-        navigation={props.navigation}
-        competition={competition}
-        allCompetitions={allCompetitions}
-        setCompetition={setCompetition}
-      />
+      {tableData.length > 0 && (
+        <TableHome
+          showMessage={showMessage}
+          tableData={tableData}
+          setTableData={setTableData}
+          navigation={props.navigation}
+          competition={competition}
+          allCompetitions={allCompetitions}
+          setCompetition={setCompetition}
+        />
+      )}
     </SafeAreaView>
   );
 };

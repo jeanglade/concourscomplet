@@ -12,6 +12,7 @@ const DropdownCompetition = props => {
           style={styles.dropdown}
           styleItem={styles.dropdownItem}
           selectedValue={props.competition}
+          itemStyle={styles.dropdownItem}
           dropdownIconColor={colors.muted}
           onValueChange={value => {
             props.setCompetition(value);
@@ -19,11 +20,7 @@ const DropdownCompetition = props => {
           mode="dropdown">
           {props.allCompetitions.map(rowData => {
             return (
-              <Picker.Item
-                style={styles.dropdownItem}
-                label={rowData.competitionInfo}
-                value={rowData}
-              />
+              <Picker.Item label={rowData.competitionInfo} value={rowData} />
             );
           })}
         </Picker>
@@ -37,20 +34,16 @@ const styles = StyleSheet.create({
     borderColor: colors.muted,
     borderWidth: 1,
     width: 400,
+    color: colors.black,
+    backgroundColor: colors.muted,
   },
   dropdown: {
-    padding: 0,
-    margin: 0,
     color: colors.black,
-    backgroundColor: colors.white,
+    backgroundColor: colors.muted,
   },
   dropdownItem: {
     color: colors.black,
-    backgroundColor: colors.white,
-    fontSize: 14,
-    padding: 0,
-    margin: 0,
-    height: 20,
+    backgroundColor: colors.muted,
   },
 });
 

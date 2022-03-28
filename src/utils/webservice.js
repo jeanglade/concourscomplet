@@ -61,6 +61,42 @@ export const validateCompetitionCode = async (
   return res;
 };
 
+export const saveEachSerie = async (
+  content,
+  t,
+  showMessage,
+  addOneSerieDataTable,
+) => {
+  try {
+    const contentObject = JSON.parse(content);
+    contentObject.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet.forEach(
+      serie => {
+        const newContentObject = JSON.parse(content);
+        //Suppression des séries
+        newContentObject.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet =
+          [];
+        //Ajout de la série
+        newContentObject.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet.push(
+          serie,
+        );
+        const codeConcours =
+          newContentObject.EpreuveConcoursComplet.TourConcoursComplet
+            .LstSerieConcoursComplet[0].CodeConcours + '.json';
+        const result = saveJsonFile(
+          codeConcours,
+          JSON.stringify(newContentObject),
+          t,
+          showMessage,
+        );
+        if (result)
+          addOneSerieDataTable(codeConcours, JSON.stringify(newContentObject));
+      },
+    );
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 export const saveJsonFile = async (fileName, content, t, showMessage) => {
   try {
     var result = false;

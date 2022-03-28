@@ -3,7 +3,7 @@ import {unzip} from 'react-native-zip-archive';
 import base64 from 'react-native-base64';
 import ReactNativeBlobUtil from 'react-native-blob-util';
 
-import {saveJsonFile} from '../../utils/webservice';
+import {saveJsonFile, saveEachSerie} from '../../utils/webservice';
 
 export const pickOneDeviceFile = async (
   t,
@@ -66,8 +66,7 @@ const readFile = async (newFile, t, showMessage, addOneSerieDataTable) => {
             await ReactNativeBlobUtil.fs
               .readFile(newFile.uri, 'utf8')
               .then(content => {
-                const res = saveJsonFile(newFile.name, content, t, showMessage);
-                if (res) addOneSerieDataTable(newFile.name, content);
+                saveEachSerie(content, t, showMessage, addOneSerieDataTable);
               })
               .catch(e => {
                 console.error(e);
@@ -78,17 +77,12 @@ const readFile = async (newFile, t, showMessage, addOneSerieDataTable) => {
               });
             break;
           case 'windows':
-            const res = saveJsonFile(
-              newFile.name,
-              base64.decode(newFile.content),
+            saveEachSerie(
+              newFile.content,
               t,
               showMessage,
+              addOneSerieDataTable,
             );
-            if (res)
-              addOneSerieDataTable(
-                newFile.name,
-                base64.decode(newFile.content),
-              );
             break;
         }
       } else {

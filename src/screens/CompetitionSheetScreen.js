@@ -25,7 +25,7 @@ function CompetitionSheetScreen(props) {
   const competitionName = competitionDataTable[3];
   const listAthlete =
     competitionData.EpreuveConcoursComplet.TourConcoursComplet
-      .SerieConcoursComplet.LstResultats;
+      .LstSerieConcoursComplet[0].LstResultats;
 
   const [tableData, setTableData] = useState([]);
   const [addAnAthleteVisible, setAddAnAthleteVisible] = useState(false);

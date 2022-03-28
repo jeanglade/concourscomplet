@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
-import {validateCompetitionCode, saveJsonFile} from '../../utils/webservice';
+import {validateCompetitionCode, saveEachSerie} from '../../utils/webservice';
 import {pickOneDeviceFile} from '../../utils/localservice';
 
 const OpenJson = props => {
@@ -23,11 +23,8 @@ const OpenJson = props => {
       t,
       props.showMessage,
     );
-    if (myjson != null) {
-      const fileName = codeCompetition + '.json';
-      const result = saveJsonFile(fileName, myjson, t, props.showMessage);
-      if (result) props.addOneSerieDataTable(fileName, myjson);
-    }
+    if (myjson != null)
+      saveEachSerie(myjson, t, showMessage, props.addOneSerieDataTable);
     Keyboard.dismiss();
     setCodeCompetition(null);
   };

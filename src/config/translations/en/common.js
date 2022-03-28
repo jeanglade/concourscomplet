@@ -12,10 +12,10 @@ export default {
   discipline: 'Discipline',
   competition: 'Competition',
   status: 'Status',
-  action: 'Action',
+  actions: 'Actions',
   required: 'Required',
   options: 'Options',
-  new_epreuve: 'New competition',
+  new_epreuve: 'Import a competition',
   code: 'Code',
   filters: 'Filters',
 };

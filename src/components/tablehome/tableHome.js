@@ -161,11 +161,9 @@ const TableHome = props => {
         }}>
         <Text style={styles.titleText}>
           {t('common:list_competion_sheets')} {' - '}
-          {props.tableData.length > 0
-            ? props.allCompetitions.length == 1
-              ? props.competition.nomCompetition
-              : null
-            : t('common:no_imported_competitions') + '...'}
+          {props.allCompetitions.length == 1
+            ? props.competition.nomCompetition
+            : null}
         </Text>
         {props.allCompetitions.length >= 2 && (
           <DropdownCompetition
@@ -175,43 +173,39 @@ const TableHome = props => {
           />
         )}
       </View>
-      {props.tableData.length > 0 ? (
-        <View style={{flex: 1}}>
-          <View style={styles.headerTable}>
-            <View style={{flex: 2}}>
-              <Text style={styles.text}>{t('common:date')}</Text>
-            </View>
-            <View style={{flex: 4}}>
-              <Text style={styles.text}>{t('common:discipline')}</Text>
-            </View>
-            <View style={{flex: 2}}>
-              <Text style={styles.text}>{t('common:status')}</Text>
-            </View>
-            <View style={{flex: 2}}>
-              <Text style={styles.text}>{t('common:action')}</Text>
-            </View>
+      <View style={{flex: 1}}>
+        <View style={styles.headerTable}>
+          <View style={{flex: 2}}>
+            <Text style={styles.text}>{t('common:date')}</Text>
           </View>
-          <View style={{flex: 1}}>
-            <FlatList
-              contentContainerStyle={{
-                flexGrow: 1,
-              }}
-              data={props.tableData.filter(x => {
-                return (
-                  JSON.parse(x.data).GuidCompetition ==
-                  props.competition?.idCompetition
-                );
-              })}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => {
-                return index;
-              }}
-            />
+          <View style={{flex: 4}}>
+            <Text style={styles.text}>{t('common:discipline')}</Text>
+          </View>
+          <View style={{flex: 2}}>
+            <Text style={styles.text}>{t('common:status')}</Text>
+          </View>
+          <View style={{flex: 2}}>
+            <Text style={styles.text}>{t('common:actions')}</Text>
           </View>
         </View>
-      ) : (
-        <></>
-      )}
+        <View style={{flex: 1}}>
+          <FlatList
+            contentContainerStyle={{
+              flexGrow: 1,
+            }}
+            data={props.tableData.filter(x => {
+              return (
+                JSON.parse(x.data).GuidCompetition ==
+                props.competition?.idCompetition
+              );
+            })}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => {
+              return index;
+            }}
+          />
+        </View>
+      </View>
     </View>
   );
 };

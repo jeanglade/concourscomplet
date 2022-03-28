@@ -9,7 +9,7 @@ export default {
   required_fields_error: 'Champs obligatoires non remplis',
   athlete_added: 'Athlète ajouté',
   wrong_code: 'Aucun concours ne correspond à ce code',
-  confirm_delete: 'Voulez-vous supprimer ce concours?',
+  confirm_delete: 'Voulez-vous supprimer ce concours de cette plateforme ?',
   cancel: 'Annuler',
   ok: 'OK',
 };
