@@ -4,15 +4,17 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "install-all": "yarn install",
-    "clean": "yarn clean-android && yarn clean-node && watchman watch-del-all && rm -rf /tmp/metro-*",
+    "install-all": "yarn install && yarn pod",
+    "pod": "cd ios && pod install && cd ..",
+    "clean": "yarn clean-ios && yarn clean-android && yarn clean-node && watchman watch-del-all && rm -rf /tmp/metro-*",
     "clean-android": "rm -rf android/.gradle android/.idea android/build android/app/build",
+    "clean-ios": "cd ios && pod deintegrate && cd .. && pod cache clean --all && rm -rf ios/build ios/Podfile.lock",
     "clean-node": "rm -rf node_modules yarn.lock",
-    "clean-npm": "npm cache clean --force",
-    "windows": "react-native run-windows"
+    "clean-npm": "npm cache clean --force"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.16.1",
