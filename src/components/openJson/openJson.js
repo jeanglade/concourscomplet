@@ -10,7 +10,8 @@ import {
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
-import {validateCompetitionCode, saveEachSerie} from '../../utils/webservice';
+import {validateCompetitionCode} from '../../utils/webservice';
+import {saveEachSerie} from '../../utils/myasyncstorage';
 import {pickOneDeviceFile} from '../../utils/localservice';
 
 const OpenJson = props => {
@@ -24,7 +25,7 @@ const OpenJson = props => {
       props.showMessage,
     );
     if (myjson != null)
-      saveEachSerie(myjson, t, showMessage, props.addOneSerieDataTable);
+      saveEachSerie(myjson, t, props.showMessage, props.addOneSerieDataTable);
     Keyboard.dismiss();
     setCodeCompetition(null);
   };

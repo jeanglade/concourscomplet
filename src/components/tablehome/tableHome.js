@@ -49,7 +49,7 @@ const TableHome = props => {
     return res;
   };
 
-  const Item = ({id, data, date, epreuve, statut, index}) => (
+  const Item = ({id, data, date, epreuve, statut, item, index}) => (
     <>
       <View style={styles.item}>
         <View style={{flex: 2}}>
@@ -84,7 +84,7 @@ const TableHome = props => {
           <TouchableWithoutFeedback
             onPress={() => {
               props.navigation.navigate('CompetitionSheet', {
-                competitionData: data,
+                item: item,
               });
             }}>
             <View style={[styles.cellButton]}>
@@ -143,6 +143,7 @@ const TableHome = props => {
       date={item.dateInfo}
       epreuve={item.epreuve}
       statut={item.statut}
+      item={item}
       index={index}
     />
   );

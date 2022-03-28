@@ -12,4 +12,10 @@ export default {
   club: 'Club',
   category: 'Category',
   add_an_athlete: 'Add an athlete',
+  first: '1st',
+  second: '2nd',
+  third: '3rd',
+  fourth: '4th',
+  fifth: '5th',
+  six: '6th',
 };

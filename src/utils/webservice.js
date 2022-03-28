@@ -1,6 +1,6 @@
 import base64 from 'react-native-base64';
 import {Keyboard} from 'react-native';
-import {getFile, setFile} from '../../utils/myasyncstorage';
+import {getFile} from '../../utils/myasyncstorage';
 
 export const validateCompetitionCode = async (
   codeCompetition,
@@ -59,71 +59,6 @@ export const validateCompetitionCode = async (
     Keyboard.dismiss();
   }
   return res;
-};
-
-export const saveEachSerie = async (
-  content,
-  t,
-  showMessage,
-  addOneSerieDataTable,
-) => {
-  try {
-    const contentObject = JSON.parse(content);
-    contentObject.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet.forEach(
-      serie => {
-        const newContentObject = JSON.parse(content);
-        //Suppression des séries
-        newContentObject.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet =
-          [];
-        //Ajout de la série
-        newContentObject.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet.push(
-          serie,
-        );
-        const codeConcours =
-          newContentObject.EpreuveConcoursComplet.TourConcoursComplet
-            .LstSerieConcoursComplet[0].CodeConcours + '.json';
-        const result = saveJsonFile(
-          codeConcours,
-          JSON.stringify(newContentObject),
-          t,
-          showMessage,
-        );
-        if (result)
-          addOneSerieDataTable(codeConcours, JSON.stringify(newContentObject));
-      },
-    );
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-export const saveJsonFile = async (fileName, content, t, showMessage) => {
-  try {
-    var result = false;
-    const contentFile = await getFile(fileName);
-    if (contentFile != null) {
-      showMessage({
-        message: t('toast:file_already_exist'),
-        type: 'warning',
-      });
-      Keyboard.dismiss();
-      //TODO Popup overwrite dans le fichier ?
-    } else {
-      await setFile(fileName, content);
-      result = true;
-      showMessage({
-        message: t('toast:uploaded_file'),
-        type: 'success',
-      });
-      Keyboard.dismiss();
-    }
-    return result;
-  } catch (e) {
-    console.error(e);
-    Keyboard.dismiss();
-
-    return false;
-  }
 };
 
 export const sendJson = async fileName => {

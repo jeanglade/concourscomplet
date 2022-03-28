@@ -2,6 +2,7 @@ import DropdownLanguage from './dropdownlanguage';
 import ButtonInfoApp from './buttoninfoapp';
 import OpenJson from './openJson';
 import TableHome from './tablehome';
+import TableFeuilleConcours from './tablefeuilleconcours';
 import DropdownCompetition from './dropdowncompetition';
 
 export {
@@ -10,4 +11,5 @@ export {
   OpenJson,
   TableHome,
   DropdownCompetition,
+  TableFeuilleConcours,
 };
