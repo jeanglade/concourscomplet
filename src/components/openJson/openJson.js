@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
   },
   textButton: {
     color: colors.white,
+    fontSize: 16,
   },
   dividerLeft: {
     borderColor: colors.muted,

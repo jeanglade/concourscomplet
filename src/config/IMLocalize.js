@@ -29,10 +29,10 @@ const LANGUAGE_DETECTOR = {
         const findBestAvailableLanguage =
           RNLocalize.findBestAvailableLanguage(LANG_CODES);
 
-        callback(findBestAvailableLanguage.languageTag || 'fr');
+        callback(/*findBestAvailableLanguage.languageTag || */ 'fr');
         return;
       }
-      callback(language);
+      callback(/*language*/ 'fr');
     });
   },
   init: () => {},

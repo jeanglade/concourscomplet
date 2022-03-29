@@ -18,6 +18,11 @@ function AppNavigator() {
         headerStyle: {
           backgroundColor: colors.ffa_blue_light,
         },
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerTitleAllowFontScaling: true,
+        headerTitleAlign: 'left',
         headerTintColor: colors.white,
       }}>
       <Stack.Screen

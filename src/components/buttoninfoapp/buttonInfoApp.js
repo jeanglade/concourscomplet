@@ -8,6 +8,7 @@ import {
   Pressable,
   StyleSheet,
   Image,
+  SafeAreaView,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
@@ -21,8 +22,8 @@ const ButtonInfoApp = () => {
         <View>
           <Image
             style={{
-              width: 35,
-              height: 35,
+              width: 40,
+              height: 40,
             }}
             source={require('../../icons/info.png')}
           />
@@ -44,10 +45,10 @@ const ButtonInfoApp = () => {
 const styles = StyleSheet.create({
   text: {
     color: colors.black,
-    fontWeight: 'bold',
     textAlign: 'center',
     padding: 10,
     textAlign: 'right',
+    fontSize: 16,
   },
   parent: {
     backgroundColor: colors.white,

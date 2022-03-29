@@ -345,7 +345,7 @@ PODS:
     - React-jsi (= 0.67.3)
     - React-logger (= 0.67.3)
     - React-perflogger (= 0.67.3)
-  - RNCAsyncStorage (1.17.0):
+  - RNCAsyncStorage (1.17.1):
     - React-Core
   - RNCMaskedView (0.1.11):
     - React
@@ -353,7 +353,7 @@ PODS:
     - React-Core
   - RNDateTimePicker (5.1.0):
     - React-Core
-  - RNDeviceInfo (8.6.0):
+  - RNDeviceInfo (8.7.0):
     - React-Core
   - RNGestureHandler (2.3.2):
     - React-Core
@@ -632,11 +632,11 @@ SPEC CHECKSUMS:
   React-RCTVibration: d0361f15ea978958fab7ffb6960f475b5063d83f
   React-runtimeexecutor: af1946623656f9c5fd64ca6f36f3863516193446
   ReactCommon: 650e33cde4fb7d36781cd3143f5276da0abb2f96
-  RNCAsyncStorage: 4efdcd2f7378421b29467c9de58f43552b60cf5b
+  RNCAsyncStorage: 4e17811bcadfdc068cd3e2bb896f0fea0198710d
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNCPicker: 6d5d64e7b90c240c779ee0938ec433c11e2dd758
   RNDateTimePicker: 1dd15d7ed1ab7d999056bc77879a42920d139c12
-  RNDeviceInfo: 7257d02f4ec94882c309c987cf42f3588d85103e
+  RNDeviceInfo: 36286df381fcaf1933ff9d2d3c34ba2abeb2d8d8
   RNGestureHandler: 6e757e487a4834e7280e98e9bac66d2d9c575e9c
   RNLocalize: cbcb55d0e19c78086ea4eea20e03fe8000bbbced
   RNReanimated: 190b6930d5d94832061278e1070bbe313e50c830
