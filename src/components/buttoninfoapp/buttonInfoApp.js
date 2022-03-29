@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   parent: {
     backgroundColor: colors.white,
     position: 'absolute',
-    right: 100,
+    right: 50,
   },
 });
 

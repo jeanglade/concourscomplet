@@ -5,7 +5,16 @@ import {colors} from '_config';
 
 const TableFeuilleConcours = props => {
   const [t] = useTranslation();
-  const [hasDossard, setHasDossard] = useState(false);
+  const [hasDossard, setHasDossard] = useState(() => {
+    props.tableData.forEach(row => {
+      if (row.Athlete.Dossard) return true;
+    });
+    return false;
+  });
+  const [allEssais, setAllEssais] = useState(
+    //Init avec les valeurs du JSON
+    [...Array(props.tableData.length)].map(row => [...Array(6)].map(x => '')),
+  );
 
   const serie =
     props.compData.EpreuveConcoursComplet.TourConcoursComplet
@@ -15,7 +24,7 @@ const TableFeuilleConcours = props => {
   const NbSec_1athlete = serie.NbSec_1athlete?.toString();
   const NbSec_EssaiConsecutif = serie.NbSec_EssaiConsecutif?.toString();
 
-  const setVariable = () => {
+  /*const setVariable = () => {
     var res = false;
     props.tableData.forEach(row => {
       if (row.Athlete.Dossard) res = true;
@@ -24,7 +33,7 @@ const TableFeuilleConcours = props => {
   };
   useEffect(() => {
     setVariable();
-  }, []);
+  }, []);*/
 
   const createEssai = (resultat, numEssai, value) => {
     var essai = {
@@ -41,7 +50,7 @@ const TableFeuilleConcours = props => {
     resultat['LstEssais'][numEssai - 1] = essai;
   };
 
-  const Item = ({id, order, dossard, athlete, resultat}) => (
+  const Item = ({id, order, dossard, athlete, resultat, index}) => (
     <>
       <View style={styles.item}>
         <View style={{flex: 1}}>
@@ -65,36 +74,58 @@ const TableFeuilleConcours = props => {
         <View style={{flex: 1}}>
           <TextInput
             style={styles.textinput}
+            value={allEssais[index][0]}
             onChangeText={value => {
-              createEssai(resultat, 1, value);
+              //createEssai(resultat, 1, value);
+              setAllEssais(allEssais => {
+                allEssais[index][0] = value.toString();
+                return allEssais;
+              });
             }}
-            value={''}
+          />
+        </View>
+        <View style={{flex: 1}}>
+          <TextInput
+            style={styles.textinput}
+            value={allEssais[index] ? allEssais[index][1] : ''}
+            onChangeText={value => {
+              createEssai(resultat, 2, value);
+              setAllEssais(allEssais => {
+                allEssais[index][1] = value;
+                return allEssais;
+              });
+            }}
+            editable={
+              allEssais[index] && allEssais[index][0]?.toString() != null
+            }
+            selectTextOnFocus={
+              allEssais[index] && allEssais[index][0]?.toString() != null
+            }
             keyboardType="numeric"
           />
         </View>
         <View style={{flex: 1}}>
           <TextInput
             style={styles.textinput}
-            onChangeText={() => {}}
-            value={''}
+            value={allEssais[index] ? allEssais[index][2] : ''}
+            onChangeText={value => {
+              createEssai(resultat, 3, value);
+              setAllEssais(allEssais => {
+                allEssais[index][2] = value;
+                return allEssais;
+              });
+            }}
+            editable={
+              allEssais[index] && allEssais[index][1]?.toString() != null
+            }
+            selectTextOnFocus={
+              allEssais[index] && allEssais[index][1]?.toString() != null
+            }
             keyboardType="numeric"
           />
         </View>
         <View style={{flex: 1}}>
-          <TextInput
-            style={styles.textinput}
-            onChangeText={() => {}}
-            value={''}
-            keyboardType="numeric"
-          />
-        </View>
-        <View style={{flex: 1}}>
-          <TextInput
-            style={styles.textinput}
-            onChangeText={() => {}}
-            value={''}
-            keyboardType="numeric"
-          />
+          <Text style={styles.text}></Text>
         </View>
         <View style={{flex: 1}}>
           <TextInput
@@ -145,6 +176,7 @@ const TableFeuilleConcours = props => {
         item.Athlete.Categorie
       }
       resultat={item}
+      index={index}
     />
   );
 

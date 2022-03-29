@@ -7,8 +7,8 @@ import en from './translations/en';
 import fr from './translations/fr';
 
 const LANGUAGES = {
-  en,
   fr,
+  en,
 };
 
 const LANG_CODES = Object.keys(LANGUAGES);

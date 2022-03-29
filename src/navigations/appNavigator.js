@@ -45,9 +45,10 @@ function AppNavigator() {
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
+                marginRight: 10,
               }}>
               <ButtonInfoApp />
-              <DropdownLanguage />
+              {/* <DropdownLanguage /> */}
             </View>
           ),
         }}

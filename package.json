@@ -14,7 +14,8 @@
     "clean-android": "rm -rf android/.gradle android/.idea android/build android/app/build",
     "clean-ios": "cd ios && pod deintegrate && cd .. && pod cache clean --all && rm -rf ios/build ios/Podfile.lock",
     "clean-node": "rm -rf node_modules yarn.lock",
-    "clean-npm": "npm cache clean --force"
+    "clean-npm": "npm cache clean --force",
+    "windows": "react-native run-windows"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.16.1",
