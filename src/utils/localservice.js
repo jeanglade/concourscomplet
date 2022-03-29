@@ -18,9 +18,24 @@ export const pickOneDeviceFile = async (
     if (newFile != null) {
       if (newFile.type == 'application/json') {
         switch (Platform.OS) {
-          case 'android' || 'ios':
+          case 'android':
             await ReactNativeBlobUtil.fs
               .readFile(newFile.uri, 'utf8')
+              .then(content => {
+                saveEachSerie(content, t, showMessage, addOneSerieDataTable);
+              })
+              .catch(e => {
+                console.error(e);
+                showMessage({
+                  message: t('toast:import_error'),
+                  type: 'danger',
+                });
+              });
+            break;
+          case 'ios':
+            console.log(newFile.uri);
+            await ReactNativeBlobUtil.fs
+              .readFile(newFile.fileCopyUri, 'utf8')
               .then(content => {
                 saveEachSerie(content, t, showMessage, addOneSerieDataTable);
               })
