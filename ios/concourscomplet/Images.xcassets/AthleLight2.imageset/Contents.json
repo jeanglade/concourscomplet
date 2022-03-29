@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "splash_fg.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "AthleLight2.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
