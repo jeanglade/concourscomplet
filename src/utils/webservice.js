@@ -7,8 +7,6 @@ export const validateCompetitionCode = async (
   t,
   showMessage,
 ) => {
-  console.log('coucou');
-
   const soapRequest = require('easy-soap-request');
   var res = null;
   var XMLParser = require('react-xml-parser');
@@ -38,7 +36,6 @@ export const validateCompetitionCode = async (
       });
       Keyboard.dismiss();
     });
-    console.log('coucou2');
 
     const {headers, body, statusCode} = response;
     if (statusCode === 200) {

@@ -18,7 +18,7 @@ export const pickOneDeviceFile = async (
     if (newFile != null) {
       if (newFile.type == 'application/json') {
         switch (Platform.OS) {
-          case ('android', 'ios'):
+          default:
             await ReactNativeBlobUtil.fs
               .readFile(
                 Platform.OS == 'android'
@@ -37,7 +37,6 @@ export const pickOneDeviceFile = async (
                 });
               });
             break;
-
           case 'windows':
             saveEachSerie(
               newFile.content,

@@ -276,6 +276,8 @@ PODS:
     - React-Core
   - react-native-document-picker (8.0.0):
     - React-Core
+  - react-native-netinfo (8.2.0):
+    - React-Core
   - react-native-safe-area (0.5.1):
     - React
   - react-native-safe-area-context (3.4.1):
@@ -448,6 +450,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area (from `../node_modules/react-native-safe-area`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -532,6 +535,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-blob-util"
   react-native-document-picker:
     :path: "../node_modules/react-native-document-picker"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
   react-native-safe-area:
     :path: "../node_modules/react-native-safe-area"
   react-native-safe-area-context:
@@ -618,6 +623,7 @@ SPEC CHECKSUMS:
   React-logger: 1e10789cb84f99288479ba5f20822ce43ced6ffe
   react-native-blob-util: 7ac01cd4a4ba81016864727a756ce2c1af995e35
   react-native-document-picker: 429972f7ece4463aa5bcdd789622b3a674a3c5d1
+  react-native-netinfo: e922cb2e3eaf9ccdf16b8d4744a89657377aa4a1
   react-native-safe-area: e8230b0017d76c00de6b01e2412dcf86b127c6a3
   react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9
   React-perflogger: 93d3f142d6d9a46e635f09ba0518027215a41098

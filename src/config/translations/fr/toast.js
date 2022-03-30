@@ -12,4 +12,5 @@ export default {
   confirm_delete: 'Voulez-vous supprimer ce concours de cette plateforme ?',
   cancel: 'Annuler',
   ok: 'OK',
+  no_internet_connexion: 'Pas de connexion internet',
 };

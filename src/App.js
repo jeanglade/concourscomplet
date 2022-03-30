@@ -11,6 +11,7 @@ import Navigations from './navigations';
 LogBox.ignoreLogs([
   "[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!",
   'Warning: Each child in a list should have a unique "key" prop.',
+  'RCTBridge required dispatch_sync to load RNGestureHandlerModule. This may lead to deadlocks',
 ]);
 
 const queryClient = new QueryClient();

@@ -13,19 +13,30 @@ import {colors} from '_config';
 import {validateCompetitionCode} from '../../utils/webservice';
 import {saveEachSerie} from '../../utils/myasyncstorage';
 import {pickOneDeviceFile} from '../../utils/localservice';
+import {useNetInfo} from '@react-native-community/netinfo';
+import {showMessage} from 'react-native-flash-message';
 
 const OpenJson = props => {
   const [t] = useTranslation();
   const [codeCompetition, setCodeCompetition] = useState(null);
+  const netInfo = useNetInfo();
 
   const manageCode = async () => {
-    const myjson = await validateCompetitionCode(
-      codeCompetition,
-      t,
-      props.showMessage,
-    );
-    if (myjson != null)
-      saveEachSerie(myjson, t, props.showMessage, props.addOneSerieDataTable);
+    if (netInfo.isConnected) {
+      const myjson = await validateCompetitionCode(
+        codeCompetition,
+        t,
+        props.showMessage,
+      );
+      if (myjson != null)
+        saveEachSerie(myjson, t, props.showMessage, props.addOneSerieDataTable);
+    } else {
+      console.error(t('toast:no_internet_connexion'));
+      showMessage({
+        message: t('toast:no_internet_connexion'),
+        type: 'danger',
+      });
+    }
     Keyboard.dismiss();
     setCodeCompetition(null);
   };

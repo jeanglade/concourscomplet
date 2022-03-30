@@ -52,7 +52,6 @@ export const saveEachSerie = async (
   addOneSerieDataTable,
 ) => {
   try {
-    console.log('coucou');
     const contentObject = JSON.parse(content);
     contentObject.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet.forEach(
       serie => {
