@@ -31,14 +31,15 @@ function CompetitionSheet(props) {
           {dataConcours.epreuve} - {dataConcours.dateInfo}
         </Text>
       </View>
-
-      <TableConcoursSb
-        showMessage={showMessage}
-        dataConcours={dataConcours}
-        tableData={tableData}
-        setTableData={setTableData}
-        compData={compData}
-      />
+      {compData.EpreuveConcoursComplet.CodeFamilleEpreuve == 'SB' && (
+        <TableConcoursSb
+          showMessage={showMessage}
+          dataConcours={dataConcours}
+          tableData={tableData}
+          setTableData={setTableData}
+          compData={compData}
+        />
+      )}
 
       {/* <View
         style={{

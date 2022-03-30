@@ -6,8 +6,11 @@ import {colors} from '_config';
 import {OpenJson, TableCompetition, ModalOpenJson} from '_components';
 import {SafeAreaView} from 'react-native';
 import {getAllKeys, getFile, getFiles} from '../../utils/myasyncstorage';
+import {useTranslation} from 'react-i18next';
 
 const Home = props => {
+  const [t] = useTranslation();
+
   //Tableau avec toutes les données concours complet
   const [tableData, setTableData] = useState([]);
   //Information de la compétition des concours affichés
@@ -79,13 +82,13 @@ const Home = props => {
         moment(dateConcours, moment.ISO_8601).format('H:mm'),
       epreuve:
         infoConcours.EpreuveConcoursComplet.Nom +
-        ' - ' +
-        infoConcours.EpreuveConcoursComplet.TourConcoursComplet
-          .LstSerieConcoursComplet[0].Libelle +
-        ' \\ ' +
+        ' ' +
         infoConcours.EpreuveConcoursComplet.Categorie +
-        infoConcours.EpreuveConcoursComplet.Sexe,
-      statut: 'Prêt',
+        infoConcours.EpreuveConcoursComplet.Sexe +
+        ' / ' +
+        infoConcours.EpreuveConcoursComplet.TourConcoursComplet
+          .LstSerieConcoursComplet[0].Libelle,
+      statut: t('common:in_progress'),
     };
   };
 
@@ -131,6 +134,7 @@ const Home = props => {
         compete.EpreuveConcoursComplet.TourConcoursComplet
           .LstSerieConcoursComplet[0].DateHeureSerie,*/
       nomCompetition: compete.NomCompetition,
+      lieuCompetition: compete.Stade,
       competitionInfo:
         moment(compete.DateDebutCompetition.toString(), moment.ISO_8601).format(
           i18n.language == 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY',

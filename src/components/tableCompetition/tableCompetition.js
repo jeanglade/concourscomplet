@@ -49,6 +49,25 @@ const TableHome = props => {
     return res;
   };
 
+  const getStatusColor = statut => {
+    var res = colors.black;
+    switch (statut) {
+      case t('common:ready'):
+        res = colors.black;
+        break;
+      case t('common:in_progress'):
+        res = colors.red;
+        break;
+      case t('common:finished'):
+        res = colors.orange;
+        break;
+      case t('common:send_to_elogica'):
+        res = colors.green;
+        break;
+    }
+    return res;
+  };
+
   const Item = ({id, data, date, epreuve, statut, item, index}) => (
     <>
       <View style={styles.item}>
@@ -57,7 +76,7 @@ const TableHome = props => {
         </View>
         <View
           style={{
-            flex: 4,
+            flex: 5,
             flexDirection: 'row',
             alignItems: 'center',
             flexWrap: 'wrap',
@@ -68,12 +87,18 @@ const TableHome = props => {
               height: 30,
               marginRight: 5,
             }}
-            source={getImageEpreuve(epreuve.split(' - ')[0])}
+            source={getImageEpreuve(epreuve)}
           />
           <Text style={styles.text}>{epreuve}</Text>
         </View>
-        <View style={{flex: 2}}>
-          <Text style={[styles.text, {fontWeight: 'bold'}]}>{statut}</Text>
+        <View style={{flex: 1}}>
+          <Text
+            style={[
+              styles.text,
+              {fontWeight: 'bold', color: getStatusColor(statut)},
+            ]}>
+            {statut}
+          </Text>
         </View>
         <View
           style={{
@@ -160,14 +185,14 @@ const TableHome = props => {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <Text style={styles.titleText}>
-          {t('common:list_competion_sheets')} {' - '}
-          {props.allCompetitions.length == 1
-            ? props.competition.nomCompetition
-            : null}
-        </Text>
-        {props.allCompetitions.length >= 2 && (
+        {props.allCompetitions.length == 1 && (
+          <Text style={styles.titleText}>
+            {props.competition.nomCompetition}
+          </Text>
+        )}
+        {props.allCompetitions.length > 1 && (
           <DropdownCompetition
+            orientation={orientation}
             competition={props.competition}
             setCompetition={props.setCompetition}
             allCompetitions={props.allCompetitions}
@@ -208,7 +233,13 @@ const TableHome = props => {
             style={[
               styles.cellButton,
               styles.backRed,
-              {padding: 0, margin: 0, marginLeft: 10, borderRadius: 20},
+              {
+                padding: 0,
+                margin: 0,
+                marginLeft: 10,
+                marginTop: 15,
+                borderRadius: 20,
+              },
             ]}>
             <Image
               style={{
@@ -220,15 +251,35 @@ const TableHome = props => {
           </View>
         </TouchableWithoutFeedback>
       </View>
+      {props.competition?.lieuCompetition?.toString() && (
+        <Text style={[styles.text, {textAlign: 'center'}]}>
+          {props.competition.lieuCompetition?.toString()}
+        </Text>
+      )}
+      <Text
+        style={[
+          styles.text,
+          {textAlign: 'center', color: colors.ffa_blue_light},
+        ]}>
+        {
+          props.tableData.filter(x => {
+            return (
+              JSON.parse(x.data).GuidCompetition ==
+              props.competition?.idCompetition
+            );
+          }).length
+        }{' '}
+        {t('common:list_competion_sheets')}
+      </Text>
       <View style={{flex: 1}}>
         <View style={styles.headerTable}>
           <View style={{flex: 2}}>
             <Text style={styles.text}>{t('common:date')}</Text>
           </View>
-          <View style={{flex: 4}}>
+          <View style={{flex: 5}}>
             <Text style={styles.text}>{t('common:discipline')}</Text>
           </View>
-          <View style={{flex: 2}}>
+          <View style={{flex: 1}}>
             <Text style={styles.text}>{t('common:status')}</Text>
           </View>
           <View style={{flex: 2}}>
@@ -266,28 +317,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   titleText: {
+    marginTop: 10,
     fontSize: 20,
     color: colors.ffa_blue_light,
-    margin: 15,
     textAlign: 'center',
-    paddingVertical: 10,
-  },
-  text: {
-    color: colors.ffa_blue_light,
-    fontSize: 14,
-    paddingHorizontal: 10,
   },
   item: {
     flexDirection: 'row',
     backgroundColor: colors.gray_light,
     margin: 1,
-    paddingHorizontal: 10,
+    paddingLeft: 10,
     alignItems: 'center',
   },
   headerTable: {
     flexDirection: 'row',
-    paddingHorizontal: 10,
+    paddingLeft: 10,
     paddingBottom: 5,
+    marginTop: 20,
   },
   text: {
     color: colors.black,

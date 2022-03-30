@@ -5,6 +5,24 @@ import {Picker} from '@react-native-picker/picker';
 import {colors} from '_config';
 
 const DropdownCompetition = props => {
+  const styles = StyleSheet.create({
+    viewDropdown: {
+      width: props.orientation === 'LANDSCAPE' ? '100%' : '75%',
+      borderColor: colors.muted,
+      borderWidth: 1,
+      marginTop: 15,
+    },
+    dropdown: {
+      textAlign: 'center',
+      color: colors.black,
+      backgroundColor: colors.muted,
+    },
+    dropdownItem: {
+      textAlign: 'center',
+      color: colors.black,
+      backgroundColor: colors.muted,
+    },
+  });
   return (
     <>
       <View style={styles.viewDropdown}>
@@ -13,7 +31,7 @@ const DropdownCompetition = props => {
           styleItem={styles.dropdownItem}
           selectedValue={props.competition}
           itemStyle={styles.dropdownItem}
-          dropdownIconColor={colors.muted}
+          dropdownIconColor={colors.black}
           onValueChange={value => {
             props.setCompetition(value);
           }}
@@ -28,23 +46,5 @@ const DropdownCompetition = props => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  viewDropdown: {
-    borderColor: colors.muted,
-    borderWidth: 1,
-    width: 400,
-    color: colors.black,
-    backgroundColor: colors.muted,
-  },
-  dropdown: {
-    color: colors.black,
-    backgroundColor: colors.muted,
-  },
-  dropdownItem: {
-    color: colors.black,
-    backgroundColor: colors.muted,
-  },
-});
 
 export default DropdownCompetition;

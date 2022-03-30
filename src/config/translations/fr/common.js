@@ -4,7 +4,7 @@ export default {
   no_imported_competitions: 'Aucun concours importé',
   competition_sheet: 'Feuille de concours',
   open_competion_sheets: "Ouvrir les concours d'une compétition",
-  list_competion_sheets: 'Concours',
+  list_competion_sheets: 'concours',
   competition_code: 'Code de la compétition',
   validate: 'Valider',
   via_local_file: 'Via un fichier local',
@@ -20,4 +20,8 @@ export default {
   new_epreuve: 'Importer un concours',
   code: 'Code',
   filters: 'Filtres',
+  ready: 'Prêt',
+  in_progress: 'En cours',
+  finished: 'Terminé',
+  send_to_elogica: 'Envoyé',
 };

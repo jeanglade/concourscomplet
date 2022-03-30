@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View, FlatList, TextInput} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
@@ -6,17 +6,15 @@ import {colors} from '_config';
 const TableConcoursSb = props => {
   const [t] = useTranslation();
   const [hasDossard, setHasDossard] = useState(() => {
-    var res = false;
     props.tableData.forEach(row => {
-      if (row.Athlete.Dossard?.toString()) res = true;
+      if (row.Athlete.Dossard) return true;
     });
-    return res;
+    return false;
   });
   const [allEssais, setAllEssais] = useState(
     //Init avec les valeurs du JSON
     [...Array(props.tableData.length)].map(row => [...Array(6)].map(x => '')),
   );
-  const [athleteEnCours, setAthleteEnCours] = useState(props.tableData[0]);
 
   const serie =
     props.compData.EpreuveConcoursComplet.TourConcoursComplet
@@ -25,6 +23,17 @@ const TableConcoursSb = props => {
   const NbSec_2ou3athletes = serie.NbSec_2ou3athletes?.toString();
   const NbSec_1athlete = serie.NbSec_1athlete?.toString();
   const NbSec_EssaiConsecutif = serie.NbSec_EssaiConsecutif?.toString();
+
+  /*const setVariable = () => {
+    var res = false;
+    props.tableData.forEach(row => {
+      if (row.Athlete.Dossard) res = true;
+    });
+    setHasDossard(res);
+  };
+  useEffect(() => {
+    setVariable();
+  }, []);*/
 
   const createEssai = (resultat, numEssai, value) => {
     var essai = {
@@ -41,56 +50,30 @@ const TableConcoursSb = props => {
     resultat['LstEssais'][numEssai - 1] = essai;
   };
 
-  const Item = ({
-    id,
-    order,
-    dossard,
-    athleteName,
-    athleteInfo,
-    resultat,
-    index,
-  }) => (
+  const Item = ({id, order, dossard, athlete, resultat, index}) => (
     <>
       <View style={styles.item}>
         <View style={{flex: 1}}>
-          <Text style={[styles.text]}>{order}</Text>
+          <Text style={styles.text}>{order}</Text>
         </View>
         {hasDossard && (
           <View style={{flex: 1}}>
-            <Text style={[styles.text]}>{dossard}</Text>
+            <Text style={styles.text}>{dossard}</Text>
           </View>
         )}
         <View style={{flex: 4}}>
           <Text
-            style={[
-              styles.text,
-              {
-                fontSize: 16,
-                fontWeight: 'bold',
-                color:
-                  athleteEnCours == resultat
-                    ? colors.ffa_blue_light
-                    : colors.black,
-              },
-            ]}
+            style={{color: colors.black, fontSize: 16, fontWeight: 'bold'}}
             numberOfLines={1}>
-            {athleteName}
+            {athlete.split('\n')[0]}
           </Text>
-          <Text style={[styles.text]} numberOfLines={1}>
-            {athleteInfo}
+          <Text style={{color: colors.black, fontSize: 16}} numberOfLines={1}>
+            {athlete.split('\n')[1]}
           </Text>
         </View>
         <View style={{flex: 1}}>
           <TextInput
-            style={[
-              styles.textinput,
-              {
-                borderColor:
-                  athleteEnCours == resultat
-                    ? colors.ffa_blue_light
-                    : colors.muted,
-              },
-            ]}
+            style={styles.textinput}
             value={allEssais[index][0]}
             onChangeText={value => {
               //createEssai(resultat, 1, value);
@@ -181,20 +164,16 @@ const TableConcoursSb = props => {
   const renderItem = ({item, index}) => (
     <Item
       id={item.id}
-      order={item.NumCouloir?.toString()}
+      order={item.NumCouloir}
       dossard={item.Athlete.Dossard?.toString()}
-      athleteName={
-        item.Athlete.Prenom?.toString() +
+      athlete={
+        item.Athlete.Prenom +
         ' ' +
-        item.Athlete.Nom?.toString() +
-        ' '
-      }
-      athleteInfo={
-        item.Athlete.Nationalite?.toString() === 'FRA'
-          ? item.Athlete.Categorie?.toString() +
-            ' - ' +
-            item.Athlete.Club?.toString()
-          : '(' + item.Athlete.Nationalite?.toString() + ')'
+        item.Athlete.Nom +
+        '\n' +
+        item.Athlete.Club +
+        ' - ' +
+        item.Athlete.Categorie
       }
       resultat={item}
       index={index}
@@ -289,7 +268,6 @@ const styles = StyleSheet.create({
     margin: 1,
     paddingHorizontal: 10,
     alignItems: 'center',
-    paddingVertical: 5,
   },
   headerTable: {
     flexDirection: 'row',
