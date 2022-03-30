@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
-import {removeFile} from '../../utils/myasyncstorage';
+import {removeFile, removeFiles} from '../../utils/myasyncstorage';
 import {useOrientation} from '../../utils/useOrientation';
 import {DropdownCompetition} from '_components';
 
@@ -173,6 +173,52 @@ const TableHome = props => {
             allCompetitions={props.allCompetitions}
           />
         )}
+        <TouchableWithoutFeedback
+          onPress={() => {
+            Alert.alert(
+              t('toast:confirm_delete'),
+              props.competition.nomCompetition,
+              [
+                {
+                  text: t('toast:cancel'),
+                },
+                {
+                  text: t('toast:ok'),
+                  onPress: async () => {
+                    const ids = props.tableData
+                      .filter(x => {
+                        return (
+                          JSON.parse(x.data).GuidCompetition ==
+                          props.competition?.idCompetition
+                        );
+                      })
+                      .map(x => x.id);
+                    await removeFiles(ids);
+                    props.setTableData(
+                      props.tableData.filter(
+                        (item, itemIndex) => !ids.includes(item.id),
+                      ),
+                    );
+                  },
+                },
+              ],
+            );
+          }}>
+          <View
+            style={[
+              styles.cellButton,
+              styles.backRed,
+              {padding: 0, margin: 0, borderRadius: 20},
+            ]}>
+            <Image
+              style={{
+                width: 20,
+                height: 20,
+              }}
+              source={require('../icons/delete.png')}
+            />
+          </View>
+        </TouchableWithoutFeedback>
       </View>
       <View style={{flex: 1}}>
         <View style={styles.headerTable}>

@@ -45,6 +45,14 @@ export const removeFile = async key => {
   }
 };
 
+export const removeFiles = async keys => {
+  try {
+    await AsyncStorage.multiRemove(keys);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 export const saveEachSerie = async (
   content,
   t,
