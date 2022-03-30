@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView} from 'react-native';
 import i18n from 'i18next';
 import moment from 'moment';
 import {showMessage} from 'react-native-flash-message';
 import {colors} from '_config';
-import {OpenJson, TableHome} from '_components';
-
+import {OpenJson, TableHome, ModalOpenJson} from '_components';
+import {SafeAreaView} from 'react-native';
 import {getAllKeys, getFile, getFiles} from '../../utils/myasyncstorage';
 
 const Home = props => {
@@ -15,6 +14,7 @@ const Home = props => {
   const [competition, setCompetition] = useState({});
   //Liste des compétitions
   const [allCompetitions, setAllCompetitions] = useState([]);
+
   // Chargement des concours existants
   const getAllSeries = async () => {
     const keys = await getAllKeys();
@@ -85,7 +85,7 @@ const Home = props => {
         ' \\ ' +
         infoConcours.EpreuveConcoursComplet.Categorie +
         infoConcours.EpreuveConcoursComplet.Sexe,
-      statut: 'A venir',
+      statut: 'Prêt',
     };
   };
 
@@ -147,20 +147,28 @@ const Home = props => {
         backgroundColor: colors.white,
         padding: 10,
       }}>
-      <OpenJson
-        addOneSerieDataTable={addOneSerieDataTable}
-        showMessage={showMessage}
-      />
-      {tableData.length > 0 && (
-        <TableHome
+      {tableData.length == 0 && (
+        <OpenJson
+          addOneSerieDataTable={addOneSerieDataTable}
           showMessage={showMessage}
-          tableData={tableData}
-          setTableData={setTableData}
-          navigation={props.navigation}
-          competition={competition}
-          allCompetitions={allCompetitions}
-          setCompetition={setCompetition}
         />
+      )}
+      {tableData.length > 0 && (
+        <>
+          <ModalOpenJson
+            addOneSerieDataTable={addOneSerieDataTable}
+            showMessage={showMessage}
+          />
+          <TableHome
+            showMessage={showMessage}
+            tableData={tableData}
+            setTableData={setTableData}
+            navigation={props.navigation}
+            competition={competition}
+            allCompetitions={allCompetitions}
+            setCompetition={setCompetition}
+          />
+        </>
       )}
     </SafeAreaView>
   );

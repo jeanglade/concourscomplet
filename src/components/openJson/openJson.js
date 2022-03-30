@@ -66,11 +66,11 @@ const OpenJson = props => {
                 props.addOneSerieDataTable,
               )
             }>
-            <View style={styles.buttonWithIcon}>
-              <Image
+            <View style={styles.button}>
+              {/* <Image
                 style={styles.iconButton}
                 source={require('../../icons/import.png')}
-              />
+              /> */}
               <Text style={styles.textButton}>
                 {t('common:via_local_file')}
               </Text>
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
   textinput: {
     fontSize: 16,
     padding: 10,
+    paddingVertical: 14,
     width: 130,
     color: colors.black,
     backgroundColor: colors.white,

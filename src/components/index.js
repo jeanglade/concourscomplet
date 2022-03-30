@@ -4,6 +4,7 @@ import OpenJson from './openJson';
 import TableHome from './tablehome';
 import TableFeuilleConcours from './tablefeuilleconcours';
 import DropdownCompetition from './dropdowncompetition';
+import ModalOpenJson from './modalOpenJson';
 
 export {
   DropdownLanguage,
@@ -12,4 +13,5 @@ export {
   TableHome,
   DropdownCompetition,
   TableFeuilleConcours,
+  ModalOpenJson,
 };

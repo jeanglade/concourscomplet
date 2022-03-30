@@ -208,7 +208,7 @@ const TableHome = props => {
             style={[
               styles.cellButton,
               styles.backRed,
-              {padding: 0, margin: 0, borderRadius: 20},
+              {padding: 0, margin: 0, marginLeft: 10, borderRadius: 20},
             ]}>
             <Image
               style={{
@@ -263,9 +263,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'stretch',
     marginHorizontal: 20,
-    borderColor: colors.muted,
-    borderTopWidth: 1,
-    borderWidth: 0,
     flex: 1,
   },
   titleText: {

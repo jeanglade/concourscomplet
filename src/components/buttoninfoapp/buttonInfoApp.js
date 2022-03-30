@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import DeviceInfo from 'react-native-device-info';
-
 import {
   View,
   Text,
@@ -8,25 +7,18 @@ import {
   Pressable,
   StyleSheet,
   Image,
-  SafeAreaView,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
 
-const ButtonInfoApp = () => {
+const ButtonInfoApp = props => {
   const [t] = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <>
       <TouchableWithoutFeedback onPress={() => setModalVisible(!modalVisible)}>
         <View>
-          <Image
-            style={{
-              width: 40,
-              height: 40,
-            }}
-            source={require('../../icons/info.png')}
-          />
+          <Image style={styles.icon} source={require('../../icons/info.png')} />
         </View>
       </TouchableWithoutFeedback>
       {modalVisible && (
@@ -54,6 +46,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     position: 'absolute',
     right: 50,
+  },
+  icon: {
+    width: 40,
+    height: 40,
+    marginHorizontal: 5,
   },
 });
 
