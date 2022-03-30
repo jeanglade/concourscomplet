@@ -3,7 +3,7 @@ import {StyleSheet, Text, SafeAreaView, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
 import {showMessage} from 'react-native-flash-message';
-import {TableFeuilleConcours} from '_components';
+import {TableConcoursSb} from '_components';
 
 function CompetitionSheet(props) {
   const [t] = useTranslation();
@@ -32,7 +32,7 @@ function CompetitionSheet(props) {
         </Text>
       </View>
 
-      <TableFeuilleConcours
+      <TableConcoursSb
         showMessage={showMessage}
         dataConcours={dataConcours}
         tableData={tableData}

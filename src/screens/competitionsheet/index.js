@@ -1,1 +1,1 @@
-export {default} from './competitionsheet';
+export {default} from './competitionSheet';

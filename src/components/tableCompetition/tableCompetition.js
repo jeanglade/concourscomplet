@@ -20,29 +20,29 @@ const TableHome = props => {
 
   const getImageEpreuve = epreuve => {
     var res = '';
-    switch (epreuve) {
-      case 'Hauteur':
+    switch (true) {
+      case epreuve.includes('Hauteur'):
         res = require('../../icons/epreuves/SautEnHauteur_Dark.png');
         break;
-      case 'Perche':
+      case epreuve.includes('Perche'):
         res = require('../../icons/epreuves/SautALaPerche_Dark.png');
         break;
-      case 'Longueur':
+      case epreuve.includes('Longueur'):
         res = require('../../icons/epreuves/SautEnLongueur_Dark.png');
         break;
-      case 'Triple':
+      case epreuve.includes('Triple saut'):
         res = require('../../icons/epreuves/SautEnLongueur_Dark.png');
         break;
-      case 'Poids':
+      case epreuve.includes('Poids'):
         res = require('../../icons/epreuves/LancerDePoids_Dark.png');
         break;
-      case 'Javelot':
+      case epreuve.includes('Javelot'):
         res = require('../../icons/epreuves/Javelot_Dark.png');
         break;
-      case 'Marteau':
+      case epreuve.includes('Marteau'):
         res = require('../../icons/epreuves/LancerDeMarteau_Dark.png');
         break;
-      case 'Disque':
+      case epreuve.includes('Disque'):
         res = require('../../icons/epreuves/LancerDeDisque_Dark.png');
         break;
     }

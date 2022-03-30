@@ -1,3 +1,3 @@
 import Home from './home';
-import CompetitionSheet from './competitionsheet';
+import CompetitionSheet from './competitionSheet';
 export {Home, CompetitionSheet};

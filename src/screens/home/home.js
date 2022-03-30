@@ -3,7 +3,7 @@ import i18n from 'i18next';
 import moment from 'moment';
 import {showMessage} from 'react-native-flash-message';
 import {colors} from '_config';
-import {OpenJson, TableHome, ModalOpenJson} from '_components';
+import {OpenJson, TableCompetition, ModalOpenJson} from '_components';
 import {SafeAreaView} from 'react-native';
 import {getAllKeys, getFile, getFiles} from '../../utils/myasyncstorage';
 
@@ -159,7 +159,7 @@ const Home = props => {
             addOneSerieDataTable={addOneSerieDataTable}
             showMessage={showMessage}
           />
-          <TableHome
+          <TableCompetition
             showMessage={showMessage}
             tableData={tableData}
             setTableData={setTableData}

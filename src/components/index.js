@@ -1,17 +1,17 @@
-import DropdownLanguage from './dropdownlanguage';
-import ButtonInfoApp from './buttoninfoapp';
+import DropdownLanguage from './dropdownLanguage';
+import ButtonInfoApp from './buttonInfoApp';
 import OpenJson from './openJson';
-import TableHome from './tablehome';
-import TableFeuilleConcours from './tablefeuilleconcours';
-import DropdownCompetition from './dropdowncompetition';
+import TableCompetition from './tableCompetition';
+import TableConcoursSb from './tableConcoursSB';
+import DropdownCompetition from './dropdownCompetition';
 import ModalOpenJson from './modalOpenJson';
 
 export {
   DropdownLanguage,
   ButtonInfoApp,
   OpenJson,
-  TableHome,
+  TableCompetition,
   DropdownCompetition,
-  TableFeuilleConcours,
+  TableConcoursSb,
   ModalOpenJson,
 };

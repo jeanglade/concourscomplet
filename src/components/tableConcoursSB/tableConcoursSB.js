@@ -3,7 +3,7 @@ import {StyleSheet, Text, View, FlatList, TextInput} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
 
-const TableFeuilleConcours = props => {
+const TableConcoursSb = props => {
   const [t] = useTranslation();
   const [hasDossard, setHasDossard] = useState(() => {
     props.tableData.forEach(row => {
@@ -287,4 +287,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TableFeuilleConcours;
+export default TableConcoursSb;
