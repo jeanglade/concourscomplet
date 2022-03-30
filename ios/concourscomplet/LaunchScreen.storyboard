@@ -17,8 +17,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="AthleLight2" translatesAutoresizingMaskIntoConstraints="NO" id="dvB-vZ-E5c">
-                                <rect key="frame" x="407" y="326" width="366" height="168"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" misplaced="YES" image="AthleLight2" translatesAutoresizingMaskIntoConstraints="NO" id="dvB-vZ-E5c">
+                                <rect key="frame" x="293" y="261" width="594" height="298"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>

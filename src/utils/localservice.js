@@ -18,9 +18,14 @@ export const pickOneDeviceFile = async (
     if (newFile != null) {
       if (newFile.type == 'application/json') {
         switch (Platform.OS) {
-          case 'android':
+          case ('android', 'ios'):
             await ReactNativeBlobUtil.fs
-              .readFile(newFile.uri, 'utf8')
+              .readFile(
+                Platform.OS == 'android'
+                  ? newFile.uri
+                  : newFile.fileCopyUri.replace('file:/', ''),
+                'utf8',
+              )
               .then(content => {
                 saveEachSerie(content, t, showMessage, addOneSerieDataTable);
               })
@@ -32,21 +37,7 @@ export const pickOneDeviceFile = async (
                 });
               });
             break;
-          case 'ios':
-            console.log(newFile.uri);
-            await ReactNativeBlobUtil.fs
-              .readFile(newFile.fileCopyUri, 'utf8')
-              .then(content => {
-                saveEachSerie(content, t, showMessage, addOneSerieDataTable);
-              })
-              .catch(e => {
-                console.error(e);
-                showMessage({
-                  message: t('toast:import_error'),
-                  type: 'danger',
-                });
-              });
-            break;
+
           case 'windows':
             saveEachSerie(
               newFile.content,
