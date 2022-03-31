@@ -19,7 +19,7 @@ const ModalOpenJson = props => {
         <View style={styles.iconPosition}>
           <Image
             style={styles.iconImport}
-            source={require('../../icons/import_white.png')}
+            source={require('../../icons/import_down.png')}
           />
         </View>
       </TouchableWithoutFeedback>

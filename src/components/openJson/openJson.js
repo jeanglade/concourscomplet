@@ -67,10 +67,6 @@ const OpenJson = props => {
               )
             }>
             <View style={styles.button}>
-              {/* <Image
-                style={styles.iconButton}
-                source={require('../../icons/import.png')}
-              /> */}
               <Text style={styles.textButton}>
                 {t('common:via_local_file')}
               </Text>
@@ -136,7 +132,6 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: colors.ffa_blue_light,
   },
-  iconButton: {width: 30, height: 30},
 });
 
 export default OpenJson;
