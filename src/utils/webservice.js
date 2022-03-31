@@ -1,6 +1,6 @@
 import base64 from 'react-native-base64';
 import {Keyboard} from 'react-native';
-import {getFile} from '../../utils/myasyncstorage';
+import {getFile} from '../../utils/myAsyncStorage';
 
 export const validateCompetitionCode = async (
   codeCompetition,
@@ -10,7 +10,7 @@ export const validateCompetitionCode = async (
   const soapRequest = require('easy-soap-request');
   var res = null;
   var XMLParser = require('react-xml-parser');
-  if (codeCompetition != null && codeCompetition != '') {
+  if (codeCompetition !== null && codeCompetition !== '') {
     const {response} = await soapRequest({
       url: 'http://webservices.e-logica.fr/WS_ELOG_COMP_DEV/ServiceElogicaDEV.svc',
       headers: {
@@ -37,7 +37,7 @@ export const validateCompetitionCode = async (
       Keyboard.dismiss();
     });
 
-    const {headers, body, statusCode} = response;
+    const {body, statusCode} = response;
     if (statusCode === 200) {
       const xmlResponse = new XMLParser().parseFromString(body);
       res = base64.decode(
@@ -88,7 +88,7 @@ export const sendJson = async fileName => {
                </Body>\
       </Envelope>',
       }).catch(e => console.error(e));
-      const {headers, body, statusCode} = response;
+      const {statusCode} = response;
       if (statusCode === 200) {
         result = true;
       }

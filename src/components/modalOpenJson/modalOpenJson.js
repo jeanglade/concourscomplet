@@ -18,10 +18,7 @@ const ModalOpenJson = props => {
       <TouchableWithoutFeedback onPress={() => setModalImportVisible(true)}>
         <View style={styles.iconPosition}>
           <Image
-            style={{
-              width: 30,
-              height: 30,
-            }}
+            style={styles.iconImport}
             source={require('../../icons/import_white.png')}
           />
         </View>
@@ -35,12 +32,9 @@ const ModalOpenJson = props => {
           <View style={styles.modalView}>
             <TouchableWithoutFeedback
               onPress={() => setModalImportVisible(false)}>
-              <View style={{position: 'absolute', top: 15, right: 15}}>
+              <View style={styles.iconClosePosition}>
                 <Image
-                  style={{
-                    width: 25,
-                    height: 25,
-                  }}
+                  style={styles.iconClose}
                   source={require('../../icons/close.png')}
                 />
               </View>
@@ -85,6 +79,15 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   modalContent: {},
+  iconImport: {
+    width: 30,
+    height: 30,
+  },
+  iconClose: {
+    width: 25,
+    height: 25,
+  },
+  iconClosePosition: {position: 'absolute', top: 15, right: 15},
 });
 
 export default ModalOpenJson;

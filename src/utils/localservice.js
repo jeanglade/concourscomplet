@@ -1,7 +1,9 @@
 import DocumentPicker from 'react-native-document-picker';
 import ReactNativeBlobUtil from 'react-native-blob-util';
+import base64 from 'react-native-base64';
+import {Platform} from 'react-native';
 
-import {saveEachSerie} from '../../utils/myasyncstorage';
+import {saveEachSerie} from '../../utils/myAsyncStorage';
 
 export const pickOneDeviceFile = async (
   t,
@@ -15,13 +17,13 @@ export const pickOneDeviceFile = async (
       readContent: true,
     });
     // READ ONE FILE
-    if (newFile != null) {
-      if (newFile.type == 'application/json') {
+    if (newFile !== null) {
+      if (newFile.type === 'application/json') {
         switch (Platform.OS) {
           default:
             await ReactNativeBlobUtil.fs
               .readFile(
-                Platform.OS == 'android'
+                Platform.OS === 'android'
                   ? newFile.uri
                   : newFile.fileCopyUri.replace('file:/', ''),
                 'utf8',
@@ -39,7 +41,7 @@ export const pickOneDeviceFile = async (
             break;
           case 'windows':
             saveEachSerie(
-              newFile.content,
+              base64.decode(newFile.content),
               t,
               showMessage,
               addOneSerieDataTable,

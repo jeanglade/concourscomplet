@@ -37,7 +37,6 @@ const ButtonInfoApp = props => {
 const styles = StyleSheet.create({
   text: {
     color: colors.black,
-    textAlign: 'center',
     padding: 10,
     textAlign: 'right',
     fontSize: 16,

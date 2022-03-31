@@ -8,7 +8,9 @@ const TableConcoursSb = props => {
   const [hasDossard, setHasDossard] = useState(() => {
     var res = false;
     props.tableData.forEach(row => {
-      if (row.Athlete.Dossard?.toString()) res = true;
+      if (row.Athlete.Dossard?.toString()) {
+        res = true;
+      }
     });
     return res;
   });
@@ -21,10 +23,10 @@ const TableConcoursSb = props => {
   const serie =
     props.compData.EpreuveConcoursComplet.TourConcoursComplet
       .LstSerieConcoursComplet[0];
-  const NbSec_plusde3athletes = serie.NbSec_plusde3athletes?.toString();
-  const NbSec_2ou3athletes = serie.NbSec_2ou3athletes?.toString();
-  const NbSec_1athlete = serie.NbSec_1athlete?.toString();
-  const NbSec_EssaiConsecutif = serie.NbSec_EssaiConsecutif?.toString();
+  // const NbSec_plusde3athletes = serie.NbSec_plusde3athletes?.toString();
+  // const NbSec_2ou3athletes = serie.NbSec_2ou3athletes?.toString();
+  // const NbSec_1athlete = serie.NbSec_1athlete?.toString();
+  // const NbSec_EssaiConsecutif = serie.NbSec_EssaiConsecutif?.toString();
 
   const createEssai = (resultat, numEssai, value) => {
     var essai = {
@@ -37,7 +39,9 @@ const TableConcoursSb = props => {
       //GUID_BARRE (nullable)
       //Vent (10, -10), règle saisie (nullable)
     };
-    if (resultat['LstEssais'] == null) resultat['LstEssais'] = [];
+    if (resultat['LstEssais'] == null) {
+      resultat['LstEssais'] = [];
+    }
     resultat['LstEssais'][numEssai - 1] = essai;
   };
 
@@ -52,23 +56,22 @@ const TableConcoursSb = props => {
   }) => (
     <>
       <View style={styles.item}>
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <Text style={[styles.text]}>{order}</Text>
         </View>
         {hasDossard && (
-          <View style={{flex: 1}}>
+          <View style={styles.flex1}>
             <Text style={[styles.text]}>{dossard}</Text>
           </View>
         )}
-        <View style={{flex: 4}}>
+        <View style={styles.flex4}>
           <Text
             style={[
               styles.text,
+              styles.textBold,
               {
-                fontSize: 16,
-                fontWeight: 'bold',
                 color:
-                  athleteEnCours == resultat
+                  athleteEnCours === resultat
                     ? colors.ffa_blue_light
                     : colors.black,
               },
@@ -80,33 +83,33 @@ const TableConcoursSb = props => {
             {athleteInfo}
           </Text>
         </View>
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <TextInput
             style={[
               styles.textinput,
               {
                 borderColor:
-                  athleteEnCours == resultat
+                  athleteEnCours === resultat
                     ? colors.ffa_blue_light
                     : colors.muted,
               },
             ]}
             onChangeText={value => {
               //createEssai(resultat, 1, value);
-              setAllEssais(allEssais => {
+              setAllEssais(() => {
                 allEssais[index][0] = value.toString();
                 return allEssais;
               });
             }}
           />
         </View>
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <TextInput
             style={styles.textinput}
             value={allEssais[index] ? allEssais[index][1] : ''}
             onChangeText={value => {
               createEssai(resultat, 2, value);
-              setAllEssais(allEssais => {
+              setAllEssais(() => {
                 allEssais[index][1] = value;
                 return allEssais;
               });
@@ -120,13 +123,13 @@ const TableConcoursSb = props => {
             keyboardType="numeric"
           />
         </View>
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <TextInput
             style={styles.textinput}
             value={allEssais[index] ? allEssais[index][2] : ''}
             onChangeText={value => {
               createEssai(resultat, 3, value);
-              setAllEssais(allEssais => {
+              setAllEssais(() => {
                 allEssais[index][2] = value;
                 return allEssais;
               });
@@ -140,13 +143,13 @@ const TableConcoursSb = props => {
             keyboardType="numeric"
           />
         </View>
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <Text style={styles.text}></Text>
         </View>
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <Text style={styles.text}></Text>
         </View>
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <TextInput
             style={styles.textinput}
             onChangeText={() => {}}
@@ -154,7 +157,7 @@ const TableConcoursSb = props => {
             keyboardType="numeric"
           />
         </View>
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <TextInput
             style={styles.textinput}
             onChangeText={() => {}}
@@ -162,7 +165,7 @@ const TableConcoursSb = props => {
             keyboardType="numeric"
           />
         </View>
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <TextInput
             style={styles.textinput}
             onChangeText={() => {}}
@@ -170,10 +173,10 @@ const TableConcoursSb = props => {
             keyboardType="numeric"
           />
         </View>
-        <View style={{flex: 2}}>
+        <View style={styles.flex2}>
           <Text style={styles.text}></Text>
         </View>
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <Text style={styles.text}></Text>
         </View>
       </View>
@@ -205,53 +208,53 @@ const TableConcoursSb = props => {
 
   return (
     <View style={[styles.containerCenter]}>
-      <View style={{flex: 1}}>
+      <View style={styles.flex1}>
         <View style={styles.headerTable}>
-          <View style={{flex: 1}}>
+          <View style={styles.flex1}>
             <Text style={styles.text}>{t('competition:order')}</Text>
           </View>
           {hasDossard && (
-            <View style={{flex: 1}}>
+            <View style={styles.flex1}>
               <Text style={styles.text}>{t('competition:number')}</Text>
             </View>
           )}
-          <View style={{flex: 4}}>
+          <View style={styles.flex4}>
             <Text style={styles.text}>{t('competition:athlete')}</Text>
           </View>
-          <View style={{flex: 1}}>
+          <View style={styles.flex1}>
             <Text style={styles.text}>{t('competition:first')}</Text>
           </View>
-          <View style={{flex: 1}}>
+          <View style={styles.flex1}>
             <Text style={styles.text}>{t('competition:second')}</Text>
           </View>
-          <View style={{flex: 1}}>
+          <View style={styles.flex1}>
             <Text style={styles.text}>{t('competition:third')}</Text>
           </View>
-          <View style={{flex: 1}}>
+          <View style={styles.flex1}>
             <Text style={styles.text}>
               {t('competition:performance').substring(0, 4) + '.'}
             </Text>
           </View>
-          <View style={{flex: 1}}>
+          <View style={styles.flex1}>
             <Text style={styles.text}>{t('competition:place')}</Text>
           </View>
-          <View style={{flex: 1}}>
+          <View style={styles.flex1}>
             <Text style={styles.text}>{t('competition:fourth')}</Text>
           </View>
-          <View style={{flex: 1}}>
+          <View style={styles.flex1}>
             <Text style={styles.text}>{t('competition:fifth')}</Text>
           </View>
-          <View style={{flex: 1}}>
+          <View style={styles.flex1}>
             <Text style={styles.text}>{t('competition:six')}</Text>
           </View>
-          <View style={{flex: 2}}>
+          <View style={styles.flex2}>
             <Text style={styles.text}>{t('competition:performance')}</Text>
           </View>
-          <View style={{flex: 1}}>
+          <View style={styles.flex1}>
             <Text style={styles.text}>{t('competition:place')}</Text>
           </View>
         </View>
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <FlatList
             contentContainerStyle={{
               flexGrow: 1,
@@ -283,11 +286,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingVertical: 10,
   },
-  text: {
-    color: colors.ffa_blue_light,
-    fontSize: 14,
-    paddingHorizontal: 10,
-  },
   item: {
     flexDirection: 'row',
     backgroundColor: colors.gray_light,
@@ -305,12 +303,28 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 16,
   },
+  textBold: {fontWeight: 'bold'},
   textinput: {
     height: 35,
     marginRight: 5,
     color: colors.black,
     borderColor: colors.muted,
     borderWidth: 1,
+  },
+  flex1: {
+    flex: 1,
+  },
+  flex2: {
+    flex: 2,
+  },
+  flex3: {
+    flex: 3,
+  },
+  flex4: {
+    flex: 4,
+  },
+  flex5: {
+    flex: 5,
   },
 });
 

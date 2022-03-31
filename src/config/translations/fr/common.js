@@ -14,7 +14,6 @@ export default {
   status: 'Statut',
   actions: 'Actions',
   competitionSheetempty: 'Code compétition vide',
-  no_imported_competitions: 'Aucun concours importé',
   required: 'Obligatoire',
   options: 'Options',
   new_epreuve: 'Importer un concours',

@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import {initReactI18next} from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as RNLocalize from 'react-native-localize';
+//import * as RNLocalize from 'react-native-localize';
 
 import en from './translations/en';
 import fr from './translations/fr';
@@ -11,7 +11,7 @@ const LANGUAGES = {
   en,
 };
 
-const LANG_CODES = Object.keys(LANGUAGES);
+//const LANG_CODES = Object.keys(LANGUAGES);
 
 const LANGUAGE_DETECTOR = {
   type: 'languageDetector',
@@ -26,8 +26,8 @@ const LANGUAGE_DETECTOR = {
         } else {
           console.info('No language is set, choosing French as fallback');
         }
-        const findBestAvailableLanguage =
-          RNLocalize.findBestAvailableLanguage(LANG_CODES);
+        //const findBestAvailableLanguage =
+        // RNLocalize.findBestAvailableLanguage(LANG_CODES);
 
         callback(/*findBestAvailableLanguage.languageTag || */ 'fr');
         return;

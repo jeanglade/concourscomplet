@@ -10,11 +10,11 @@ import {
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
-import {removeFile, removeFiles} from '../../utils/myasyncstorage';
+import {removeFile, removeFiles} from '../../utils/myAsyncStorage';
 import {useOrientation} from '../../utils/useOrientation';
 import {DropdownCompetition} from '_components';
 
-const TableHome = props => {
+const TableCompetition = props => {
   const [t] = useTranslation();
   const orientation = useOrientation();
 
@@ -71,41 +71,24 @@ const TableHome = props => {
   const Item = ({id, data, date, epreuve, statut, item, index}) => (
     <>
       <View style={styles.item}>
-        <View style={{flex: 2}}>
+        <View style={styles.flex2}>
           <Text style={styles.text}>{date}</Text>
         </View>
-        <View
-          style={{
-            flex: 5,
-            flexDirection: 'row',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-          }}>
-          <Image
-            style={{
-              width: 30,
-              height: 30,
-              marginRight: 5,
-            }}
-            source={getImageEpreuve(epreuve)}
-          />
+        <View style={[styles.epreuve, styles.flex5]}>
+          <Image style={styles.iconEpreuve} source={getImageEpreuve(epreuve)} />
           <Text style={styles.text}>{epreuve}</Text>
         </View>
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <Text
             style={[
               styles.text,
-              {fontWeight: 'bold', color: getStatusColor(statut)},
+              styles.textBold,
+              {color: getStatusColor(statut)},
             ]}>
             {statut}
           </Text>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            flex: 2,
-          }}>
+        <View style={[styles.actions, styles.flex2]}>
           <TouchableWithoutFeedback
             onPress={() => {
               props.navigation.navigate('CompetitionSheet', {
@@ -114,10 +97,7 @@ const TableHome = props => {
             }}>
             <View style={[styles.cellButton]}>
               <Image
-                style={{
-                  width: 20,
-                  height: 20,
-                }}
+                style={styles.icon}
                 source={require('../icons/list.png')}
               />
             </View>
@@ -133,9 +113,7 @@ const TableHome = props => {
                   onPress: async () => {
                     await removeFile(id);
                     props.setTableData(
-                      props.tableData.filter(
-                        (item, itemIndex) => item.id !== id,
-                      ),
+                      props.tableData.filter((i, itemIndex) => i.id !== id),
                     );
                     props.showMessage({
                       message: t('toast:file_deleted'),
@@ -147,10 +125,7 @@ const TableHome = props => {
             }}>
             <View style={[styles.cellButton, styles.backRed]}>
               <Image
-                style={{
-                  width: 20,
-                  height: 20,
-                }}
+                style={styles.icon}
                 source={require('../icons/delete.png')}
               />
             </View>
@@ -177,15 +152,10 @@ const TableHome = props => {
     <View
       style={[
         styles.containerCenter,
-        orientation === 'LANDSCAPE' && {width: '80%', marginLeft: '10%'},
+        orientation === 'LANDSCAPE' && styles.containerSize,
       ]}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        {props.allCompetitions.length == 1 && (
+      <View style={styles.containerTitle}>
+        {props.allCompetitions.length === 1 && (
           <Text style={styles.titleText}>
             {props.competition.nomCompetition}
           </Text>
@@ -213,7 +183,7 @@ const TableHome = props => {
                     const ids = props.tableData
                       .filter(x => {
                         return (
-                          JSON.parse(x.data).GuidCompetition ==
+                          JSON.parse(x.data).GuidCompetition ===
                           props.competition?.idCompetition
                         );
                       })
@@ -233,67 +203,57 @@ const TableHome = props => {
             style={[
               styles.cellButton,
               styles.backRed,
-              {
-                padding: 0,
-                margin: 0,
-                marginLeft: 10,
-                marginTop: 15,
-                borderRadius: 20,
-              },
+              styles.buttonDeleteCompetition,
             ]}>
             <Image
-              style={{
-                width: 20,
-                height: 20,
-              }}
+              style={styles.icon}
               source={require('../icons/delete.png')}
             />
           </View>
         </TouchableWithoutFeedback>
       </View>
       {props.competition?.lieuCompetition?.toString() && (
-        <Text style={[styles.text, {textAlign: 'center'}]}>
+        <Text style={[styles.text, styles.textCenter]}>
           {props.competition.lieuCompetition?.toString()}
         </Text>
       )}
       <Text
         style={[
           styles.text,
-          {textAlign: 'center', color: colors.ffa_blue_light},
+          styles.textCenter,
+          {color: colors.ffa_blue_light},
         ]}>
         {
           props.tableData.filter(x => {
             return (
-              JSON.parse(x.data).GuidCompetition ==
+              JSON.parse(x.data).GuidCompetition ===
               props.competition?.idCompetition
             );
           }).length
         }{' '}
         {t('common:list_competion_sheets')}
       </Text>
-      <View style={{flex: 1}}>
+      <View style={styles.flex1}>
         <View style={styles.headerTable}>
-          <View style={{flex: 2}}>
+          <View style={styles.flex2}>
             <Text style={styles.text}>{t('common:date')}</Text>
           </View>
-          <View style={{flex: 5}}>
+          <View style={styles.flex5}>
             <Text style={styles.text}>{t('common:discipline')}</Text>
           </View>
-          <View style={{flex: 1}}>
+          <View style={styles.flex1}>
             <Text style={styles.text}>{t('common:status')}</Text>
           </View>
-          <View style={{flex: 2}}>
+          <View style={styles.flex2}>
             <Text style={styles.text}>{t('common:actions')}</Text>
           </View>
         </View>
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <FlatList
-            contentContainerStyle={{
-              flexGrow: 1,
-            }}
+            contentContainerStyle={styles.flexGrow1}
             data={props.tableData.filter(x => {
               return (
-                JSON.parse(x.data).GuidCompetition ==
+                JSON.parse(x.data).GuidCompetition ===
                 props.competition?.idCompetition
               );
             })}
@@ -309,6 +269,11 @@ const TableHome = props => {
 };
 
 const styles = StyleSheet.create({
+  containerTitle: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   containerCenter: {
     flexDirection: 'column',
     justifyContent: 'flex-start',
@@ -316,6 +281,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     flex: 1,
   },
+  containerSize: {width: '80%', marginLeft: '10%'},
   titleText: {
     marginTop: 10,
     fontSize: 20,
@@ -339,6 +305,8 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 16,
   },
+  textBold: {fontWeight: 'bold'},
+  textCenter: {textAlign: 'center'},
   cellButton: {
     backgroundColor: colors.ffa_blue_dark,
     padding: 10,
@@ -350,6 +318,49 @@ const styles = StyleSheet.create({
     backgroundColor: colors.red,
     borderColor: colors.red_light,
   },
+  flex1: {
+    flex: 1,
+  },
+  flex2: {
+    flex: 2,
+  },
+  flex3: {
+    flex: 3,
+  },
+  flex4: {
+    flex: 4,
+  },
+  flex5: {
+    flex: 5,
+  },
+  flexGrow1: {
+    flexGrow: 1,
+  },
+  iconEpreuve: {
+    width: 30,
+    height: 30,
+    marginRight: 5,
+  },
+  epreuve: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  icon: {
+    width: 20,
+    height: 20,
+  },
+  actions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  buttonDeleteCompetition: {
+    padding: 0,
+    margin: 0,
+    marginLeft: 10,
+    marginTop: 15,
+    borderRadius: 20,
+  },
 });
 
-export default TableHome;
+export default TableCompetition;

@@ -80,8 +80,9 @@ export const saveEachSerie = async (
           t,
           showMessage,
         );
-        if (result)
+        if (result) {
           addOneSerieDataTable(codeConcours, JSON.stringify(newContentObject));
+        }
       },
     );
   } catch (e) {
@@ -92,7 +93,7 @@ export const saveEachSerie = async (
 export const saveJsonFile = async (fileName, content, t, showMessage) => {
   try {
     var result = false;
-    const contentFile = await getFile(fileName);
+    //const contentFile = await getFile(fileName);
     /*if (contentFile != null) {
       showMessage({
         message: t('toast:file_already_exist'),

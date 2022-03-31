@@ -4,8 +4,8 @@ import moment from 'moment';
 import {showMessage} from 'react-native-flash-message';
 import {colors} from '_config';
 import {OpenJson, TableCompetition, ModalOpenJson} from '_components';
-import {SafeAreaView} from 'react-native';
-import {getAllKeys, getFile, getFiles} from '../../utils/myasyncstorage';
+import {SafeAreaView, StyleSheet} from 'react-native';
+import {getAllKeys, getFile, getFiles} from '../../utils/myAsyncStorage';
 import {useTranslation} from 'react-i18next';
 
 const Home = props => {
@@ -18,46 +18,61 @@ const Home = props => {
   //Liste des compétitions
   const [allCompetitions, setAllCompetitions] = useState([]);
 
-  // Chargement des concours existants
-  const getAllSeries = async () => {
-    const keys = await getAllKeys();
-    await addSeriesDataTable(keys.filter(key => key.match(/.+\.json/g)));
-  };
   // Initialise la liste des concours complets déjà présents
   useEffect(() => {
+    // Ajoute plusieurs concours
+    const addSeriesDataTable = async keys => {
+      if (keys.length > 0) {
+        // Récupère les clés/valeurs des concours non chargés
+        const listKeyValue = await getFiles(
+          keys.filter(key => tableData.find(x => (x.key = key)) === undefined),
+        );
+        listKeyValue.forEach(keyValue => {
+          //Met à jour les données des concours en triant par ordre croissant par date
+          setTableData(() =>
+            [...tableData, getInfoSerie(keyValue[0], keyValue[1])].sort(
+              (a, b) => {
+                return a.date > b.date;
+              },
+            ),
+          );
+        });
+      }
+    };
+    // Chargement des concours existants
+    const getAllSeries = async () => {
+      const keys = await getAllKeys();
+      await addSeriesDataTable(keys.filter(key => key.match(/.+\.json/g)));
+    };
+    const getAllCompetitionsInfo = () => {
+      var result = [];
+      tableData.forEach(compete => {
+        // Si la compétition n'est pas déjà présente dans result
+        if (
+          !result
+            .map(a => a.idCompetition)
+            .includes(JSON.parse(compete.data).GuidCompetition)
+        ) {
+          result.push(getCompetitionInfo(compete.data));
+        }
+      });
+      return result;
+    };
     getAllSeries();
     var competitions = getAllCompetitionsInfo();
     setAllCompetitions(competitions);
     setCompetition(getLastCompetition(competitions));
   }, [tableData]);
 
-  // Ajoute plusieurs concours
-  const addSeriesDataTable = async keys => {
-    if (keys.length > 0) {
-      // Récupère les clés/valeurs des concours non chargés
-      const listKeyValue = await getFiles(
-        keys.filter(key => tableData.find(x => (x.key = key)) === undefined),
-      );
-      listKeyValue.forEach(keyValue => {
-        //Met à jour les données des concours en triant par ordre croissant par date
-        setTableData(tableData =>
-          [...tableData, getInfoSerie(keyValue[0], keyValue[1])].sort(
-            (a, b) => {
-              return a.date > b.date;
-            },
-          ),
-        );
-      });
-    }
-  };
-
   // Ajoute 1 concours
   const addOneSerieDataTable = async (key, data = null) => {
     if (key.match(/.+\.json/g)) {
-      if (tableData.filter(row => row.id == key).length === 0) {
-        if (data == null) data = await getFile(key);
+      if (tableData.filter(row => row.id === key).length === 0) {
+        if (data == null) {
+          data = await getFile(key);
+        }
         //Met à jour les données des concours en triant par ordre croissant par date
-        setTableData(tableData =>
+        setTableData(() =>
           [...tableData, getInfoSerie(key, data)].sort((a, b) => {
             return a.date > b.date;
           }),
@@ -76,7 +91,7 @@ const Home = props => {
       date: dateConcours,
       dateInfo:
         moment(dateConcours, moment.ISO_8601).format(
-          i18n.language == 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY',
+          i18n.language === 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY',
         ) +
         ' - ' +
         moment(dateConcours, moment.ISO_8601).format('H:mm'),
@@ -92,20 +107,6 @@ const Home = props => {
     };
   };
 
-  const getAllCompetitionsInfo = () => {
-    var result = [];
-    tableData.forEach(compete => {
-      // Si la compétition n'est pas déjà présente dans result
-      if (
-        !result
-          .map(a => a.idCompetition)
-          .includes(JSON.parse(compete.data).GuidCompetition)
-      )
-        result.push(getCompetitionInfo(compete.data));
-    });
-    return result;
-  };
-
   // Récupère la compétition la plus récente à partir de maintenant
   const getLastCompetition = competitions => {
     var result = null;
@@ -117,7 +118,9 @@ const Home = props => {
       const recentC = competitions.filter(a => {
         a.dateCompetition > moment();
       });
-      if (recentC.length > 0) result = recentC[0];
+      if (recentC.length > 0) {
+        result = recentC[0];
+      }
     }
     return result;
   };
@@ -142,20 +145,15 @@ const Home = props => {
         moment(
           compete.DateDebutCompetition?.toString(),
           moment.ISO_8601,
-        ).format(i18n.language == 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY') +
+        ).format(i18n.language === 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY') +
         ' - ' +
         compete.NomCompetition,
     };
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: colors.white,
-        padding: 10,
-      }}>
-      {tableData.length == 0 && (
+    <SafeAreaView style={styles.container}>
+      {tableData.length === 0 && (
         <OpenJson
           addOneSerieDataTable={addOneSerieDataTable}
           showMessage={showMessage}
@@ -181,5 +179,13 @@ const Home = props => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+    padding: 10,
+  },
+});
 
 export default Home;

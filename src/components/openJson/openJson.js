@@ -5,14 +5,13 @@ import {
   Text,
   View,
   TouchableWithoutFeedback,
-  Image,
   Keyboard,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
-import {validateCompetitionCode} from '../../utils/webservice';
-import {saveEachSerie} from '../../utils/myasyncstorage';
-import {pickOneDeviceFile} from '../../utils/localservice';
+import {validateCompetitionCode} from '../../utils/webService';
+import {saveEachSerie} from '../../utils/myAsyncStorage';
+import {pickOneDeviceFile} from '../../utils/localService';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {showMessage} from 'react-native-flash-message';
 
@@ -28,8 +27,9 @@ const OpenJson = props => {
         t,
         props.showMessage,
       );
-      if (myjson != null)
+      if (myjson != null) {
         saveEachSerie(myjson, t, props.showMessage, props.addOneSerieDataTable);
+      }
     } else {
       console.error(t('toast:no_internet_connexion'));
       showMessage({

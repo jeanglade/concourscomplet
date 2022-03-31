@@ -1,13 +1,10 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, SafeAreaView, View} from 'react-native';
-import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
 import {showMessage} from 'react-native-flash-message';
 import {TableConcoursSb} from '_components';
 
 function CompetitionSheet(props) {
-  const [t] = useTranslation();
-
   //Initialisation des données du concours
   const dataConcours = props.route.params.item;
   const compData = JSON.parse(dataConcours.data);
@@ -17,21 +14,16 @@ function CompetitionSheet(props) {
   const [tableData, setTableData] = useState(listAthlete);
 
   //Options
-  const [optionAddAthlete, setOptionAddAthlete] = useState(false);
+  // const [optionAddAthlete, setOptionAddAthlete] = useState(false);
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: colors.white,
-        padding: 10,
-      }}>
+    <SafeAreaView style={styles.container}>
       <View>
         <Text style={styles.titleText}>
           {dataConcours.epreuve} - {dataConcours.dateInfo}
         </Text>
       </View>
-      {compData.EpreuveConcoursComplet.CodeFamilleEpreuve == 'SB' && (
+      {compData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
         <TableConcoursSb
           showMessage={showMessage}
           dataConcours={dataConcours}
@@ -64,6 +56,11 @@ function CompetitionSheet(props) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+    padding: 10,
+  },
   titleText: {
     fontSize: 20,
     color: colors.ffa_blue_light,
