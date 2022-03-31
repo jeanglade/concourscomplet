@@ -91,7 +91,6 @@ const TableConcoursSb = props => {
                     : colors.muted,
               },
             ]}
-            value={allEssais[index][0]}
             onChangeText={value => {
               //createEssai(resultat, 1, value);
               setAllEssais(allEssais => {
@@ -140,6 +139,9 @@ const TableConcoursSb = props => {
             }
             keyboardType="numeric"
           />
+        </View>
+        <View style={{flex: 1}}>
+          <Text style={styles.text}></Text>
         </View>
         <View style={{flex: 1}}>
           <Text style={styles.text}></Text>
@@ -229,6 +231,9 @@ const TableConcoursSb = props => {
             <Text style={styles.text}>
               {t('competition:performance').substring(0, 4) + '.'}
             </Text>
+          </View>
+          <View style={{flex: 1}}>
+            <Text style={styles.text}>{t('competition:place')}</Text>
           </View>
           <View style={{flex: 1}}>
             <Text style={styles.text}>{t('competition:fourth')}</Text>

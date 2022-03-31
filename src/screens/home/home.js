@@ -133,12 +133,16 @@ const Home = props => {
       /*dateEpreuve:
         compete.EpreuveConcoursComplet.TourConcoursComplet
           .LstSerieConcoursComplet[0].DateHeureSerie,*/
-      nomCompetition: compete.NomCompetition,
-      lieuCompetition: compete.Stade,
+      nomCompetition: compete.NomCompetition?.toString(),
+      lieuCompetition:
+        compete.Stade?.toString() != null
+          ? compete.Stade?.toString()
+          : compete.Lieu?.toString(),
       competitionInfo:
-        moment(compete.DateDebutCompetition.toString(), moment.ISO_8601).format(
-          i18n.language == 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY',
-        ) +
+        moment(
+          compete.DateDebutCompetition?.toString(),
+          moment.ISO_8601,
+        ).format(i18n.language == 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY') +
         ' - ' +
         compete.NomCompetition,
     };
