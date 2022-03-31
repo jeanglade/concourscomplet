@@ -9,6 +9,9 @@
 // Includes from @react-native-community/datetimepicker
 #include <winrt/DateTimePicker.h>
 
+// Includes from @react-native-community/netinfo
+#include <winrt/ReactNativeNetInfo.h>
+
 // Includes from @react-native-picker/picker
 #include <winrt/ReactNativePicker.h>
 
@@ -36,6 +39,8 @@ void RegisterAutolinkedNativeModulePackages(winrt::Windows::Foundation::Collecti
     packageProviders.Append(winrt::ReactNativeAsyncStorage::ReactPackageProvider());
     // IReactPackageProviders from @react-native-community/datetimepicker
     packageProviders.Append(winrt::DateTimePicker::ReactPackageProvider());
+    // IReactPackageProviders from @react-native-community/netinfo
+    packageProviders.Append(winrt::ReactNativeNetInfo::ReactPackageProvider());
     // IReactPackageProviders from @react-native-picker/picker
     packageProviders.Append(winrt::ReactNativePicker::ReactPackageProvider());
     // IReactPackageProviders from react-native-blob-util

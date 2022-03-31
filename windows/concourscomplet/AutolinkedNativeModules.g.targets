@@ -10,6 +10,10 @@
     <ProjectReference Include="$(ProjectDir)..\..\node_modules\@react-native-community\datetimepicker\windows\DateTimePickerWindows\DateTimePickerWindows.vcxproj">
       <Project>{0986a4db-8e72-4bb7-ae32-7d9df1758a9d}</Project>
     </ProjectReference>
+    <!-- Projects from @react-native-community/netinfo -->
+    <ProjectReference Include="$(ProjectDir)..\..\node_modules\@react-native-community\netinfo\windows\RNCNetInfoCPP\RNCNetInfoCPP.vcxproj">
+      <Project>{37e37094-01b3-44a5-aab7-f0379b1ce8fa}</Project>
+    </ProjectReference>
     <!-- Projects from @react-native-picker/picker -->
     <ProjectReference Include="$(ProjectDir)..\..\node_modules\@react-native-picker\picker\windows\ReactNativePicker\ReactNativePicker.vcxproj">
       <Project>{bedcc600-4541-41f2-aa46-9e058202b6ad}</Project>

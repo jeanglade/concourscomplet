@@ -9,7 +9,7 @@ Technologies nécessaires :
 - [Git](https://git-scm.com/downloads)
 - [npm](https://nodejs.org/fr/download/)
 - [React Native](https://reactnative.dev/docs/0.67/environment-setup)
-  - [React Native for Windows](https://microsoft.github.io/react-native-windows/) - automatiquement ajouté via le package.json
+  - [React Native for Windows](https://microsoft.github.io/react-native-windows/docs/rnw-dependencies)
 
 Développé avec [Visual Studio Code](https://code.visualstudio.com/Download)
 
