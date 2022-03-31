@@ -119,11 +119,9 @@ buck-out
 .gradle
 local.properties
 *.iml
-/android/gradle
 /android/.idea
 /android/build
 /android/app/proguard-rules.pro
-/android/app/debug.keystore
 /android/app/BUCK
 /android/app/build_defs.bzl
 /android/app/src/debug
