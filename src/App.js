@@ -6,7 +6,7 @@ import {QueryClient, QueryClientProvider} from 'react-query';
 import {LogBox} from 'react-native';
 
 import './config/IMLocalize';
-import Navigations from './navigations';
+import Navigation from './navigation';
 
 LogBox.ignoreLogs([
   "[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!",
@@ -25,7 +25,7 @@ export default class App extends Component {
       <>
         <QueryClientProvider client={queryClient}>
           <NavigationContainer>
-            <Navigations />
+            <Navigation />
           </NavigationContainer>
         </QueryClientProvider>
         <FlashMessage position="top" />

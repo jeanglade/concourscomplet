@@ -15,7 +15,7 @@ module.exports = function (api) {
             _config: path.resolve(__dirname, 'src/config/'),
             _icons: path.resolve(__dirname, 'src/icons/'),
             _screens: path.resolve(__dirname, 'src/screens/'),
-            _navigations: path.resolve(__dirname, 'src/navigations/'),
+            _navigation: path.resolve(__dirname, 'src/navigation/'),
             _components: path.resolve(__dirname, 'src/components/'),
           },
         },
