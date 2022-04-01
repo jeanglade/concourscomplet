@@ -110,11 +110,10 @@ const TableCompetition = props => {
 
   //Renvoie les concours de la competition visible
   const tableDataFilter = () => {
-    return props.tableData.filter(x => {
-      return (
-        JSON.parse(x.data).GuidCompetition === props.competition?.idCompetition
-      );
-    });
+    return props.tableData.filter(
+      d =>
+        JSON.parse(d.data).GuidCompetition === props.competition?.idCompetition,
+    );
   };
 
   const Item = ({id, date, epreuve, statut, item}) => (

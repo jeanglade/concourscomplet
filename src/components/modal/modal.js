@@ -1,38 +1,51 @@
-import React, {useState} from 'react';
-import {View, SafeAreaView, Modal, Image, StyleSheet} from 'react-native';
+import React from 'react';
+import {
+  View,
+  SafeAreaView,
+  Modal,
+  Image,
+  StyleSheet,
+  Platform,
+} from 'react-native';
+import {Popup} from 'react-native-windows';
 import {Button} from '_components';
 import {colors} from '_config';
 
 const MyModal = props => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const contentModal = (
+    <View style={styles.modalView}>
+      <Button
+        onPress={() => props.setModalVisible(false)}
+        styleView={styles.iconClosePosition}
+        content={
+          <Image
+            style={styles.iconClose}
+            source={require('../../icons/close.png')}
+          />
+        }
+      />
+      {props.contentModal}
+    </View>
+  );
+
   return (
     <SafeAreaView>
       <Button
-        onPress={() => setModalVisible(true)}
+        onPress={() => props.setModalVisible(true)}
         styleView={props.buttonStyleView}
         content={props.buttonContent}
       />
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Button
-              onPress={() => setModalVisible(false)}
-              styleView={styles.iconClosePosition}
-              content={
-                <Image
-                  style={styles.iconClose}
-                  source={require('../../icons/close.png')}
-                />
-              }
-            />
-            {props.contentModal}
-          </View>
-        </View>
-      </Modal>
+      {Platform.OS == 'ios' || Platform.OS == 'android' ? (
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={props.modalVisible}
+          onRequestClose={() => props.setModalVisible(false)}>
+          <View style={styles.centeredView}>{contentModal}</View>
+        </Modal>
+      ) : (
+        <Popup isOpen={props.modalVisible}>{contentModal}</Popup>
+      )}
     </SafeAreaView>
   );
 };

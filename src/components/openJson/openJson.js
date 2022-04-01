@@ -39,6 +39,9 @@ const OpenJson = props => {
     }
     Keyboard.dismiss();
     setCodeConcours(null);
+    if (props.setModalVisible) {
+      props.setModalVisible(false);
+    }
   };
 
   return (
@@ -61,13 +64,16 @@ const OpenJson = props => {
         />
         <View style={styles.dividerLeft}>
           <Button
-            onPress={() =>
+            onPress={() => {
               pickOneDeviceFile(
                 t,
                 props.showMessage,
                 props.addOneSerieDataTable,
-              )
-            }
+              );
+              if (props.setModalVisible) {
+                props.setModalVisible(false);
+              }
+            }}
             styleView={styles.button}
             content={
               <Text style={styles.textButton}>

@@ -10,7 +10,6 @@ import {useTranslation} from 'react-i18next';
 
 const Home = props => {
   const [t] = useTranslation();
-
   //Tableau avec toutes les données concours complet
   const [tableData, setTableData] = useState([]);
   //Information de la compétition des concours affichés
@@ -18,51 +17,54 @@ const Home = props => {
   //Liste des compétitions
   const [allCompetitions, setAllCompetitions] = useState([]);
 
+  // Chargement des concours existants
+  const getAllSeries = async () => {
+    const keys = await getAllKeys();
+    await addSeriesDataTable(keys.filter(key => key.match(/.+\.json/g)));
+  };
+
   // Initialise la liste des concours complets déjà présents
   useEffect(() => {
-    // Ajoute plusieurs concours
-    const addSeriesDataTable = async keys => {
-      if (keys.length > 0) {
-        // Récupère les clés/valeurs des concours non chargés
-        const listKeyValue = await getFiles(
-          keys.filter(key => tableData.find(x => (x.key = key)) === undefined),
-        );
-        listKeyValue.forEach(keyValue => {
-          //Met à jour les données des concours en triant par ordre croissant par date
-          setTableData(() =>
-            [...tableData, getInfoSerie(keyValue[0], keyValue[1])].sort(
-              (a, b) => {
-                return a.date > b.date;
-              },
-            ),
-          );
-        });
-      }
-    };
-    // Chargement des concours existants
-    const getAllSeries = async () => {
-      const keys = await getAllKeys();
-      await addSeriesDataTable(keys.filter(key => key.match(/.+\.json/g)));
-    };
-    const getAllCompetitionsInfo = () => {
-      var result = [];
-      tableData.forEach(compete => {
-        // Si la compétition n'est pas déjà présente dans result
-        if (
-          !result
-            .map(a => a.idCompetition)
-            .includes(JSON.parse(compete.data).GuidCompetition)
-        ) {
-          result.push(getCompetitionInfo(compete.data));
-        }
-      });
-      return result;
-    };
     getAllSeries();
     var competitions = getAllCompetitionsInfo();
     setAllCompetitions(competitions);
     setCompetition(getLastCompetition(competitions));
-  }, [tableData]);
+  }, []);
+
+  // Ajoute plusieurs concours
+  const addSeriesDataTable = async keys => {
+    if (keys.length > 0) {
+      // Récupère les clés/valeurs des concours non chargés
+      const listKeyValue = await getFiles(
+        keys.filter(key => tableData.find(x => x.id === key) === undefined),
+      );
+      listKeyValue.forEach(keyValue => {
+        //Met à jour les données des concours en triant par ordre croissant par date
+        setTableData(() =>
+          [...tableData, getInfoSerie(keyValue[0], keyValue[1])].sort(
+            (a, b) => {
+              return a.date > b.date;
+            },
+          ),
+        );
+      });
+    }
+  };
+
+  const getAllCompetitionsInfo = () => {
+    var result = [];
+    tableData.forEach(compete => {
+      // Si la compétition n'est pas déjà présente dans result
+      if (
+        !result
+          .map(a => a.idCompetition)
+          .includes(JSON.parse(compete.data).GuidCompetition)
+      ) {
+        result.push(getCompetitionInfo(compete.data));
+      }
+    });
+    return result;
+  };
 
   // Ajoute 1 concours
   const addOneSerieDataTable = async (key, data = null) => {

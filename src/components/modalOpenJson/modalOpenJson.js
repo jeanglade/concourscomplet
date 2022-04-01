@@ -1,11 +1,15 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {colors} from '_config';
 import {OpenJson, Modal} from '_components';
 import {Image, StyleSheet} from 'react-native';
 
 const ModalOpenJson = props => {
+  const [modalVisible, setModalVisible] = useState(false);
+
   return (
     <Modal
+      modalVisible={modalVisible}
+      setModalVisible={setModalVisible}
       buttonStyleView={styles.iconPosition}
       buttonContent={
         <Image
@@ -15,6 +19,7 @@ const ModalOpenJson = props => {
       }
       contentModal={
         <OpenJson
+          setModalVisible={setModalVisible}
           addOneSerieDataTable={props.addOneSerieDataTable}
           showMessage={props.showMessage}
         />
