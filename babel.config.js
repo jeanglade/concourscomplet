@@ -17,6 +17,11 @@ module.exports = function (api) {
             _screens: path.resolve(__dirname, 'src/screens/'),
             _navigation: path.resolve(__dirname, 'src/navigation/'),
             _components: path.resolve(__dirname, 'src/components/'),
+            _homeComponents: path.resolve(__dirname, 'src/components/home/'),
+            _concoursComponents: path.resolve(
+              __dirname,
+              'src/components/concours/',
+            ),
           },
         },
       ],

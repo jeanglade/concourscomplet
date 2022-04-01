@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, SafeAreaView, View} from 'react-native';
-import {colors} from '_config';
 import {showMessage} from 'react-native-flash-message';
-import {TableConcoursSb} from '_components';
 
-function CompetitionSheet(props) {
+import {TableConcoursSb} from '_concoursComponents';
+import {colors} from '_config';
+
+function FeuilleDeConcours(props) {
   //Initialisation des données du concours
   const dataConcours = props.route.params.item;
   const compData = JSON.parse(dataConcours.data);
@@ -69,4 +70,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CompetitionSheet;
+export default FeuilleDeConcours;

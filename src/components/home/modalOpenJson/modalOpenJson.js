@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {colors} from '_config';
-import {OpenJson, Modal} from '_components';
+import {Modal} from '_components';
+import {OpenJson} from '_homeComponents';
 import {Image, StyleSheet} from 'react-native';
 
 const ModalOpenJson = props => {

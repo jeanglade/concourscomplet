@@ -35,7 +35,7 @@ const MyModal = props => {
         styleView={props.buttonStyleView}
         content={props.buttonContent}
       />
-      {Platform.OS == 'ios' || Platform.OS == 'android' ? (
+      {Platform.OS === 'ios' || Platform.OS === 'android' ? (
         <Modal
           animationType="fade"
           transparent={true}

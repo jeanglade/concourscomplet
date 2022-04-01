@@ -1,12 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import i18n from 'i18next';
 import moment from 'moment';
 import {showMessage} from 'react-native-flash-message';
-import {colors} from '_config';
-import {OpenJson, TableCompetition, ModalOpenJson} from '_components';
 import {SafeAreaView, StyleSheet} from 'react-native';
-import {getAllKeys, getFile, getFiles} from '../../utils/myAsyncStorage';
 import {useTranslation} from 'react-i18next';
+
+import {getAllKeys, getFile, getFiles} from '../../utils/myAsyncStorage';
+import {OpenJson, TableCompetition, ModalOpenJson} from '_homeComponents';
+import {colors} from '_config';
 
 const Home = props => {
   const [t] = useTranslation();
@@ -18,42 +19,48 @@ const Home = props => {
   const [allCompetitions, setAllCompetitions] = useState([]);
 
   // Chargement des concours existants
-  const getAllSeries = async () => {
+  const getAllSeries = async tab => {
     const keys = await getAllKeys();
-    await addSeriesDataTable(keys.filter(key => key.match(/.+\.json/g)));
+    await addSeriesDataTable(
+      keys.filter(key => key.match(/.+\.json/g)),
+      tab,
+    );
   };
 
-  // Initialise la liste des concours complets déjà présents
-  useEffect(() => {
-    getAllSeries();
-    var competitions = getAllCompetitionsInfo();
+  const resfreshData = useCallback(() => {
+    const tab = tableData;
+    getAllSeries(tab);
+    var competitions = getAllCompetitionsInfo(tab);
     setAllCompetitions(competitions);
     setCompetition(getLastCompetition(competitions));
   }, []);
 
+  // Initialise la liste des concours complets déjà présents
+  useEffect(() => {
+    resfreshData();
+  }, [resfreshData]);
+
   // Ajoute plusieurs concours
-  const addSeriesDataTable = async keys => {
+  const addSeriesDataTable = async (keys, tab) => {
     if (keys.length > 0) {
       // Récupère les clés/valeurs des concours non chargés
       const listKeyValue = await getFiles(
-        keys.filter(key => tableData.find(x => x.id === key) === undefined),
+        keys.filter(key => tab.find(x => x.id === key) === undefined),
       );
       listKeyValue.forEach(keyValue => {
         //Met à jour les données des concours en triant par ordre croissant par date
-        setTableData(() =>
-          [...tableData, getInfoSerie(keyValue[0], keyValue[1])].sort(
-            (a, b) => {
-              return a.date > b.date;
-            },
-          ),
+        setTableData(oldTab =>
+          [...oldTab, getInfoSerie(keyValue[0], keyValue[1])].sort((a, b) => {
+            return a.date > b.date;
+          }),
         );
       });
     }
   };
 
-  const getAllCompetitionsInfo = () => {
+  const getAllCompetitionsInfo = tab => {
     var result = [];
-    tableData.forEach(compete => {
+    tab.forEach(compete => {
       // Si la compétition n'est pas déjà présente dans result
       if (
         !result
@@ -74,8 +81,8 @@ const Home = props => {
           data = await getFile(key);
         }
         //Met à jour les données des concours en triant par ordre croissant par date
-        setTableData(() =>
-          [...tableData, getInfoSerie(key, data)].sort((a, b) => {
+        setTableData(tab =>
+          [...tab, getInfoSerie(key, data)].sort((a, b) => {
             return a.date > b.date;
           }),
         );

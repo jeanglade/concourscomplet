@@ -2,9 +2,10 @@ import React from 'react';
 import {StyleSheet, Text, View, Image, Alert} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
-import {removeFile, removeFiles} from '../../utils/myAsyncStorage';
-import {useOrientation} from '../../utils/useOrientation';
-import {DropdownCompetition, Button, DataTable} from '_components';
+import {removeFile, removeFiles} from '../../../utils/myAsyncStorage';
+import {useOrientation} from '../../../utils/useOrientation';
+import {Button, DataTable} from '_components';
+import {DropdownCompetition} from '_homeComponents';
 
 const TableCompetition = props => {
   const [t] = useTranslation();
@@ -140,7 +141,7 @@ const TableCompetition = props => {
           <Button
             styleView={[styles.cellButton]}
             onPress={() => {
-              props.navigation.navigate('CompetitionSheet', {
+              props.navigation.navigate('FeuilleDeConcours', {
                 item: item,
               });
             }}

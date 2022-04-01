@@ -3,8 +3,8 @@ import {View, Image, StyleSheet} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {useTranslation} from 'react-i18next';
 
-import {Home, CompetitionSheet} from '_screens';
-import {ButtonInfoApp} from '_components';
+import {Home, FeuilleDeConcours} from '_screens';
+import {ButtonInfoApp} from '_homeComponents';
 import {colors} from '_config';
 
 const Stack = createStackNavigator();
@@ -47,8 +47,8 @@ function AppNavigator() {
         }}
       />
       <Stack.Screen
-        name="CompetitionSheet"
-        component={CompetitionSheet}
+        name="FeuilleDeConcours"
+        component={FeuilleDeConcours}
         options={{
           title: t('common:competition_sheet'),
         }}
