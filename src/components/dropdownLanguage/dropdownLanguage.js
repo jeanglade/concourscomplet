@@ -9,7 +9,6 @@ const DropdownLanguage = () => {
   return (
     <Picker
       style={styles.picker}
-      itemStyle={styles.pickerItem}
       selectedValue={i18n.language}
       dropdownIconColor={colors.ffa_blue_light}
       dropdownIconRippleColor={colors.ffa_blue_light}
@@ -25,11 +24,6 @@ const styles = StyleSheet.create({
   picker: {
     marginHorizontal: 10,
     width: 100,
-    //marginEnd: -50,
-    //backgroundColor: colors.ffa_blue_light,
-  },
-  pickerItem: {
-    //backgroundColor: colors.ffa_blue_light,
   },
 });
 

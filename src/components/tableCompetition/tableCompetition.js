@@ -1,18 +1,10 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableWithoutFeedback,
-  Image,
-  Alert,
-  FlatList,
-} from 'react-native';
+import {StyleSheet, Text, View, Image, Alert} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
 import {removeFile, removeFiles} from '../../utils/myAsyncStorage';
 import {useOrientation} from '../../utils/useOrientation';
-import {DropdownCompetition} from '_components';
+import {DropdownCompetition, Button, DataTable} from '_components';
 
 const TableCompetition = props => {
   const [t] = useTranslation();
@@ -68,7 +60,64 @@ const TableCompetition = props => {
     return res;
   };
 
-  const Item = ({id, data, date, epreuve, statut, item, index}) => (
+  //Suppression d un concours
+  const alertDeleteConcours = (id, epreuve) => {
+    Alert.alert(t('toast:confirm_delete'), epreuve, [
+      {
+        text: t('toast:cancel'),
+      },
+      {
+        text: t('toast:ok'),
+        onPress: async () => {
+          await removeFile(id);
+          props.setTableData(
+            props.tableData.filter((i, itemIndex) => i.id !== id),
+          );
+          props.showMessage({
+            message: t('toast:file_deleted'),
+            type: 'success',
+          });
+        },
+      },
+    ]);
+  };
+
+  //Suppression de tous les concours d une competition
+  const alertDeleteCompetition = () => {
+    Alert.alert(t('toast:confirm_delete'), props.competition.nomCompetition, [
+      {
+        text: t('toast:cancel'),
+      },
+      {
+        text: t('toast:ok'),
+        onPress: async () => {
+          const ids = props.tableData
+            .filter(x => {
+              return (
+                JSON.parse(x.data).GuidCompetition ===
+                props.competition?.idCompetition
+              );
+            })
+            .map(x => x.id);
+          await removeFiles(ids);
+          props.setTableData(
+            props.tableData.filter((item, itemIndex) => !ids.includes(item.id)),
+          );
+        },
+      },
+    ]);
+  };
+
+  //Renvoie les concours de la competition visible
+  const tableDataFilter = () => {
+    return props.tableData.filter(x => {
+      return (
+        JSON.parse(x.data).GuidCompetition === props.competition?.idCompetition
+      );
+    });
+  };
+
+  const Item = ({id, date, epreuve, statut, item}) => (
     <>
       <View style={styles.item}>
         <View style={styles.flex2}>
@@ -89,63 +138,33 @@ const TableCompetition = props => {
           </Text>
         </View>
         <View style={[styles.actions, styles.flex2]}>
-          <TouchableWithoutFeedback
+          <Button
+            styleView={[styles.cellButton]}
             onPress={() => {
               props.navigation.navigate('CompetitionSheet', {
                 item: item,
               });
-            }}>
-            <View style={[styles.cellButton]}>
+            }}
+            content={
               <Image
                 style={styles.icon}
                 source={require('../icons/list.png')}
               />
-            </View>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              Alert.alert(t('toast:confirm_delete'), epreuve, [
-                {
-                  text: t('toast:cancel'),
-                },
-                {
-                  text: t('toast:ok'),
-                  onPress: async () => {
-                    await removeFile(id);
-                    props.setTableData(
-                      props.tableData.filter((i, itemIndex) => i.id !== id),
-                    );
-                    props.showMessage({
-                      message: t('toast:file_deleted'),
-                      type: 'success',
-                    });
-                  },
-                },
-              ]);
-            }}>
-            <View style={[styles.cellButton, styles.backRed]}>
+            }
+          />
+          <Button
+            styleView={[styles.cellButton, styles.backRed]}
+            onPress={() => alertDeleteConcours(id, epreuve)}
+            content={
               <Image
                 style={styles.icon}
                 source={require('../icons/delete.png')}
               />
-            </View>
-          </TouchableWithoutFeedback>
+            }
+          />
         </View>
       </View>
     </>
-  );
-
-  const renderItem = ({item, index}) => (
-    <Item
-      key={index}
-      id={item.id}
-      data={item.data}
-      date={item.dateInfo}
-      epreuve={item.epreuve}
-      statut={item.statut}
-      item={item}
-      index={index}
-    />
   );
 
   return (
@@ -154,116 +173,76 @@ const TableCompetition = props => {
         styles.containerCenter,
         orientation === 'LANDSCAPE' && styles.containerSize,
       ]}>
-      <View style={styles.containerTitle}>
-        {props.allCompetitions.length === 1 && (
-          <Text style={styles.titleText}>
-            {props.competition.nomCompetition}
-          </Text>
-        )}
-        {props.allCompetitions.length > 1 && (
-          <DropdownCompetition
-            orientation={orientation}
-            competition={props.competition}
-            setCompetition={props.setCompetition}
-            allCompetitions={props.allCompetitions}
-          />
-        )}
-        <TouchableWithoutFeedback
-          onPress={() => {
-            Alert.alert(
-              t('toast:confirm_delete'),
-              props.competition.nomCompetition,
-              [
-                {
-                  text: t('toast:cancel'),
-                },
-                {
-                  text: t('toast:ok'),
-                  onPress: async () => {
-                    const ids = props.tableData
-                      .filter(x => {
-                        return (
-                          JSON.parse(x.data).GuidCompetition ===
-                          props.competition?.idCompetition
-                        );
-                      })
-                      .map(x => x.id);
-                    await removeFiles(ids);
-                    props.setTableData(
-                      props.tableData.filter(
-                        (item, itemIndex) => !ids.includes(item.id),
-                      ),
-                    );
-                  },
-                },
-              ],
-            );
-          }}>
-          <View
-            style={[
+      {/* Titres */}
+      <>
+        <View style={styles.containerTitle}>
+          {/* S il y a 1 seule competition */}
+          {props.allCompetitions.length === 1 && (
+            <Text style={styles.titleText}>
+              {props.competition.nomCompetition}
+            </Text>
+          )}
+          {/* S il y a plusieurs competitions */}
+          {props.allCompetitions.length > 1 && (
+            <DropdownCompetition
+              orientation={orientation}
+              competition={props.competition}
+              setCompetition={props.setCompetition}
+              allCompetitions={props.allCompetitions}
+            />
+          )}
+          {/* Button de suppression de tous les concours d une competition */}
+          <Button
+            onPress={alertDeleteCompetition}
+            styleView={[
               styles.cellButton,
               styles.backRed,
               styles.buttonDeleteCompetition,
-            ]}>
-            <Image
-              style={styles.icon}
-              source={require('../icons/delete.png')}
-            />
-          </View>
-        </TouchableWithoutFeedback>
-      </View>
-      {props.competition?.lieuCompetition?.toString() && (
-        <Text style={[styles.text, styles.textCenter]}>
-          {props.competition.lieuCompetition?.toString()}
-        </Text>
-      )}
-      <Text
-        style={[
-          styles.text,
-          styles.textCenter,
-          {color: colors.ffa_blue_light},
-        ]}>
-        {
-          props.tableData.filter(x => {
-            return (
-              JSON.parse(x.data).GuidCompetition ===
-              props.competition?.idCompetition
-            );
-          }).length
-        }{' '}
-        {t('common:list_competion_sheets')}
-      </Text>
-      <View style={styles.flex1}>
-        <View style={styles.headerTable}>
-          <View style={styles.flex2}>
-            <Text style={styles.text}>{t('common:date')}</Text>
-          </View>
-          <View style={styles.flex5}>
-            <Text style={styles.text}>{t('common:discipline')}</Text>
-          </View>
-          <View style={styles.flex1}>
-            <Text style={styles.text}>{t('common:status')}</Text>
-          </View>
-          <View style={styles.flex2}>
-            <Text style={styles.text}>{t('common:actions')}</Text>
-          </View>
-        </View>
-        <View style={styles.flex1}>
-          <FlatList
-            contentContainerStyle={styles.flexGrow1}
-            data={props.tableData.filter(x => {
-              return (
-                JSON.parse(x.data).GuidCompetition ===
-                props.competition?.idCompetition
-              );
-            })}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => {
-              return index;
-            }}
+            ]}
+            content={
+              <Image
+                style={styles.icon}
+                source={require('../icons/delete.png')}
+              />
+            }
           />
         </View>
-      </View>
+        {/* Lieu de la competition */}
+        {props.competition?.lieuCompetition?.toString() && (
+          <Text style={[styles.text, styles.textCenter]}>
+            {props.competition.lieuCompetition?.toString()}
+          </Text>
+        )}
+        {/* Nombre de concours dans la competition */}
+        <Text
+          style={[
+            styles.text,
+            styles.textCenter,
+            {color: colors.ffa_blue_light},
+          ]}>
+          {tableDataFilter().length} {t('common:list_competion_sheets')}
+        </Text>
+      </>
+      {/* Liste des concours */}
+      <DataTable
+        headerTable={[
+          {type: 'text', flex: 2, text: t('common:date')},
+          {type: 'text', flex: 5, text: t('common:discipline')},
+          {type: 'text', flex: 1, text: t('common:status')},
+          {type: 'text', flex: 2, text: t('common:actions')},
+        ]}
+        tableData={tableDataFilter()}
+        renderItem={({item, index}) => (
+          <Item
+            key={index}
+            id={item.id}
+            date={item.dateInfo}
+            epreuve={item.epreuve}
+            statut={item.statut}
+            item={item}
+          />
+        )}
+      />
     </View>
   );
 };
@@ -294,12 +273,6 @@ const styles = StyleSheet.create({
     margin: 1,
     paddingLeft: 10,
     alignItems: 'center',
-  },
-  headerTable: {
-    flexDirection: 'row',
-    paddingLeft: 10,
-    paddingBottom: 5,
-    marginTop: 20,
   },
   text: {
     color: colors.black,

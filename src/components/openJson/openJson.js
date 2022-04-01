@@ -1,12 +1,5 @@
 import React, {useState} from 'react';
-import {
-  StyleSheet,
-  TextInput,
-  Text,
-  View,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from 'react-native';
+import {StyleSheet, TextInput, Text, View, Keyboard} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
 import {validateCompetitionCode} from '../../utils/webService';
@@ -14,21 +7,28 @@ import {saveEachSerie} from '../../utils/myAsyncStorage';
 import {pickOneDeviceFile} from '../../utils/localService';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {showMessage} from 'react-native-flash-message';
+import {Button} from '_components';
 
 const OpenJson = props => {
   const [t] = useTranslation();
-  const [codeCompetition, setCodeCompetition] = useState(null);
+  const [codeConcours, setCodeConcours] = useState(null);
   const netInfo = useNetInfo();
 
   const manageCode = async () => {
+    //S il y a internet
     if (netInfo.isConnected) {
-      const myjson = await validateCompetitionCode(
-        codeCompetition,
+      const jsonContent = await validateCompetitionCode(
+        codeConcours,
         t,
         props.showMessage,
       );
-      if (myjson != null) {
-        saveEachSerie(myjson, t, props.showMessage, props.addOneSerieDataTable);
+      if (jsonContent != null) {
+        saveEachSerie(
+          jsonContent,
+          t,
+          props.showMessage,
+          props.addOneSerieDataTable,
+        );
       }
     } else {
       console.error(t('toast:no_internet_connexion'));
@@ -38,7 +38,7 @@ const OpenJson = props => {
       });
     }
     Keyboard.dismiss();
-    setCodeCompetition(null);
+    setCodeConcours(null);
   };
 
   return (
@@ -47,31 +47,34 @@ const OpenJson = props => {
       <View style={styles.row}>
         <TextInput
           style={styles.textinput}
-          onChangeText={setCodeCompetition}
-          value={codeCompetition}
+          onChangeText={setCodeConcours}
+          value={codeConcours}
           placeholder={t('common:code')}
           placeholderTextColor={colors.muted}
         />
-        <TouchableWithoutFeedback onPress={manageCode}>
-          <View style={styles.button}>
+        <Button
+          onPress={manageCode}
+          styleView={styles.button}
+          content={
             <Text style={styles.textButton}>{t('common:validate')}</Text>
-          </View>
-        </TouchableWithoutFeedback>
+          }
+        />
         <View style={styles.dividerLeft}>
-          <TouchableWithoutFeedback
+          <Button
             onPress={() =>
               pickOneDeviceFile(
                 t,
                 props.showMessage,
                 props.addOneSerieDataTable,
               )
-            }>
-            <View style={styles.button}>
+            }
+            styleView={styles.button}
+            content={
               <Text style={styles.textButton}>
                 {t('common:via_local_file')}
               </Text>
-            </View>
-          </TouchableWithoutFeedback>
+            }
+          />
         </View>
       </View>
     </View>
@@ -123,14 +126,6 @@ const styles = StyleSheet.create({
     borderColor: colors.muted,
     borderLeftWidth: 1,
     borderWidth: 0,
-  },
-  buttonWithIcon: {
-    alignItems: 'center',
-    backgroundColor: colors.ffa_blue_dark,
-    padding: 20,
-    marginHorizontal: 15,
-    borderWidth: 3,
-    borderColor: colors.ffa_blue_light,
   },
 });
 

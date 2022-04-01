@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, FlatList, TextInput} from 'react-native';
+import {StyleSheet, Text, View, TextInput} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
+import {DataTable} from '_components';
 
 const TableConcoursSb = props => {
   const [t] = useTranslation();
@@ -208,65 +209,29 @@ const TableConcoursSb = props => {
 
   return (
     <View style={[styles.containerCenter]}>
-      <View style={styles.flex1}>
-        <View style={styles.headerTable}>
-          <View style={styles.flex1}>
-            <Text style={styles.text}>{t('competition:order')}</Text>
-          </View>
-          {hasDossard && (
-            <View style={styles.flex1}>
-              <Text style={styles.text}>{t('competition:number')}</Text>
-            </View>
-          )}
-          <View style={styles.flex4}>
-            <Text style={styles.text}>{t('competition:athlete')}</Text>
-          </View>
-          <View style={styles.flex1}>
-            <Text style={styles.text}>{t('competition:first')}</Text>
-          </View>
-          <View style={styles.flex1}>
-            <Text style={styles.text}>{t('competition:second')}</Text>
-          </View>
-          <View style={styles.flex1}>
-            <Text style={styles.text}>{t('competition:third')}</Text>
-          </View>
-          <View style={styles.flex1}>
-            <Text style={styles.text}>
-              {t('competition:performance').substring(0, 4) + '.'}
-            </Text>
-          </View>
-          <View style={styles.flex1}>
-            <Text style={styles.text}>{t('competition:place')}</Text>
-          </View>
-          <View style={styles.flex1}>
-            <Text style={styles.text}>{t('competition:fourth')}</Text>
-          </View>
-          <View style={styles.flex1}>
-            <Text style={styles.text}>{t('competition:fifth')}</Text>
-          </View>
-          <View style={styles.flex1}>
-            <Text style={styles.text}>{t('competition:six')}</Text>
-          </View>
-          <View style={styles.flex2}>
-            <Text style={styles.text}>{t('competition:performance')}</Text>
-          </View>
-          <View style={styles.flex1}>
-            <Text style={styles.text}>{t('competition:place')}</Text>
-          </View>
-        </View>
-        <View style={styles.flex1}>
-          <FlatList
-            contentContainerStyle={{
-              flexGrow: 1,
-            }}
-            data={props.tableData}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => {
-              return index;
-            }}
-          />
-        </View>
-      </View>
+      <DataTable
+        headerTable={[
+          {type: 'text', flex: 1, text: t('competition:order')},
+          hasDossard && {type: 'text', flex: 1, text: t('competition:number')},
+          {type: 'text', flex: 4, text: t('competition:athlete')},
+          {type: 'text', flex: 1, text: t('competition:first')},
+          {type: 'text', flex: 1, text: t('competition:second')},
+          {type: 'text', flex: 1, text: t('competition:third')},
+          {
+            type: 'text',
+            flex: 1,
+            text: t('competition:performance').substring(0, 4) + '.',
+          },
+          {type: 'text', flex: 1, text: t('competition:place')},
+          {type: 'text', flex: 1, text: t('competition:fourth')},
+          {type: 'text', flex: 1, text: t('competition:fifth')},
+          {type: 'text', flex: 1, text: t('competition:sixth')},
+          {type: 'text', flex: 2, text: t('competition:performance')},
+          {type: 'text', flex: 1, text: t('competition:place')},
+        ]}
+        tableData={props.tableData}
+        renderItem={renderItem}
+      />
     </View>
   );
 };
@@ -279,13 +244,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     flex: 1,
   },
-  titleText: {
-    fontSize: 20,
-    color: colors.ffa_blue_light,
-    margin: 15,
-    textAlign: 'center',
-    paddingVertical: 10,
-  },
   item: {
     flexDirection: 'row',
     backgroundColor: colors.gray_light,
@@ -293,11 +251,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     alignItems: 'center',
     paddingVertical: 5,
-  },
-  headerTable: {
-    flexDirection: 'row',
-    paddingHorizontal: 10,
-    paddingBottom: 5,
   },
   text: {
     color: colors.black,

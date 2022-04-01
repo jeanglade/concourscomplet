@@ -17,5 +17,5 @@ export default {
   third: '3ème',
   fourth: '4ème',
   fifth: '5ème',
-  six: '6ème',
+  sixth: '6ème',
 };

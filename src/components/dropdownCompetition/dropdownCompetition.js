@@ -24,26 +24,24 @@ const DropdownCompetition = props => {
     },
   });
   return (
-    <>
-      <View style={styles.viewDropdown}>
-        <Picker
-          style={styles.dropdown}
-          styleItem={styles.dropdownItem}
-          selectedValue={props.competition}
-          itemStyle={styles.dropdownItem}
-          dropdownIconColor={colors.black}
-          onValueChange={value => {
-            props.setCompetition(value);
-          }}
-          mode="dropdown">
-          {props.allCompetitions.map(rowData => {
-            return (
-              <Picker.Item label={rowData.competitionInfo} value={rowData} />
-            );
-          })}
-        </Picker>
-      </View>
-    </>
+    <View style={styles.viewDropdown}>
+      <Picker
+        style={styles.dropdown}
+        styleItem={styles.dropdownItem}
+        selectedValue={props.competition}
+        itemStyle={styles.dropdownItem}
+        dropdownIconColor={colors.black}
+        onValueChange={value => {
+          props.setCompetition(value);
+        }}
+        mode="dropdown">
+        {props.allCompetitions.map(rowData => {
+          return (
+            <Picker.Item label={rowData.competitionInfo} value={rowData} />
+          );
+        })}
+      </Picker>
+    </View>
   );
 };
 

@@ -1,33 +1,31 @@
 import React, {useState} from 'react';
 import DeviceInfo from 'react-native-device-info';
-import {
-  View,
-  Text,
-  TouchableWithoutFeedback,
-  Pressable,
-  StyleSheet,
-  Image,
-} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {colors} from '_config';
+import {Button} from '_components';
 
 const ButtonInfoApp = props => {
   const [t] = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <>
-      <TouchableWithoutFeedback onPress={() => setModalVisible(!modalVisible)}>
-        <View>
+      <Button
+        onPress={() => setModalVisible(!modalVisible)}
+        content={
           <Image style={styles.icon} source={require('../../icons/info.png')} />
-        </View>
-      </TouchableWithoutFeedback>
+        }
+      />
       {modalVisible && (
         <View style={styles.parent}>
-          <Pressable onPress={() => setModalVisible(!modalVisible)}>
-            <Text style={styles.text}>
-              {t('common:version')} {DeviceInfo.getVersion()}
-            </Text>
-          </Pressable>
+          <Button
+            onPress={() => setModalVisible(!modalVisible)}
+            content={
+              <Text style={styles.text}>
+                {t('common:version')} {DeviceInfo.getVersion()}
+              </Text>
+            }
+          />
         </View>
       )}
     </>
