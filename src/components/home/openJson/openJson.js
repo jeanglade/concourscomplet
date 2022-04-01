@@ -49,7 +49,7 @@ const OpenJson = props => {
       <Text style={styles.titleText}>{t('common:new_epreuve')}</Text>
       <View style={styles.row}>
         <TextInput
-          style={styles.textinput}
+          style={[styles.textinput, Platform.OS === 'windows' && {height: 55}]}
           onChangeText={setCodeConcours}
           value={codeConcours}
           placeholder={t('common:code')}
@@ -91,9 +91,9 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.white,
     marginHorizontal: 20,
     paddingBottom: 20,
+    backgroundColor: colors.white,
   },
   titleText: {
     fontSize: 20,

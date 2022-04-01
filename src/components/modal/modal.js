@@ -60,12 +60,11 @@ const styles = StyleSheet.create({
   // Revoir celle ci
   modalView: {
     backgroundColor: colors.white,
-    borderRadius: 15,
+    borderColor: Platform.OS === 'windows' ? colors.muted : colors.white,
+    borderWidth: Platform.OS === 'windows' ? 2 : 0,
+    borderBottomWidth: Platform.OS === 'windows' ? 3 : 0,
+    borderRadius: Platform.OS === 'windows' ? 0 : 15,
     padding: 20,
-    shadowColor: colors.black,
-    shadowOpacity: 0.25,
-    elevation: 100,
-    maxHeight: 200,
     alignItems: 'flex-end',
   },
   iconClosePosition: {position: 'absolute', top: 15, right: 15},

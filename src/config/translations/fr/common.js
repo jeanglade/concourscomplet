@@ -23,4 +23,5 @@ export default {
   in_progress: 'En cours',
   finished: 'Terminé',
   send_to_elogica: 'Envoyé',
+  choice_comp: 'Choix de la compétition',
 };

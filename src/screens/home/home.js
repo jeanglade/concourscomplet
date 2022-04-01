@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import i18n from 'i18next';
 import moment from 'moment';
 import {showMessage} from 'react-native-flash-message';
@@ -6,7 +6,12 @@ import {SafeAreaView, StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
 
 import {getAllKeys, getFile, getFiles} from '../../utils/myAsyncStorage';
-import {OpenJson, TableCompetition, ModalOpenJson} from '_homeComponents';
+import {
+  OpenJson,
+  TableCompetition,
+  ModalOpenJson,
+  ModalChoiceCompetition,
+} from '_homeComponents';
 import {colors} from '_config';
 
 const Home = props => {
@@ -21,22 +26,29 @@ const Home = props => {
   // Chargement des concours existants
   const getAllSeries = async tab => {
     const keys = await getAllKeys();
-    const result = await addSeriesDataTable(
+    const series = await addSeriesDataTable(
       keys.filter(key => key.match(/.+\.json/g)),
       tab,
     );
-    return result;
+    return series;
   };
 
-  // Initialise la liste des concours complets déjà présents
-  useEffect(() => {
+  function refreshData(tab) {
+    const competitions = getAllCompetitionsInfo(tab);
+    setTableData(tab);
+    setAllCompetitions(competitions);
+    setCompetition(getLastCompetition(competitions));
+  }
+
+  function initData() {
     const tab = tableData;
     getAllSeries(tab).then(tabSeries => {
-      const competitions = getAllCompetitionsInfo(tabSeries);
-      setTableData(tabSeries);
-      setAllCompetitions(competitions);
-      setCompetition(getLastCompetition(competitions));
+      refreshData(tabSeries);
     });
+  }
+  // Initialise la liste des concours complets déjà présents
+  useEffect(() => {
+    initData();
   }, []);
 
   // Ajoute plusieurs concours
@@ -49,12 +61,6 @@ const Home = props => {
       );
       listKeyValue.forEach(keyValue => {
         res.push(getInfoSerie(keyValue[0], keyValue[1]));
-        //Met à jour les données des concours en triant par ordre croissant par date
-        /*setTableData(oldTab =>
-          [...oldTab, getInfoSerie(keyValue[0], keyValue[1])].sort((a, b) => {
-            return a.date > b.date;
-          }),
-        );*/
       });
       return res.sort((a, b) => {
         return a.date > b.date;
@@ -79,17 +85,18 @@ const Home = props => {
 
   // Ajoute 1 concours
   const addOneSerieDataTable = async (key, data = null) => {
+    var tab = tableData;
     if (key.match(/.+\.json/g)) {
       if (tableData.filter(row => row.id === key).length === 0) {
         if (data == null) {
           data = await getFile(key);
         }
         //Met à jour les données des concours en triant par ordre croissant par date
-        setTableData(tab =>
-          [...tab, getInfoSerie(key, data)].sort((a, b) => {
-            return a.date > b.date;
-          }),
-        );
+        tab.push(getInfoSerie(key, data));
+        tab.sort((a, b) => {
+          return a.date > b.date;
+        });
+        refreshData(tab);
       }
     }
   };
@@ -178,6 +185,14 @@ const Home = props => {
             addOneSerieDataTable={addOneSerieDataTable}
             showMessage={showMessage}
           />
+          {/* S il y a plusieurs competitions */}
+          {allCompetitions.length > 1 && (
+            <ModalChoiceCompetition
+              competition={competition}
+              setCompetition={setCompetition}
+              allCompetitions={allCompetitions}
+            />
+          )}
           <TableCompetition
             showMessage={showMessage}
             tableData={tableData}

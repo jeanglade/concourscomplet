@@ -183,20 +183,9 @@ const TableCompetition = props => {
       <>
         <View style={styles.containerTitle}>
           {/* S il y a 1 seule competition */}
-          {props.allCompetitions.length === 1 && (
-            <Text style={styles.titleText}>
-              {props.competition?.nomCompetition?.toString()}
-            </Text>
-          )}
-          {/* S il y a plusieurs competitions */}
-          {props.allCompetitions.length > 1 && (
-            <DropdownCompetition
-              orientation={orientation}
-              competition={props.competition}
-              setCompetition={props.setCompetition}
-              allCompetitions={props.allCompetitions}
-            />
-          )}
+          <Text style={styles.titleText}>
+            {props.competition?.nomCompetition?.toString()}
+          </Text>
           {/* Button de suppression de tous les concours d une competition */}
           <Button
             onPress={alertDeleteCompetition}
