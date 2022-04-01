@@ -85,28 +85,34 @@ const TableCompetition = props => {
 
   //Suppression de tous les concours d une competition
   const alertDeleteCompetition = () => {
-    Alert.alert(t('toast:confirm_delete'), props.competition.nomCompetition, [
-      {
-        text: t('toast:cancel'),
-      },
-      {
-        text: t('toast:ok'),
-        onPress: async () => {
-          const ids = props.tableData
-            .filter(x => {
-              return (
-                JSON.parse(x.data).GuidCompetition ===
-                props.competition?.idCompetition
-              );
-            })
-            .map(x => x.id);
-          await removeFiles(ids);
-          props.setTableData(
-            props.tableData.filter((item, itemIndex) => !ids.includes(item.id)),
-          );
+    Alert.alert(
+      t('toast:confirm_delete'),
+      props.competition?.nomCompetition?.toString(),
+      [
+        {
+          text: t('toast:cancel'),
         },
-      },
-    ]);
+        {
+          text: t('toast:ok'),
+          onPress: async () => {
+            const ids = props.tableData
+              .filter(x => {
+                return (
+                  JSON.parse(x.data).GuidCompetition ===
+                  props.competition?.idCompetition
+                );
+              })
+              .map(x => x.id);
+            await removeFiles(ids);
+            props.setTableData(
+              props.tableData.filter(
+                (item, itemIndex) => !ids.includes(item.id),
+              ),
+            );
+          },
+        },
+      ],
+    );
   };
 
   //Renvoie les concours de la competition visible
@@ -179,7 +185,7 @@ const TableCompetition = props => {
           {/* S il y a 1 seule competition */}
           {props.allCompetitions.length === 1 && (
             <Text style={styles.titleText}>
-              {props.competition.nomCompetition}
+              {props.competition?.nomCompetition?.toString()}
             </Text>
           )}
           {/* S il y a plusieurs competitions */}

@@ -21,39 +21,43 @@ const Home = props => {
   // Chargement des concours existants
   const getAllSeries = async tab => {
     const keys = await getAllKeys();
-    await addSeriesDataTable(
+    const result = await addSeriesDataTable(
       keys.filter(key => key.match(/.+\.json/g)),
       tab,
     );
+    return result;
   };
-
-  const resfreshData = useCallback(() => {
-    const tab = tableData;
-    getAllSeries(tab);
-    var competitions = getAllCompetitionsInfo(tab);
-    setAllCompetitions(competitions);
-    setCompetition(getLastCompetition(competitions));
-  }, []);
 
   // Initialise la liste des concours complets déjà présents
   useEffect(() => {
-    resfreshData();
-  }, [resfreshData]);
+    const tab = tableData;
+    getAllSeries(tab).then(tabSeries => {
+      const competitions = getAllCompetitionsInfo(tabSeries);
+      setTableData(tabSeries);
+      setAllCompetitions(competitions);
+      setCompetition(getLastCompetition(competitions));
+    });
+  }, []);
 
   // Ajoute plusieurs concours
   const addSeriesDataTable = async (keys, tab) => {
+    var res = [];
     if (keys.length > 0) {
       // Récupère les clés/valeurs des concours non chargés
       const listKeyValue = await getFiles(
         keys.filter(key => tab.find(x => x.id === key) === undefined),
       );
       listKeyValue.forEach(keyValue => {
+        res.push(getInfoSerie(keyValue[0], keyValue[1]));
         //Met à jour les données des concours en triant par ordre croissant par date
-        setTableData(oldTab =>
+        /*setTableData(oldTab =>
           [...oldTab, getInfoSerie(keyValue[0], keyValue[1])].sort((a, b) => {
             return a.date > b.date;
           }),
-        );
+        );*/
+      });
+      return res.sort((a, b) => {
+        return a.date > b.date;
       });
     }
   };
