@@ -173,10 +173,10 @@ const Home = props => {
 
   const setChoiceCompetition = comp => {
     if (comp !== null && JSON.stringify(comp) !== JSON.stringify({})) {
-      if (comp.idCompetition !== competition?.idCompetition?.toString()) {
-        console.log('je passe la');
-        console.log(comp.toString());
-        refreshData(tableData, comp);
+      if (comp.idCompetition !== undefined) {
+        if (comp.idCompetition !== competition?.idCompetition?.toString()) {
+          refreshData(tableData, comp);
+        }
       }
     }
   };

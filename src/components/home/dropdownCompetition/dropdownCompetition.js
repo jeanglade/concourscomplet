@@ -6,8 +6,8 @@ const DropdownCompetition = props => {
   return (
     <Dropdown
       styleContainer={styles.container}
-      onValueChange={value => {
-        props.setChoiceCompetition(value);
+      onValueChange={(value, index) => {
+        props.setSelectedValue(index);
       }}
       data={props.allComps.map(compete => {
         return {

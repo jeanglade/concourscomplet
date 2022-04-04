@@ -7,11 +7,15 @@ import {DropdownCompetition} from '_homeComponents';
 
 const ModalChoiceCompetition = props => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [compTemp, setCompTemp] = useState(props.competition);
+  const [selectedValue, setSelectedValue] = useState(null);
 
   useEffect(() => {
-    setCompTemp(props.competition);
-  }, [props.competition]);
+    setSelectedValue(props.competition);
+  }, []);
+
+  const selectedVal = index => {
+    setSelectedValue(props.allCompetitions[index]);
+  };
 
   return (
     <Modal
@@ -25,13 +29,13 @@ const ModalChoiceCompetition = props => {
         <View>
           <Text style={styles.titleText}>{i18n.t('common:choice_comp')}</Text>
           <DropdownCompetition
-            selectedValue={compTemp}
-            setChoiceCompetition={setCompTemp}
+            selectedValue={selectedValue}
+            setSelectedValue={selectedVal}
             allComps={props.allCompetitions}
           />
           <Button
             onPress={() => {
-              props.setChoiceCompetition(compTemp);
+              props.setChoiceCompetition(selectedValue);
               setModalVisible(false);
             }}
             styleView={styles.button}
