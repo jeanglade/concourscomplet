@@ -20,8 +20,6 @@ const Home = props => {
   //Liste des compétitions
   const [allCompetitions, setAllCompetitions] = useState([]);
 
-  console.log('Home');
-
   // Chargement des concours existants
   const getAllSeries = async tab => {
     const keys = await getAllKeys();
@@ -32,8 +30,7 @@ const Home = props => {
     return series;
   };
 
-  function refreshData(tab, comp = null) {
-    console.log('refreshData');
+  async function refreshData(tab, comp = null) {
     const competitions = getAllCompetitionsInfo(tab);
     setTableData(tab);
     setAllCompetitions(competitions);
@@ -51,7 +48,6 @@ const Home = props => {
 
   // Initialise la liste des concours complets déjà présents
   useEffect(() => {
-    console.log('useEffect');
     initData();
   }, []);
 
@@ -176,8 +172,10 @@ const Home = props => {
   };
 
   const setChoiceCompetition = comp => {
-    if (comp != null) {
+    if (comp !== null && JSON.stringify(comp) !== JSON.stringify({})) {
       if (comp.idCompetition !== competition?.idCompetition?.toString()) {
+        console.log('je passe la');
+        console.log(comp.toString());
         refreshData(tableData, comp);
       }
     }
@@ -208,6 +206,7 @@ const Home = props => {
             competition={competition}
             allCompetitions={allCompetitions}
             setCompetition={setCompetition}
+            refreshData={refreshData}
           />
         </>
       )}

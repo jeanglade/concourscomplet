@@ -5,6 +5,7 @@ import {
   Text,
   View,
   Keyboard,
+  SafeAreaView,
   Platform,
 } from 'react-native';
 import i18n from 'i18next';
@@ -42,9 +43,9 @@ const OpenJson = props => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={props.modal != null ? {} : styles.container}>
       <Text style={styles.titleText}>{i18n.t('common:new_epreuve')}</Text>
-      <View style={styles.row}>
+      <View style={[styles.row]}>
         <TextInput
           style={[
             styles.textinput,
@@ -97,6 +98,7 @@ const styles = StyleSheet.create({
     margin: 15,
   },
   row: {
+    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

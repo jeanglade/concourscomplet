@@ -13,10 +13,13 @@ import {colors} from '_config';
 
 const MyModal = props => {
   const contentModal = (
-    <View style={styles.modalView}>
+    <View
+      style={[
+        styles.modalView,
+        Platform.OS === 'windows' && {minWidth: props.minWidth},
+      ]}>
       <Button
         onPress={() => {
-          console.log('Close modal');
           props.setModalVisible(false);
         }}
         styleView={styles.iconClosePosition}
@@ -27,7 +30,7 @@ const MyModal = props => {
           />
         }
       />
-      {props.contentModal}
+      <View>{props.contentModal}</View>
     </View>
   );
 
@@ -35,7 +38,6 @@ const MyModal = props => {
     <SafeAreaView>
       <Button
         onPress={() => {
-          console.log('Open modal');
           props.setModalVisible(true);
         }}
         styleView={props.buttonStyleView}
@@ -45,13 +47,13 @@ const MyModal = props => {
         <Modal
           animationType="fade"
           transparent={true}
-          visible={props.modalVisible}
-          // onRequestClose={() => props.setModalVisible(false)}
-        >
+          visible={props.modalVisible}>
           <View style={styles.centeredView}>{contentModal}</View>
         </Modal>
       ) : (
-        <Popup isOpen={props.modalVisible}>{contentModal}</Popup>
+        <Popup isOpen={props.modalVisible}>
+          <View style={styles.centeredView}>{contentModal}</View>
+        </Popup>
       )}
     </SafeAreaView>
   );
@@ -62,7 +64,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(52, 52, 52, 0.8)',
+    backgroundColor:
+      Platform.OS === 'windows' ? colors.transparent : 'rgba(52, 52, 52, 0.8)',
   },
   // Revoir celle ci
   modalView: {

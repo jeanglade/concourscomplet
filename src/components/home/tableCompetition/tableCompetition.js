@@ -70,8 +70,17 @@ const TableCompetition = props => {
         text: i18n.t('toast:ok'),
         onPress: async () => {
           await removeFile(id);
-          props.setTableData(
-            props.tableData.filter((i, itemIndex) => i.id !== id),
+          const res = props.tableData.filter(i => i.id !== id);
+          props.refreshData(
+            res,
+            res.filter(i => {
+              return (
+                JSON.parse(i.data).GuidCompetition ===
+                props.competition.idCompetition
+              );
+            }).length > 0
+              ? props.competition
+              : null,
           );
           showMessage({
             message: i18n.t('toast:file_deleted'),
@@ -103,11 +112,10 @@ const TableCompetition = props => {
               })
               .map(x => x.id);
             await removeFiles(ids);
-            props.setTableData(
-              props.tableData.filter(
-                (item, itemIndex) => !ids.includes(item.id),
-              ),
+            const res = props.tableData.filter(
+              (item, itemIndex) => !ids.includes(item.id),
             );
+            props.refreshData(res);
           },
         },
       ],

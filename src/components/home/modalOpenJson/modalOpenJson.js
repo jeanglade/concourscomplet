@@ -2,16 +2,16 @@ import React, {useState} from 'react';
 import {colors} from '_config';
 import {Modal} from '_components';
 import {OpenJson} from '_homeComponents';
-import {Image, StyleSheet} from 'react-native';
+import {Image, StyleSheet, Platform} from 'react-native';
 
 const ModalOpenJson = props => {
   const [modalVisible, setModalVisible] = useState(false);
-  console.log('ModalOpenJson');
   return (
     <Modal
       modalVisible={modalVisible}
       setModalVisible={setModalVisible}
       buttonStyleView={styles.iconPosition}
+      minWidth={Platform.OS === 'windows' ? 510 : 0}
       buttonContent={
         <Image
           style={styles.iconImport}
@@ -22,6 +22,7 @@ const ModalOpenJson = props => {
         <OpenJson
           setModalVisible={setModalVisible}
           addOneSerieDataTable={props.addOneSerieDataTable}
+          modal={Platform.OS === 'windows' ? true : null}
         />
       }
     />
