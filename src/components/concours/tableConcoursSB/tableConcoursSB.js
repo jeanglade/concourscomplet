@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, View, TextInput} from 'react-native';
-import {useTranslation} from 'react-i18next';
+import i18n from 'i18next';
 import {colors} from '_config';
 import {DataTable} from '_components';
 
 const TableConcoursSb = props => {
-  const [t] = useTranslation();
   const [hasDossard, setHasDossard] = useState(() => {
     var res = false;
     props.tableData.forEach(row => {
@@ -211,23 +210,27 @@ const TableConcoursSb = props => {
     <View style={[styles.containerCenter]}>
       <DataTable
         headerTable={[
-          {type: 'text', flex: 1, text: t('competition:order')},
-          hasDossard && {type: 'text', flex: 1, text: t('competition:number')},
-          {type: 'text', flex: 4, text: t('competition:athlete')},
-          {type: 'text', flex: 1, text: t('competition:first')},
-          {type: 'text', flex: 1, text: t('competition:second')},
-          {type: 'text', flex: 1, text: t('competition:third')},
+          {type: 'text', flex: 1, text: i18n.t('competition:order')},
+          hasDossard && {
+            type: 'text',
+            flex: 1,
+            text: i18n.t('competition:number'),
+          },
+          {type: 'text', flex: 4, text: i18n.t('competition:athlete')},
+          {type: 'text', flex: 1, text: i18n.t('competition:first')},
+          {type: 'text', flex: 1, text: i18n.t('competition:second')},
+          {type: 'text', flex: 1, text: i18n.t('competition:third')},
           {
             type: 'text',
             flex: 1,
-            text: t('competition:performance').substring(0, 4) + '.',
+            text: i18n.t('competition:performance').substring(0, 4) + '.',
           },
-          {type: 'text', flex: 1, text: t('competition:place')},
-          {type: 'text', flex: 1, text: t('competition:fourth')},
-          {type: 'text', flex: 1, text: t('competition:fifth')},
-          {type: 'text', flex: 1, text: t('competition:sixth')},
-          {type: 'text', flex: 2, text: t('competition:performance')},
-          {type: 'text', flex: 1, text: t('competition:place')},
+          {type: 'text', flex: 1, text: i18n.t('competition:place')},
+          {type: 'text', flex: 1, text: i18n.t('competition:fourth')},
+          {type: 'text', flex: 1, text: i18n.t('competition:fifth')},
+          {type: 'text', flex: 1, text: i18n.t('competition:sixth')},
+          {type: 'text', flex: 2, text: i18n.t('competition:performance')},
+          {type: 'text', flex: 1, text: i18n.t('competition:place')},
         ]}
         tableData={props.tableData}
         renderItem={renderItem}

@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import i18n from 'i18next';
 import moment from 'moment';
-import {showMessage} from 'react-native-flash-message';
-import {SafeAreaView, StyleSheet} from 'react-native';
-import {useTranslation} from 'react-i18next';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 
 import {getAllKeys, getFile, getFiles} from '../../utils/myAsyncStorage';
 import {
@@ -15,13 +13,14 @@ import {
 import {colors} from '_config';
 
 const Home = props => {
-  const [t] = useTranslation();
   //Tableau avec toutes les données concours complet
   const [tableData, setTableData] = useState([]);
   //Information de la compétition des concours affichés
   const [competition, setCompetition] = useState({});
   //Liste des compétitions
   const [allCompetitions, setAllCompetitions] = useState([]);
+
+  console.log('Home');
 
   // Chargement des concours existants
   const getAllSeries = async tab => {
@@ -33,21 +32,26 @@ const Home = props => {
     return series;
   };
 
-  function refreshData(tab) {
+  function refreshData(tab, comp = null) {
+    console.log('refreshData');
     const competitions = getAllCompetitionsInfo(tab);
     setTableData(tab);
     setAllCompetitions(competitions);
-    setCompetition(getLastCompetition(competitions));
+    setCompetition(comp == null ? getLastCompetition(competitions) : comp);
   }
 
   function initData() {
     const tab = tableData;
     getAllSeries(tab).then(tabSeries => {
-      refreshData(tabSeries);
+      if (tabSeries != null) {
+        refreshData(tabSeries);
+      }
     });
   }
+
   // Initialise la liste des concours complets déjà présents
   useEffect(() => {
+    console.log('useEffect');
     initData();
   }, []);
 
@@ -123,7 +127,7 @@ const Home = props => {
         ' / ' +
         infoConcours.EpreuveConcoursComplet.TourConcoursComplet
           .LstSerieConcoursComplet[0].Libelle,
-      statut: t('common:in_progress'),
+      statut: i18n.t('common:in_progress'),
     };
   };
 
@@ -171,30 +175,33 @@ const Home = props => {
     };
   };
 
+  const setChoiceCompetition = comp => {
+    if (comp != null) {
+      if (comp.idCompetition !== competition?.idCompetition?.toString()) {
+        refreshData(tableData, comp);
+      }
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {tableData.length === 0 && (
-        <OpenJson
-          addOneSerieDataTable={addOneSerieDataTable}
-          showMessage={showMessage}
-        />
+        <OpenJson addOneSerieDataTable={addOneSerieDataTable} />
       )}
       {tableData.length > 0 && (
         <>
-          <ModalOpenJson
-            addOneSerieDataTable={addOneSerieDataTable}
-            showMessage={showMessage}
-          />
-          {/* S il y a plusieurs competitions */}
-          {allCompetitions.length > 1 && (
-            <ModalChoiceCompetition
-              competition={competition}
-              setCompetition={setCompetition}
-              allCompetitions={allCompetitions}
-            />
-          )}
+          <View style={{flexDirection: 'row-reverse'}}>
+            <ModalOpenJson addOneSerieDataTable={addOneSerieDataTable} />
+            {/* S il y a plusieurs competitions */}
+            {allCompetitions.length > 1 && (
+              <ModalChoiceCompetition
+                competition={competition}
+                setChoiceCompetition={setChoiceCompetition}
+                allCompetitions={allCompetitions}
+              />
+            )}
+          </View>
           <TableCompetition
-            showMessage={showMessage}
             tableData={tableData}
             setTableData={setTableData}
             navigation={props.navigation}

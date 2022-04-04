@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, SafeAreaView, View} from 'react-native';
-import {showMessage} from 'react-native-flash-message';
+import i18n from 'i18next';
 
 import {TableConcoursSb} from '_concoursComponents';
 import {colors} from '_config';
@@ -26,7 +26,6 @@ function FeuilleDeConcours(props) {
       </View>
       {compData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
         <TableConcoursSb
-          showMessage={showMessage}
           dataConcours={dataConcours}
           tableData={tableData}
           setTableData={setTableData}
@@ -41,9 +40,9 @@ function FeuilleDeConcours(props) {
           alignItems: 'center',
           paddingBottom: 20,
         }}>
-        <Text style={styles.titleText}>{t('common:options')} : </Text>
+        <Text style={styles.titleText}>{i18n.i18n.t('common:options')} : </Text>
         <TouchableWithoutFeedback onPress={() => setAddAnAthleteVisible(true)}>
-          <Text style={styles.button}>{t('competition:add_an_athlete')}</Text>
+          <Text style={styles.button}>{i18n.i18n.t('competition:add_an_athlete')}</Text>
         </TouchableWithoutFeedback>
         <AddAnAthleteModal
           modalVisible={addAnAthleteVisible}

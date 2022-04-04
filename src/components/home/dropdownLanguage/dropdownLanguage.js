@@ -1,11 +1,11 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
-import {useTranslation} from 'react-i18next';
+import i18n from 'i18next';
+
 import {colors} from '_config';
 
 const DropdownLanguage = () => {
-  const {i18n} = useTranslation();
   return (
     <Picker
       style={styles.picker}

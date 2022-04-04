@@ -6,7 +6,7 @@ import {Image, StyleSheet} from 'react-native';
 
 const ModalOpenJson = props => {
   const [modalVisible, setModalVisible] = useState(false);
-
+  console.log('ModalOpenJson');
   return (
     <Modal
       modalVisible={modalVisible}
@@ -22,7 +22,6 @@ const ModalOpenJson = props => {
         <OpenJson
           setModalVisible={setModalVisible}
           addOneSerieDataTable={props.addOneSerieDataTable}
-          showMessage={props.showMessage}
         />
       }
     />
@@ -31,9 +30,8 @@ const ModalOpenJson = props => {
 
 const styles = StyleSheet.create({
   iconPosition: {
-    top: 15,
-    right: 5,
-    position: 'absolute',
+    width: 55,
+    height: 55,
     backgroundColor: colors.ffa_blue_dark,
     padding: 10,
     margin: 5,

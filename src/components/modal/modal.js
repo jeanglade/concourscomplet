@@ -15,7 +15,10 @@ const MyModal = props => {
   const contentModal = (
     <View style={styles.modalView}>
       <Button
-        onPress={() => props.setModalVisible(false)}
+        onPress={() => {
+          console.log('Close modal');
+          props.setModalVisible(false);
+        }}
         styleView={styles.iconClosePosition}
         content={
           <Image
@@ -31,7 +34,10 @@ const MyModal = props => {
   return (
     <SafeAreaView>
       <Button
-        onPress={() => props.setModalVisible(true)}
+        onPress={() => {
+          console.log('Open modal');
+          props.setModalVisible(true);
+        }}
         styleView={props.buttonStyleView}
         content={props.buttonContent}
       />
@@ -40,7 +46,8 @@ const MyModal = props => {
           animationType="fade"
           transparent={true}
           visible={props.modalVisible}
-          onRequestClose={() => props.setModalVisible(false)}>
+          // onRequestClose={() => props.setModalVisible(false)}
+        >
           <View style={styles.centeredView}>{contentModal}</View>
         </Modal>
       ) : (

@@ -1,12 +1,11 @@
 import React, {useState} from 'react';
 import DeviceInfo from 'react-native-device-info';
 import {View, Text, StyleSheet, Image} from 'react-native';
-import {useTranslation} from 'react-i18next';
+import i18n from 'i18next';
 import {colors} from '_config';
 import {Button} from '_components';
 
 const ButtonInfoApp = props => {
-  const [t] = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <>
@@ -22,7 +21,7 @@ const ButtonInfoApp = props => {
             onPress={() => setModalVisible(!modalVisible)}
             content={
               <Text style={styles.text}>
-                {t('common:version')} {DeviceInfo.getVersion()}
+                {i18n.t('common:version')} {DeviceInfo.getVersion()}
               </Text>
             }
           />

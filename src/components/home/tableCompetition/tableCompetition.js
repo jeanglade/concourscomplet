@@ -1,14 +1,13 @@
 import React from 'react';
 import {StyleSheet, Text, View, Image, Alert} from 'react-native';
-import {useTranslation} from 'react-i18next';
+import i18n from 'i18next';
 import {colors} from '_config';
 import {removeFile, removeFiles} from '../../../utils/myAsyncStorage';
 import {useOrientation} from '../../../utils/useOrientation';
 import {Button, DataTable} from '_components';
-import {DropdownCompetition} from '_homeComponents';
+import {showMessage} from 'react-native-flash-message';
 
 const TableCompetition = props => {
-  const [t] = useTranslation();
   const orientation = useOrientation();
 
   const getImageEpreuve = epreuve => {
@@ -45,16 +44,16 @@ const TableCompetition = props => {
   const getStatusColor = statut => {
     var res = colors.black;
     switch (statut) {
-      case t('common:ready'):
+      case i18n.t('common:ready'):
         res = colors.black;
         break;
-      case t('common:in_progress'):
+      case i18n.t('common:in_progress'):
         res = colors.red;
         break;
-      case t('common:finished'):
+      case i18n.t('common:finished'):
         res = colors.orange;
         break;
-      case t('common:send_to_elogica'):
+      case i18n.t('common:send_to_elogica'):
         res = colors.green;
         break;
     }
@@ -63,19 +62,19 @@ const TableCompetition = props => {
 
   //Suppression d un concours
   const alertDeleteConcours = (id, epreuve) => {
-    Alert.alert(t('toast:confirm_delete'), epreuve, [
+    Alert.alert(i18n.t('toast:confirm_delete'), epreuve, [
       {
-        text: t('toast:cancel'),
+        text: i18n.t('toast:cancel'),
       },
       {
-        text: t('toast:ok'),
+        text: i18n.t('toast:ok'),
         onPress: async () => {
           await removeFile(id);
           props.setTableData(
             props.tableData.filter((i, itemIndex) => i.id !== id),
           );
-          props.showMessage({
-            message: t('toast:file_deleted'),
+          showMessage({
+            message: i18n.t('toast:file_deleted'),
             type: 'success',
           });
         },
@@ -86,20 +85,20 @@ const TableCompetition = props => {
   //Suppression de tous les concours d une competition
   const alertDeleteCompetition = () => {
     Alert.alert(
-      t('toast:confirm_delete'),
+      i18n.t('toast:confirm_delete'),
       props.competition?.nomCompetition?.toString(),
       [
         {
-          text: t('toast:cancel'),
+          text: i18n.t('toast:cancel'),
         },
         {
-          text: t('toast:ok'),
+          text: i18n.t('toast:ok'),
           onPress: async () => {
             const ids = props.tableData
               .filter(x => {
                 return (
                   JSON.parse(x.data).GuidCompetition ===
-                  props.competition?.idCompetition
+                  props.competition?.idCompetition?.toString()
                 );
               })
               .map(x => x.id);
@@ -119,7 +118,8 @@ const TableCompetition = props => {
   const tableDataFilter = () => {
     return props.tableData.filter(
       d =>
-        JSON.parse(d.data).GuidCompetition === props.competition?.idCompetition,
+        JSON.parse(d.data).GuidCompetition ===
+        props.competition?.idCompetition?.toString(),
     );
   };
 
@@ -205,7 +205,7 @@ const TableCompetition = props => {
         {/* Lieu de la competition */}
         {props.competition?.lieuCompetition?.toString() && (
           <Text style={[styles.text, styles.textCenter]}>
-            {props.competition.lieuCompetition?.toString()}
+            {props.competition?.lieuCompetition?.toString()}
           </Text>
         )}
         {/* Nombre de concours dans la competition */}
@@ -215,16 +215,16 @@ const TableCompetition = props => {
             styles.textCenter,
             {color: colors.ffa_blue_light},
           ]}>
-          {tableDataFilter().length} {t('common:list_competion_sheets')}
+          {tableDataFilter().length} {i18n.t('common:list_competion_sheets')}
         </Text>
       </>
       {/* Liste des concours */}
       <DataTable
         headerTable={[
-          {type: 'text', flex: 2, text: t('common:date')},
-          {type: 'text', flex: 5, text: t('common:discipline')},
-          {type: 'text', flex: 1, text: t('common:status')},
-          {type: 'text', flex: 2, text: t('common:actions')},
+          {type: 'text', flex: 2, text: i18n.t('common:date')},
+          {type: 'text', flex: 5, text: i18n.t('common:discipline')},
+          {type: 'text', flex: 1, text: i18n.t('common:status')},
+          {type: 'text', flex: 2, text: i18n.t('common:actions')},
         ]}
         tableData={tableDataFilter()}
         renderItem={({item, index}) => (

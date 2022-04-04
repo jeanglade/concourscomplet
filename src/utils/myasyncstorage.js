@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Keyboard} from 'react-native';
+import {showMessage} from 'react-native-flash-message';
+import i18n from 'i18next';
 
 export const getAllKeys = async () => {
   try {
@@ -53,12 +55,7 @@ export const removeFiles = async keys => {
   }
 };
 
-export const saveEachSerie = async (
-  content,
-  t,
-  showMessage,
-  addOneSerieDataTable,
-) => {
+export const saveEachSerie = async (content, addOneSerieDataTable) => {
   try {
     const contentObject = JSON.parse(content);
     contentObject.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet.forEach(
@@ -77,8 +74,6 @@ export const saveEachSerie = async (
         const result = saveJsonFile(
           codeConcours,
           JSON.stringify(newContentObject),
-          t,
-          showMessage,
         );
         if (result) {
           addOneSerieDataTable(codeConcours, JSON.stringify(newContentObject));
@@ -90,20 +85,20 @@ export const saveEachSerie = async (
   }
 };
 
-export const saveJsonFile = async (fileName, content, t, showMessage) => {
+export const saveJsonFile = async (fileName, content) => {
   try {
     var result = false;
     //const contentFile = await getFile(fileName);
     /*if (contentFile != null) {
       showMessage({
-        message: t('toast:file_already_exist'),
+        message: i18n.t('toast:file_already_exist'),
         type: 'warning',
       });
     } else {*/
     await setFile(fileName, content);
     result = true;
     showMessage({
-      message: t('toast:uploaded_file'),
+      message: i18n.t('toast:uploaded_file'),
       type: 'success',
     });
     //}

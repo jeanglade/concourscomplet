@@ -3,9 +3,11 @@ import {View, TouchableWithoutFeedback} from 'react-native';
 
 const Button = props => {
   return (
-    <TouchableWithoutFeedback onPress={props.onPress}>
-      <View style={props.styleView}>{props.content}</View>
-    </TouchableWithoutFeedback>
+    <View style={[props.styleView]}>
+      <TouchableWithoutFeedback onPress={props.onPress}>
+        <View>{props.content}</View>
+      </TouchableWithoutFeedback>
+    </View>
   );
 };
 

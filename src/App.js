@@ -21,6 +21,7 @@ const queryClient = new QueryClient();
 
 export default class App extends Component {
   render() {
+    console.log('App');
     return (
       <>
         <QueryClientProvider client={queryClient}>

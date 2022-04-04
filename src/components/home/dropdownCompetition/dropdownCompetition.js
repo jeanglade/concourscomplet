@@ -3,17 +3,20 @@ import {StyleSheet} from 'react-native';
 import {Dropdown} from '_components';
 
 const DropdownCompetition = props => {
+  console.log('DropdownCompetition', props);
+
   return (
     <Dropdown
       styleContainer={styles.container}
-      selectedValue={props.competition}
+      selectedValue={props.selectedValue}
       onValueChange={value => {
-        props.setCompetition(value);
+        console.log('value', value);
+        props.setChoiceCompetition(value);
       }}
-      data={props.allCompetitions.map(competition => {
+      data={props.allComps.map(compete => {
         return {
-          label: competition.competitionInfo,
-          value: competition,
+          label: compete.competitionInfo,
+          value: compete,
         };
       })}
     />

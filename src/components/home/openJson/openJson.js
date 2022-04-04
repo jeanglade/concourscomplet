@@ -1,6 +1,13 @@
 import React, {useState} from 'react';
-import {StyleSheet, TextInput, Text, View, Keyboard} from 'react-native';
-import {useTranslation} from 'react-i18next';
+import {
+  StyleSheet,
+  TextInput,
+  Text,
+  View,
+  Keyboard,
+  Platform,
+} from 'react-native';
+import i18n from 'i18next';
 import {colors} from '_config';
 import {validateCompetitionCode} from '../../utils/webService';
 import {saveEachSerie} from '../../utils/myAsyncStorage';
@@ -10,30 +17,20 @@ import {showMessage} from 'react-native-flash-message';
 import {Button} from '_components';
 
 const OpenJson = props => {
-  const [t] = useTranslation();
   const [codeConcours, setCodeConcours] = useState(null);
   const netInfo = useNetInfo();
 
   const manageCode = async () => {
     //S il y a internet
     if (netInfo.isConnected) {
-      const jsonContent = await validateCompetitionCode(
-        codeConcours,
-        t,
-        props.showMessage,
-      );
+      const jsonContent = await validateCompetitionCode(codeConcours);
       if (jsonContent != null) {
-        saveEachSerie(
-          jsonContent,
-          t,
-          props.showMessage,
-          props.addOneSerieDataTable,
-        );
+        saveEachSerie(jsonContent, props.addOneSerieDataTable);
       }
     } else {
-      console.error(t('toast:no_internet_connexion'));
+      console.error(i18n.t('toast:no_internet_connexion'));
       showMessage({
-        message: t('toast:no_internet_connexion'),
+        message: i18n.t('toast:no_internet_connexion'),
         type: 'danger',
       });
     }
@@ -46,30 +43,29 @@ const OpenJson = props => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titleText}>{t('common:new_epreuve')}</Text>
+      <Text style={styles.titleText}>{i18n.t('common:new_epreuve')}</Text>
       <View style={styles.row}>
         <TextInput
-          style={[styles.textinput, Platform.OS === 'windows' && {height: 55}]}
+          style={[
+            styles.textinput,
+            Platform.OS === 'windows' && styles.textInputSize,
+          ]}
           onChangeText={setCodeConcours}
           value={codeConcours}
-          placeholder={t('common:code')}
+          placeholder={i18n.t('common:code')}
           placeholderTextColor={colors.muted}
         />
         <Button
           onPress={manageCode}
           styleView={styles.button}
           content={
-            <Text style={styles.textButton}>{t('common:validate')}</Text>
+            <Text style={styles.textButton}>{i18n.t('common:validate')}</Text>
           }
         />
         <View style={styles.dividerLeft}>
           <Button
             onPress={() => {
-              pickOneDeviceFile(
-                t,
-                props.showMessage,
-                props.addOneSerieDataTable,
-              );
+              pickOneDeviceFile(props.addOneSerieDataTable);
               if (props.setModalVisible) {
                 props.setModalVisible(false);
               }
@@ -77,7 +73,7 @@ const OpenJson = props => {
             styleView={styles.button}
             content={
               <Text style={styles.textButton}>
-                {t('common:via_local_file')}
+                {i18n.t('common:via_local_file')}
               </Text>
             }
           />
@@ -133,6 +129,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 1,
     borderWidth: 0,
   },
+  textInputSize: {height: 55},
 });
 
 export default OpenJson;

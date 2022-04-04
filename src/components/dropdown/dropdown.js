@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Platform} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {colors} from '_config';
 
@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     borderColor: colors.muted,
     borderWidth: 1,
     marginVertical: 15,
+    backgroundColor: Platform.OS === 'windows' ? colors.muted : colors.white,
   },
   dropdown: {
     color: Platform.OS === 'windows' ? colors.white : colors.black,

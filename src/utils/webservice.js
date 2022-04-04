@@ -1,12 +1,10 @@
 import base64 from 'react-native-base64';
 import {Keyboard} from 'react-native';
 import {getFile} from '../../utils/myAsyncStorage';
+import {showMessage} from 'react-native-flash-message';
+import i18n from 'i18next';
 
-export const validateCompetitionCode = async (
-  codeCompetition,
-  t,
-  showMessage,
-) => {
+export const validateCompetitionCode = async codeCompetition => {
   const soapRequest = require('easy-soap-request');
   var res = null;
   var XMLParser = require('react-xml-parser');
@@ -31,7 +29,7 @@ export const validateCompetitionCode = async (
     }).catch(e => {
       console.error(e);
       showMessage({
-        message: t('toast:wrong_code'),
+        message: i18n.i18n.i18n.t('toast:wrong_code'),
         type: 'danger',
       });
       Keyboard.dismiss();
@@ -46,15 +44,15 @@ export const validateCompetitionCode = async (
       );
     } else {
       showMessage({
-        message: t('toast:import_error'),
+        message: i18n.i18n.i18n.t('toast:import_error'),
         type: 'danger',
       });
       Keyboard.dismiss();
     }
   } else {
-    console.error(t('toast:competition_sheet_empty'));
+    console.error(i18n.i18n.i18n.t('toast:competition_sheet_empty'));
     showMessage({
-      message: t('toast:competition_sheet_empty'),
+      message: i18n.i18n.i18n.t('toast:competition_sheet_empty'),
       type: 'danger',
     });
     Keyboard.dismiss();
