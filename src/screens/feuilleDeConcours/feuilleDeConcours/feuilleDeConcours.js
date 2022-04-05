@@ -2,8 +2,7 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, SafeAreaView, View} from 'react-native';
 import i18n from 'i18next';
 
-import ModalAddAthlete from './ModalAddAthlete';
-import TableConcoursSb from './TableConcoursSb';
+import {ModalAddAthlete, TableConcoursSb} from '_screens';
 import {colors} from '_config';
 
 function FeuilleDeConcours(props) {

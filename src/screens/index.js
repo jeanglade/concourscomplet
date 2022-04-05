@@ -1,11 +1,6 @@
+import Home from './home/home';
+import FeuilleDeConcours from './feuilleDeConcours/feuilleDeConcours';
 import {
-  FeuilleDeConcours,
-  TableConcoursSB,
-  ModalAddAthlete,
-} from './feuilleDeConcours';
-
-import {
-  Home,
   DropdownLanguage,
   ButtonInfoApp,
   OpenJson,
@@ -14,9 +9,11 @@ import {
   ModalOpenJson,
   ModalChoiceCompetition,
 } from './home';
+import {TableConcoursSB, ModalAddAthlete} from './feuilleDeConcours';
 
 export {
   Home,
+  FeuilleDeConcours,
   DropdownLanguage,
   ButtonInfoApp,
   OpenJson,
@@ -24,7 +21,6 @@ export {
   DropdownCompetition,
   ModalOpenJson,
   ModalChoiceCompetition,
-  FeuilleDeConcours,
   TableConcoursSB,
   ModalAddAthlete,
 };
