@@ -8,11 +8,14 @@ const Dropdown = props => {
     <View style={[styles.viewDropdown, props.styleContainer]}>
       <Picker
         style={styles.dropdown}
-        styleItem={styles.dropdownItem}
+        itemStyle={styles.dropdownItem}
         selectedValue={props.selectedValue}
         dropdownIconColor={colors.black}
         onValueChange={props.onValueChange}
         mode="dropdown">
+        {props.placeholder && (
+          <Picker.Item label={props.placeholder} enabled={false} />
+        )}
         {props.data.map(d => {
           return <Picker.Item label={d.label} value={d.value} />;
         })}
@@ -24,13 +27,18 @@ const Dropdown = props => {
 const styles = StyleSheet.create({
   viewDropdown: {
     borderColor: colors.muted,
-    borderWidth: 1,
-    marginVertical: 15,
+    borderWidth: 2,
     backgroundColor: Platform.OS === 'windows' ? colors.muted : colors.white,
+    marginBottom: 10,
   },
   dropdown: {
-    color: Platform.OS === 'windows' ? colors.white : colors.black,
+    height: 55,
+    alignItems: 'center',
     backgroundColor: Platform.OS === 'windows' ? colors.muted : colors.white,
+  },
+  dropdownItem: {
+    color: Platform.OS === 'windows' ? colors.white : colors.black,
+    fontSize: 16,
   },
 });
 

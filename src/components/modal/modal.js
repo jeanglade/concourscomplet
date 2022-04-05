@@ -35,7 +35,7 @@ const MyModal = props => {
   );
 
   return (
-    <SafeAreaView>
+    <>
       <Button
         onPress={() => {
           props.setModalVisible(true);
@@ -55,7 +55,7 @@ const MyModal = props => {
           <View style={styles.centeredView}>{contentModal}</View>
         </Popup>
       )}
-    </SafeAreaView>
+    </>
   );
 };
 

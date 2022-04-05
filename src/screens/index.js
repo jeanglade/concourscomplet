@@ -5,7 +5,6 @@ import {
   ButtonInfoApp,
   OpenJson,
   TableCompetition,
-  DropdownCompetition,
   ModalOpenJson,
   ModalChoiceCompetition,
 } from './home';
@@ -18,7 +17,6 @@ export {
   ButtonInfoApp,
   OpenJson,
   TableCompetition,
-  DropdownCompetition,
   ModalOpenJson,
   ModalChoiceCompetition,
   TableConcoursSB,

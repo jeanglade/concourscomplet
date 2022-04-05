@@ -21,20 +21,20 @@ const FeuilleDeConcours = props => {
           {dataConcours.epreuve} - {dataConcours.dateInfo}
         </Text>
       </View>
-      {compData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
+      {/* {compData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
         <TableConcoursSb
           dataConcours={dataConcours}
           tableData={tableData}
           setTableData={setTableData}
           compData={compData}
         />
-      )}
+      )} */}
       <View style={styles.rowOptions}>
         <Text style={styles.titleText}>{i18n.t('common:options')} : </Text>
-        {/* <ModalAddAthlete
+        <ModalAddAthlete
           setAthletesData={setTableData}
           athletesData={tableData}
-        /> */}
+        />
       </View>
     </SafeAreaView>
   );

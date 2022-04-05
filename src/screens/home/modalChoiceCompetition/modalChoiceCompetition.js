@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {colors} from '_config';
-import {Modal, Button} from '_components';
+import {Modal, Button, Dropdown} from '_components';
 import {Image, StyleSheet, View, Text} from 'react-native';
 import i18n from 'i18next';
-import {DropdownCompetition} from '_screens';
 
 const ModalChoiceCompetition = props => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -28,10 +27,18 @@ const ModalChoiceCompetition = props => {
       contentModal={
         <View>
           <Text style={styles.titleText}>{i18n.t('common:choice_comp')}</Text>
-          <DropdownCompetition
+          <Dropdown
+            styleContainer={{width: 600}}
+            onValueChange={(value, index) => {
+              selectedVal(index);
+            }}
+            data={props.allCompetitions.map(compete => {
+              return {
+                label: compete.competitionInfo,
+                value: compete,
+              };
+            })}
             selectedValue={selectedValue}
-            setSelectedValue={selectedVal}
-            allComps={props.allCompetitions}
           />
           <Button
             onPress={() => {

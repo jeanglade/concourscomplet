@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Text, TextInput, StyleSheet} from 'react-native';
+import {Text, TextInput, StyleSheet, Platform} from 'react-native';
 import {colors} from '_config';
+
+const maxHeightField = 55;
 
 /**
  * Input
@@ -21,10 +23,10 @@ const Input = ({name, type, error, onChange, touched, ...restProps}) => (
         color: touched && error ? colors.red : colors.black,
         borderWidth: 2,
         borderColor: colors.muted,
-        padding: 20,
-        borderRadius: 50,
-        marginBottom: touched && error ? 5 : 20,
+        padding: 15,
+        marginBottom: touched && error ? 5 : 10,
         fontSize: 16,
+        height: maxHeightField,
       }}
       onChangeText={text => onChange(text)}
       multiline={false}
@@ -51,7 +53,7 @@ Input.defaultProps = {
 
 const styles = StyleSheet.create({
   textError: {
-    marginBottom: 15,
+    marginBottom: 5,
     fontSize: 13,
     color: colors.red,
   },
