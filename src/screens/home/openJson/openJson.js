@@ -5,7 +5,6 @@ import {
   Text,
   View,
   Keyboard,
-  SafeAreaView,
   Platform,
 } from 'react-native';
 import i18n from 'i18next';

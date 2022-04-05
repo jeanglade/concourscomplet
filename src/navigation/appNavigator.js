@@ -3,8 +3,9 @@ import {View, Image, StyleSheet} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {useTranslation} from 'react-i18next';
 
-import {Home, FeuilleDeConcours} from '_screens';
-import {ButtonInfoApp} from '_homeComponents';
+import {Home} from '_screens/home';
+import {FeuilleDeConcours} from '_screens/feuilleDeConcours';
+import {ButtonInfoApp} from '_screens/home/buttonInfoApp';
 import {colors} from '_config';
 
 const Stack = createStackNavigator();

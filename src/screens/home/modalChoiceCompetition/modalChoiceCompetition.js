@@ -3,7 +3,7 @@ import {colors} from '_config';
 import {Modal, Button} from '_components';
 import {Image, StyleSheet, View, Text} from 'react-native';
 import i18n from 'i18next';
-import {DropdownCompetition} from '_homeComponents';
+import {DropdownCompetition} from '../dropdownCompetition';
 
 const ModalChoiceCompetition = props => {
   const [modalVisible, setModalVisible] = useState(false);

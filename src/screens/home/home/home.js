@@ -4,12 +4,10 @@ import moment from 'moment';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
 
 import {getAllKeys, getFile, getFiles} from '../../utils/myAsyncStorage';
-import {
-  OpenJson,
-  TableCompetition,
-  ModalOpenJson,
-  ModalChoiceCompetition,
-} from '_homeComponents';
+import {OpenJson} from '../openJson';
+import {TableCompetition} from '../tableCompetition';
+import {ModalOpenJson} from '../modalOpenJson';
+import {ModalChoiceCompetition} from '../modalChoiceCompetition';
 import {colors} from '_config';
 
 const Home = props => {
