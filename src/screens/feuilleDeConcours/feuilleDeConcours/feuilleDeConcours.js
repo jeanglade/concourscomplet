@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, SafeAreaView, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import i18n from 'i18next';
 
-import {ModalAddAthlete, TableConcoursSb} from '_screens';
+import {ModalAddAthlete, TableConcoursSB} from '_screens';
 import {colors} from '_config';
 
 const FeuilleDeConcours = props => {
@@ -15,20 +15,20 @@ const FeuilleDeConcours = props => {
   const [tableData, setTableData] = useState(listAthlete);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View>
         <Text style={styles.titleText}>
           {dataConcours.epreuve} - {dataConcours.dateInfo}
         </Text>
       </View>
-      {/* {compData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
-        <TableConcoursSb
+      {compData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
+        <TableConcoursSB
           dataConcours={dataConcours}
           tableData={tableData}
           setTableData={setTableData}
           compData={compData}
         />
-      )} */}
+      )}
       <View style={styles.rowOptions}>
         <Text style={styles.titleText}>{i18n.t('common:options')} : </Text>
         <ModalAddAthlete
@@ -36,7 +36,7 @@ const FeuilleDeConcours = props => {
           athletesData={tableData}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
