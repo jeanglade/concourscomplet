@@ -5,7 +5,7 @@ import i18n from 'i18next';
 import {ModalAddAthlete, TableConcoursSb} from '_screens';
 import {colors} from '_config';
 
-function FeuilleDeConcours(props) {
+const FeuilleDeConcours = props => {
   //Initialisation des données du concours
   const dataConcours = props.route.params.item;
   const compData = JSON.parse(dataConcours.data);
@@ -31,14 +31,14 @@ function FeuilleDeConcours(props) {
       )}
       <View style={styles.rowOptions}>
         <Text style={styles.titleText}>{i18n.t('common:options')} : </Text>
-        <ModalAddAthlete
+        {/* <ModalAddAthlete
           setAthletesData={setTableData}
           athletesData={tableData}
-        />
+        /> */}
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
