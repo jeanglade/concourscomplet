@@ -134,18 +134,43 @@ const ModalAddAthlete = props => {
                           error={errors.name}
                         />
 
-                        <Dropdown
-                          styleContainer={{maxHeight: 70}}
-                          placeholder={i18n.t('competition:sex') + ' *'}
-                          onValueChange={(value, index) => {
-                            setSexValue(index);
-                          }}
-                          data={sexValues.map(v => ({
-                            label: v,
-                            value: v,
-                          }))}
-                          selectedValue={sex}
-                        />
+                        <View
+                          style={{
+                            flexDirection:
+                              Platform.OS === 'ios' ? 'row' : column,
+                            justifyContent:
+                              Platform.OS === 'ios'
+                                ? 'space-around'
+                                : 'flex-start',
+                          }}>
+                          <Dropdown
+                            styleContainer={{}}
+                            stylePickerIOS={{width: 200}}
+                            placeholder={i18n.t('competition:sex') + ' *'}
+                            onValueChange={(value, index) => {
+                              setSexValue(index);
+                            }}
+                            data={sexValues.map(v => ({
+                              label: v,
+                              value: v,
+                            }))}
+                            selectedValue={sex}
+                          />
+
+                          <Dropdown
+                            styleContainer={{}}
+                            stylePickerIOS={{width: 200}}
+                            placeholder={i18n.t('competition:category')}
+                            onValueChange={(value, index) => {
+                              setCategoryValue(index);
+                            }}
+                            data={categoryValues.map((v, index) => ({
+                              label: categoryEasyValues[index],
+                              value: v,
+                            }))}
+                            selectedValue={category}
+                          />
+                        </View>
 
                         <View
                           style={{
@@ -154,13 +179,15 @@ const ModalAddAthlete = props => {
                             borderColor: colors.muted,
                             marginBottom: 10,
                             fontSize: 16,
+                            borderRadius: Platform.OS === 'ios' ? 50 : 0,
+
                             maxHeight: maxHeightField,
                             backgroundColor:
                               Platform.OS === 'windows'
                                 ? colors.muted
                                 : colors.white,
                           }}>
-                          {Platform.OS !== 'windows' ? (
+                          {Platform.OS === 'android' ? (
                             <Button
                               styleView={{padding: 15}}
                               onPress={() => setDateTimePickerVisible(true)}
@@ -215,19 +242,6 @@ const ModalAddAthlete = props => {
                           value={values.club}
                           touched={touched.club}
                           error={errors.club}
-                        />
-
-                        <Dropdown
-                          styleContainer={{}}
-                          placeholder={i18n.t('competition:category')}
-                          onValueChange={(value, index) => {
-                            setCategoryValue(index);
-                          }}
-                          data={categoryValues.map((v, index) => ({
-                            label: categoryEasyValues[index],
-                            value: v,
-                          }))}
-                          selectedValue={category}
                         />
 
                         <Button

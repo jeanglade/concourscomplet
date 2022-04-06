@@ -26,6 +26,7 @@ const Input = ({name, type, error, onChange, touched, ...restProps}) => (
         padding: 15,
         marginBottom: touched && error ? 5 : 10,
         fontSize: 16,
+        borderRadius: Platform.OS === 'ios' ? 50 : 0,
         height: maxHeightField,
       }}
       onChangeText={text => onChange(text)}
