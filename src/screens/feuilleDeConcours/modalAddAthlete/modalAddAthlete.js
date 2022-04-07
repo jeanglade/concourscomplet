@@ -1,7 +1,6 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {colors} from '_config';
-import {Modal, Button, Input, Dropdown} from '_components';
-import moment from 'moment';
+import {Modal, Button, Input, Dropdown, MyDateTimePicker} from '_components';
 import {
   View,
   StyleSheet,
@@ -10,36 +9,88 @@ import {
   Text,
   Platform,
 } from 'react-native';
+import moment from 'moment';
+
 import i18n from 'i18next';
 import {Formik} from 'formik';
-import Validators from '../../utils/validators';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import {showMessage} from 'react-native-flash-message';
+import {ValidatorsAddAthlete} from '../../utils/validators';
 
 const ModalAddAthlete = props => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [sex, setSex] = useState(i18n.t('competition:sex'));
-  const [category, setCategory] = useState(i18n.t('competition:category'));
   const setDateFormat = date => {
-    return moment(date, moment.ISO_8601).format(
-      i18n.language == 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY',
+    return moment(date, moment.ISO_8601).format('DD/MM/YYYY');
+  };
+
+  const getLastIdResultat = () => {
+    return Math.max(
+      ...props.athletesData.map(athlete => parseInt(athlete.$id)),
     );
   };
 
-  const [birthDate, setBirthDate] = useState(new Date());
-  const [dateTimePickerVisible, setDateTimePickerVisible] = useState(false);
-
-  const maxHeightField = 55;
-  const handleSubmitForm = values => {
-    console.log('handleSubmitForm', values);
+  const getLastNumCouloir = () => {
+    return Math.max(
+      ...props.athletesData.map(athlete => parseInt(athlete.NumCouloir)),
+    );
   };
 
-  const sexValues = ['H', 'F', 'X'];
-  const setSexValue = index => {
-    if (index > 0) {
-      setSex(sexValues[index - 1]);
+  const isAthleteExist = athlete => {
+    return (
+      props.athletesData.filter(athleteData => {
+        athleteData.Athlete.Prenom == athlete.Athlete.Prenom &&
+          athleteData.Athlete.Nom == athlete.Athlete.Nom &&
+          athleteData.Athlete.Sexe == athlete.Athlete.Sexe &&
+          athleteData.Athlete.Categorie == athlete.Athlete.Categorie &&
+          athleteData.Athlete.Club == athlete.Athlete.Club;
+      }).lenght > 0
+    );
+  };
+
+  const handleSubmitForm = actions => {
+    const values = props.fieldsAddAthtlete;
+    const lastId = getLastIdResultat();
+    console.log('values', values);
+    var newAthlete = {
+      $id: (lastId + 1).toString(),
+      GuidResultat: '',
+      Athlete: {
+        $id: (lastId + 2).toString(),
+        GuidParticipant: '',
+        Prenom:
+          values.firstname.charAt(0).toUpperCase() + values.firstname.slice(1),
+        Nom: values.name.charAt(0).toUpperCase() + values.name.slice(1),
+        Categorie:
+          values.category != i18n.t('competition:category')
+            ? values.category
+            : '',
+        Club:
+          values.club != ''
+            ? values.club.charAt(0).toUpperCase() + values.club.slice(1)
+            : '',
+        Nationalite: 'FRA',
+        DateNaissance: setDateFormat(values.birthDate),
+        Sexe: values.sex,
+        IsNew: true,
+      },
+      NumCouloir: (getLastNumCouloir() + 1).toString(),
+    };
+    if (!isAthleteExist(newAthlete)) {
+      console.log(newAthlete);
+      props.athletesData.push(newAthlete);
+      actions.resetForm(props.fieldsAddAthtlete);
+      props.setModalVisible(false);
+      showMessage({
+        message: 'Athlète ajouté',
+        type: 'success',
+      });
+    } else {
+      console.error('Athlète déjà présent dans ce concours.');
+      showMessage({
+        message: 'Athlète déjà présent dans ce concours.',
+        type: 'danger',
+      });
     }
   };
-
+  const sexValues = ['H', 'F', 'X'];
   const categoryValues = ['PO', 'BE', 'MI', 'CA', 'JU', 'ES', 'SE', 'MA'];
   const categoryEasyValues = [
     'Poussin',
@@ -51,21 +102,22 @@ const ModalAddAthlete = props => {
     'Senior',
     'Master',
   ];
-  const setCategoryValue = index => {
-    setCategory(categoryValues[index - 1]);
-  };
 
-  const setBirthDateValue = (event, date) => {
-    if (date !== undefined) {
-      setBirthDate(date);
-    }
-    setDateTimePickerVisible(false);
+  const onChangeField = (field, value, setValues) => {
+    console.log('value', value);
+    console.log('props.fieldsAddAthtlete', props.fieldsAddAthtlete);
+    const result = {
+      ...props.fieldsAddAthtlete,
+      [field]: value,
+    };
+    props.setFieldsAddAthtlete(result);
+    console.log(result);
   };
 
   return (
     <Modal
-      modalVisible={modalVisible}
-      setModalVisible={setModalVisible}
+      modalVisible={props.modalVisible}
+      setModalVisible={props.setModalVisible}
       buttonStyleView={styles.button}
       minWidth={Platform.OS === 'windows' ? 300 : 0}
       buttonContent={
@@ -95,32 +147,26 @@ const ModalAddAthlete = props => {
               </View>
               <View style={styles.content}>
                 <Formik
-                  initialValues={{
-                    firstname: '',
-                    name: '',
-                    sex: i18n.t('competition:sex'),
-                    licence_number: '',
-                    club: '',
-                    category: i18n.t('competition:category'),
-                  }}
-                  onSubmit={values => handleSubmitForm(values)}
-                  validationSchema={Validators}>
+                  initialValues={props.fieldsAddAthtlete}
+                  onSubmit={(values, actions) => handleSubmitForm(actions)}
+                  validationSchema={ValidatorsAddAthlete}>
                   {({
                     handleChange,
                     handleSubmit,
+                    setValues,
                     values,
                     errors,
                     touched,
-                    isSubmitting,
-                    dirty,
                   }) => {
                     return (
                       <View style={styles.form}>
                         <Input
                           textContentType="nickname"
                           placeholder={i18n.t('competition:firstname') + ' *'}
-                          onChange={handleChange('firstname')}
-                          value={values.firstname}
+                          onChange={value => {
+                            onChangeField('firstname', value, setValues);
+                          }}
+                          value={props.fieldsAddAthtlete.firstname}
                           touched={touched.firstname}
                           error={errors.firstname}
                         />
@@ -128,8 +174,10 @@ const ModalAddAthlete = props => {
                         <Input
                           textContentType="familyName"
                           placeholder={i18n.t('competition:name') + ' *'}
-                          onChange={handleChange('name')}
-                          value={values.name}
+                          onChange={value => {
+                            onChangeField('name', value, setValues);
+                          }}
+                          value={props.fieldsAddAthtlete.name}
                           touched={touched.name}
                           error={errors.name}
                         />
@@ -137,100 +185,59 @@ const ModalAddAthlete = props => {
                         <View
                           style={{
                             flexDirection:
-                              Platform.OS === 'ios' ? 'row' : column,
+                              Platform.OS === 'ios' ? 'row' : 'column',
                             justifyContent:
                               Platform.OS === 'ios'
                                 ? 'space-around'
                                 : 'flex-start',
                           }}>
                           <Dropdown
+                            name="sex"
                             styleContainer={{}}
                             stylePickerIOS={{width: 200}}
-                            placeholder={i18n.t('competition:sex') + ' *'}
-                            onValueChange={(value, index) => {
-                              setSexValue(index);
+                            placeholder={i18n.t('competition:sex') + '*'}
+                            onValueChange={value => {
+                              onChangeField('sex', value, setValues);
                             }}
                             data={sexValues.map(v => ({
                               label: v,
                               value: v,
                             }))}
-                            selectedValue={sex}
+                            selectedValue={props.fieldsAddAthtlete.sex}
+                            touched={touched.sex}
+                            error={errors.sex}
                           />
 
                           <Dropdown
                             styleContainer={{}}
                             stylePickerIOS={{width: 200}}
                             placeholder={i18n.t('competition:category')}
-                            onValueChange={(value, index) => {
-                              setCategoryValue(index);
+                            onValueChange={value => {
+                              onChangeField('category', value, setValues);
                             }}
                             data={categoryValues.map((v, index) => ({
                               label: categoryEasyValues[index],
                               value: v,
                             }))}
-                            selectedValue={category}
+                            selectedValue={props.fieldsAddAthtlete.category}
                           />
                         </View>
 
-                        <View
-                          style={{
-                            color: colors.black,
-                            borderWidth: 2,
-                            borderColor: colors.muted,
-                            marginBottom: 10,
-                            fontSize: 16,
-                            borderRadius: Platform.OS === 'ios' ? 50 : 0,
-
-                            maxHeight: maxHeightField,
-                            backgroundColor:
-                              Platform.OS === 'windows'
-                                ? colors.muted
-                                : colors.white,
-                          }}>
-                          {Platform.OS === 'android' ? (
-                            <Button
-                              styleView={{padding: 15}}
-                              onPress={() => setDateTimePickerVisible(true)}
-                              content={
-                                <>
-                                  <Text
-                                    style={{
-                                      color:
-                                        setDateFormat(birthDate).toString() !==
-                                        setDateFormat(new Date()).toString()
-                                          ? colors.black
-                                          : colors.muted,
-                                    }}>
-                                    {setDateFormat(birthDate)}
-                                  </Text>
-                                  {dateTimePickerVisible && (
-                                    <DateTimePicker
-                                      value={birthDate}
-                                      maximumDate={new Date()}
-                                      onChange={setBirthDateValue}
-                                    />
-                                  )}
-                                </>
-                              }
-                            />
-                          ) : (
-                            <DateTimePicker
-                              style={{
-                                height: maxHeightField,
-                                width: 280,
-                              }}
-                              value={birthDate}
-                              maximumDate={new Date()}
-                              onChange={setBirthDateValue}
-                            />
-                          )}
-                        </View>
+                        <MyDateTimePicker
+                          values={values}
+                          value={props.fieldsAddAthtlete.birthDate}
+                          touched={touched.birthDate}
+                          error={errors.birthDate}
+                          setValues={setValues}
+                        />
 
                         <Input
                           textContentType="username"
                           placeholder={i18n.t('competition:licence_number')}
-                          onChange={handleChange('licence_number')}
-                          value={values.licence_number}
+                          onChange={value => {
+                            onChangeField('licence_number', value, setValues);
+                          }}
+                          value={props.fieldsAddAthtlete.licence_number}
                           touched={touched.licence_number}
                           error={errors.licence_number}
                         />
@@ -238,8 +245,10 @@ const ModalAddAthlete = props => {
                         <Input
                           textContentType="username"
                           placeholder={i18n.t('competition:club')}
-                          onChange={handleChange('club')}
-                          value={values.club}
+                          onChange={value => {
+                            onChangeField('club', value, setValues);
+                          }}
+                          value={props.fieldsAddAthtlete.club}
                           touched={touched.club}
                           error={errors.club}
                         />

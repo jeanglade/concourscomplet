@@ -1,19 +1,16 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, TextInput} from 'react-native';
+import {StyleSheet, Text, View, TextInput, Image} from 'react-native';
 import i18n from 'i18next';
 import {colors} from '_config';
-import {DataTable} from '_components';
+import {DataTable, Button} from '_components';
 
 const TableConcoursSb = props => {
   const [hasDossard, setHasDossard] = useState(() => {
-    var res = false;
-    props.tableData.forEach(row => {
-      if (row.Athlete.Dossard?.toString()) {
-        res = true;
-      }
-    });
-    return res;
+    return (
+      props.tableData.filter(row => row.Athlete.Dossard?.toString()).length > 0
+    );
   });
+
   const [allEssais, setAllEssais] = useState(
     //Init avec les valeurs du JSON
     [...Array(props.tableData.length)].map(row => [...Array(6)].map(x => '')),
@@ -65,6 +62,28 @@ const TableConcoursSb = props => {
           </View>
         )}
         <View style={styles.flex4}>
+          {resultat.Athlete.IsNew && (
+            <Button
+              onPress={() => {
+                props.setFieldsAddAthtlete({
+                  firstname: resultat.Athlete.Prenom?.toString(),
+                  name: resultat.Athlete.Nom?.toString(),
+                  sex: resultat.Athlete.Sexe?.toString(),
+                  birthDate: resultat.Athlete.DateNaissance?.toString(),
+                  licence_number: resultat.Athlete.Licence?.toString(),
+                  club: resultat.Athlete.Club?.toString(),
+                  category: resultat.Athlete.Categorie?.toString(),
+                });
+                props.setModalAddAthlete(true);
+              }}
+              content={
+                <Image
+                  style={{width: 20, height: 20}}
+                  source={require('../../../icons/pencil.png')}
+                />
+              }
+            />
+          )}
           <Text
             style={[
               styles.text,
