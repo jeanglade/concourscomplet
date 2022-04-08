@@ -197,6 +197,7 @@ const ModalAddAthlete = props => {
           {i18n.t('competition:add_an_athlete')}
         </Text>
       }
+      maxHeight={760}
       contentModal={
         <View
           style={[
@@ -369,7 +370,6 @@ const ModalAddAthlete = props => {
                         <Button
                           onPress={e => {
                             setValues(props.fieldsAddAthtlete);
-
                             handleSubmit(e);
                           }}
                           styleView={styles.button}
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textAlignVertical: 'center',
     alignItems: 'center',
-    backgroundColor: colors.ffa_blue_dark,
+    backgroundColor: colors.ffa_blue_light,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderWidth: 3,
@@ -413,7 +413,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   container: {
-    maxHeight: '80%',
     minWidth: Platform.OS === 'windows' ? 300 : '50%',
     paddingVertical: 20,
   },

@@ -33,14 +33,10 @@ const ModalOpenJson = props => {
 
 const styles = StyleSheet.create({
   iconPosition: {
-    width: 55,
-    height: 55,
-    backgroundColor: colors.ffa_blue_dark,
+    backgroundColor: colors.ffa_blue_light,
     padding: 10,
     margin: 5,
-    borderRadius: 30,
-    borderWidth: 2,
-    borderColor: colors.ffa_blue_light,
+    borderRadius: 3,
   },
   iconImport: {
     width: 30,

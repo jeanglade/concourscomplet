@@ -145,8 +145,13 @@ const TableCompetition = props => {
           <Text
             style={[
               styles.text,
-              styles.textBold,
-              {color: getStatusColor(statut)},
+              {
+                textAlign: 'center',
+                color: colors.white,
+                backgroundColor: getStatusColor(statut),
+                borderRadius: 15,
+                padding: 3,
+              },
             ]}>
             {statut}
           </Text>
@@ -206,7 +211,7 @@ const TableCompetition = props => {
             ]}
             content={
               <Image
-                style={styles.icon}
+                style={styles.iconDeleteCompetition}
                 source={require('../icons/delete.png')}
               />
             }
@@ -278,6 +283,7 @@ const styles = StyleSheet.create({
     margin: 1,
     paddingLeft: 10,
     alignItems: 'center',
+    borderRadius: 3,
   },
   text: {
     color: colors.black,
@@ -286,15 +292,13 @@ const styles = StyleSheet.create({
   textBold: {fontWeight: 'bold'},
   textCenter: {textAlign: 'center'},
   cellButton: {
-    backgroundColor: colors.ffa_blue_dark,
-    padding: 10,
+    backgroundColor: colors.ffa_blue_light,
+    padding: 5,
     margin: 5,
-    borderWidth: 2,
-    borderColor: colors.ffa_blue_light,
+    borderRadius: 3,
   },
   backRed: {
     backgroundColor: colors.red,
-    borderColor: colors.red_light,
   },
   flex1: {
     flex: 1,
@@ -325,19 +329,23 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   icon: {
-    width: 20,
-    height: 20,
+    width: 30,
+    height: 30,
+  },
+  iconDeleteCompetition: {
+    width: 15,
+    height: 15,
   },
   actions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
   buttonDeleteCompetition: {
-    padding: 0,
+    padding: 5,
     margin: 0,
     marginLeft: 10,
     marginTop: 15,
-    borderRadius: 20,
+    borderRadius: 3,
   },
 });
 

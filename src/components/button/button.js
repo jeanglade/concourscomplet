@@ -20,7 +20,10 @@ const Button = props => {
           setTooltipVisible(false);
         }
       }}
-      onPress={props.onPress}>
+      onPress={() => {
+        setTooltipVisible(false);
+        props.onPress();
+      }}>
       <View
         style={props.styleView}
         onMouseEnter={() => {
@@ -30,6 +33,10 @@ const Button = props => {
               setTooltipVisible(false);
             }, 1500);
           }
+        }}
+        onPress={() => {
+          setTooltipVisible(false);
+          props.onPress();
         }}>
         {Platform.OS !== 'windows' && (
           <Tooltip

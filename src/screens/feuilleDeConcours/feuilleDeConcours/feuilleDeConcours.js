@@ -2,7 +2,13 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import i18n from 'i18next';
 
-import {ModalAddAthlete, TableConcoursSB} from '_screens';
+import {
+  ModalAddAthlete,
+  TableConcoursSB,
+  TableConcoursSL,
+  TableConcoursLR,
+  ModalParam,
+} from '_screens';
 import {colors} from '_config';
 
 const FeuilleDeConcours = props => {
@@ -31,15 +37,52 @@ const FeuilleDeConcours = props => {
   const [fieldsAddAthtlete, setFieldsAddAthtlete] =
     useState(initFormAddAthlete);
 
+  //Initalisatoin des variables Options Paramètres
+  const [modalParam, setModalParam] = useState(false);
+
   return (
     <View style={styles.container}>
-      <View>
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          justifyContent: 'space-bewteen',
+          alignItems: 'center',
+        }}>
         <Text style={styles.titleText}>
           {dataConcours.epreuve} - {dataConcours.dateInfo}
         </Text>
+        <View>
+          <ModalParam
+            setModalVisible={setModalParam}
+            modalVisible={modalParam}
+          />
+        </View>
       </View>
       {competitionData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
         <TableConcoursSB
+          dataConcours={dataConcours}
+          tableData={tableData}
+          setTableData={setTableData}
+          compData={competitionData}
+          setModalAddAthlete={setModalAddAthlete}
+          setFieldsAddAthtlete={setFieldsAddAthtlete}
+          fieldsAddAthtlete={fieldsAddAthtlete}
+        />
+      )}
+      {competitionData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SL' && (
+        <TableConcoursSL
+          dataConcours={dataConcours}
+          tableData={tableData}
+          setTableData={setTableData}
+          compData={competitionData}
+          setModalAddAthlete={setModalAddAthlete}
+          setFieldsAddAthtlete={setFieldsAddAthtlete}
+          fieldsAddAthtlete={fieldsAddAthtlete}
+        />
+      )}
+      {competitionData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'LR' && (
+        <TableConcoursLR
           dataConcours={dataConcours}
           tableData={tableData}
           setTableData={setTableData}
@@ -78,8 +121,8 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 20,
     color: colors.ffa_blue_light,
-    margin: 15,
-    paddingVertical: 10,
+    marginLeft: 15,
+    marginVertical: 5,
   },
   rowOptions: {
     flexDirection: 'row',

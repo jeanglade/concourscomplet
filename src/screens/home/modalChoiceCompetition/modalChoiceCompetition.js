@@ -63,14 +63,10 @@ const ModalChoiceCompetition = props => {
 
 const styles = StyleSheet.create({
   iconPosition: {
-    width: 55,
-    height: 55,
-    backgroundColor: colors.ffa_blue_dark,
+    backgroundColor: colors.ffa_blue_light,
     padding: 10,
     margin: 5,
-    borderRadius: 30,
-    borderWidth: 2,
-    borderColor: colors.ffa_blue_light,
+    borderRadius: 3,
   },
   icon: {
     width: 30,
@@ -84,11 +80,9 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 20,
     alignItems: 'center',
-    backgroundColor: colors.ffa_blue_dark,
+    backgroundColor: colors.ffa_blue_light,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderWidth: 3,
-    borderColor: colors.ffa_blue_light,
   },
   textButton: {
     color: colors.white,

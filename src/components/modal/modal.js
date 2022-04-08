@@ -16,6 +16,7 @@ const MyModal = props => {
     <View
       style={[
         styles.modalView,
+        {maxHeight: props.maxHeight},
         Platform.OS === 'windows' && {minWidth: props.minWidth},
       ]}>
       <Button
@@ -53,7 +54,9 @@ const MyModal = props => {
         </Modal>
       ) : (
         <Popup isOpen={props.modalVisible}>
-          <View style={styles.centeredView}>{contentModal}</View>
+          <View style={[styles.centeredView, {maxHeight: props.maxHeight}]}>
+            {contentModal}
+          </View>
         </Popup>
       )}
     </>
@@ -62,6 +65,7 @@ const MyModal = props => {
 
 const styles = StyleSheet.create({
   centeredView: {
+    paddingVertical: '3%',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

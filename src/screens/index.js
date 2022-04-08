@@ -8,7 +8,14 @@ import {
   ModalOpenJson,
   ModalChoiceCompetition,
 } from './home';
-import {TableConcoursSB, ModalAddAthlete} from './feuilleDeConcours';
+import {
+  TableConcoursSB,
+  TableConcoursSL,
+  TableConcoursLR,
+  ModalAddAthlete,
+  ModalParam,
+  ModalBar,
+} from './feuilleDeConcours';
 
 export {
   Home,
@@ -20,5 +27,9 @@ export {
   ModalOpenJson,
   ModalChoiceCompetition,
   TableConcoursSB,
+  TableConcoursSL,
+  TableConcoursLR,
   ModalAddAthlete,
+  ModalParam,
+  ModalBar,
 };

@@ -114,12 +114,10 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    backgroundColor: colors.ffa_blue_dark,
+    backgroundColor: colors.ffa_blue_light,
     paddingHorizontal: 20,
     paddingVertical: 13, //Same height than TextInput
     marginHorizontal: 15,
-    borderWidth: 3,
-    borderColor: colors.ffa_blue_light,
   },
   textButton: {
     color: colors.white,

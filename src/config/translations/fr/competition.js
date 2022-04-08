@@ -20,4 +20,6 @@ export default {
   fourth: '4ème',
   fifth: '5ème',
   sixth: '6ème',
+  param: 'Paramètres',
+  bar_rise: 'Montées de barre',
 };
