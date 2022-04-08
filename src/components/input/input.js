@@ -12,7 +12,15 @@ const maxHeightField = 55;
  * @param {string} error
  * @param {boolean} touched
  */
-const Input = ({name, type, error, onChange, touched, ...restProps}) => (
+const Input = ({
+  name,
+  type,
+  error,
+  onChange,
+  onBlur,
+  touched,
+  ...restProps
+}) => (
   <>
     <TextInput
       textContentType={type}
@@ -26,10 +34,12 @@ const Input = ({name, type, error, onChange, touched, ...restProps}) => (
         padding: 15,
         marginBottom: touched && error ? 5 : 10,
         fontSize: 16,
+        backgroundColor: colors.white,
         borderRadius: Platform.OS === 'ios' ? 50 : 0,
         height: maxHeightField,
       }}
       onChangeText={text => onChange(text)}
+      onEndEditing={() => onBlur()}
       multiline={false}
       {...restProps}
     />
@@ -54,7 +64,7 @@ Input.defaultProps = {
 
 const styles = StyleSheet.create({
   textError: {
-    marginBottom: 5,
+    marginBottom: 15,
     fontSize: 13,
     color: colors.red,
   },

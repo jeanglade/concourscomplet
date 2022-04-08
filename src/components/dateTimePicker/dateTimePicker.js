@@ -46,15 +46,8 @@ const MyDateTimePicker = ({name, type, error, onChange, touched, ...props}) => {
                     maximumDate={new Date()}
                     mode="date"
                     onChange={(event, date) => {
-                      console.log('event', event);
-                      console.log('date', date);
                       setDateTimePickerVisible(false);
-                      if (date != undefined) {
-                        props.setValues({
-                          ...props.values,
-                          ['birthDate']: date,
-                        });
-                      }
+                      props.onValueChange(date);
                     }}
                   />
                 )}
@@ -71,12 +64,7 @@ const MyDateTimePicker = ({name, type, error, onChange, touched, ...props}) => {
             maximumDate={new Date()}
             onChange={(event, date) => {
               setDateTimePickerVisible(false);
-              if (date != undefined) {
-                props.setValues({
-                  ...props.values,
-                  ['birthDate']: date,
-                });
-              }
+              props.onValueChange(date);
             }}
           />
         )}
@@ -122,7 +110,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   textError: {
-    marginBottom: 5,
+    marginBottom: 15,
     fontSize: 13,
     color: colors.red,
   },

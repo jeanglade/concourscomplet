@@ -7,7 +7,9 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Text,
+  Image,
   Platform,
+  Alert,
 } from 'react-native';
 import moment from 'moment';
 
@@ -15,6 +17,7 @@ import i18n from 'i18next';
 import {Formik} from 'formik';
 import {showMessage} from 'react-native-flash-message';
 import {ValidatorsAddAthlete} from '../../utils/validators';
+import {setFile} from '../../../utils/myAsyncStorage';
 
 const ModalAddAthlete = props => {
   const setDateFormat = date => {
@@ -45,73 +48,142 @@ const ModalAddAthlete = props => {
     );
   };
 
+  const setNewAthlete = (values, athlete) => {
+    athlete.Athlete.Prenom =
+      values.firstname.charAt(0).toUpperCase() + values.firstname.slice(1);
+    athlete.Athlete.Nom =
+      values.name.charAt(0).toUpperCase() + values.name.slice(1);
+    athlete.Athlete.Sexe = values.sex;
+    athlete.Athlete.Categorie =
+      values.category != i18n.t('competition:category') ? values.category : '';
+    athlete.Athlete.Club =
+      values.club != ''
+        ? values.club.charAt(0).toUpperCase() + values.club.slice(1)
+        : '';
+    athlete.Athlete.Licence = values.licence_number;
+    athlete.Athlete.Nationalite = 'FRA';
+    athlete.Athlete.DateNaissance = setDateFormat(values.birthDate);
+    athlete.Athlete.Dossard = values.dossard;
+    return athlete;
+  };
+
+  const saveContent = async () => {
+    props.fileContent.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats =
+      props.athletesData;
+    await setFile(props.fileName, JSON.stringify(props.fileContent));
+  };
+
   const handleSubmitForm = actions => {
     const values = props.fieldsAddAthtlete;
-    const lastId = getLastIdResultat();
-    console.log('values', values);
-    var newAthlete = {
-      $id: (lastId + 1).toString(),
-      GuidResultat: '',
-      Athlete: {
-        $id: (lastId + 2).toString(),
-        GuidParticipant: '',
-        Prenom:
-          values.firstname.charAt(0).toUpperCase() + values.firstname.slice(1),
-        Nom: values.name.charAt(0).toUpperCase() + values.name.slice(1),
-        Categorie:
-          values.category != i18n.t('competition:category')
-            ? values.category
-            : '',
-        Club:
-          values.club != ''
-            ? values.club.charAt(0).toUpperCase() + values.club.slice(1)
-            : '',
-        Nationalite: 'FRA',
-        DateNaissance: setDateFormat(values.birthDate),
-        Sexe: values.sex,
-        IsNew: true,
-      },
-      NumCouloir: (getLastNumCouloir() + 1).toString(),
-    };
-    if (!isAthleteExist(newAthlete)) {
-      console.log(newAthlete);
-      props.athletesData.push(newAthlete);
-      actions.resetForm(props.fieldsAddAthtlete);
-      props.setModalVisible(false);
+    var newAthlete = null;
+    var athlete = null;
+    if (values.type === 'new') {
+      const lastId = getLastIdResultat();
+      newAthlete = {
+        $id: (lastId + 1).toString(),
+        GuidResultat: '',
+        Athlete: {
+          $id: (lastId + 2).toString(),
+          GuidParticipant: '',
+          Prenom: '',
+          Nom: '',
+          Categorie: '',
+          Club: '',
+          Nationalite: '',
+          Licence: '',
+          DateNaissance: '',
+          Sexe: '',
+          Dossard: '',
+          IsNew: true,
+        },
+        NumCouloir: (getLastNumCouloir() + 1).toString(),
+      };
+      newAthlete = setNewAthlete(values, newAthlete);
+      if (!isAthleteExist(newAthlete)) {
+        props.athletesData.push(newAthlete);
+        actions.resetForm(props.fieldsAddAthtlete);
+        saveContent();
+        showMessage({
+          message: 'Athlète ajouté',
+          type: 'success',
+        });
+      } else {
+        console.error('Athlète déjà présent dans ce concours.');
+        showMessage({
+          message: 'Athlète déjà présent dans ce concours.',
+          type: 'danger',
+        });
+      }
+    } else {
+      props.athletesData[
+        props.athletesData.findIndex(
+          a => a.$id === props.fieldsAddAthtlete.resultat.$id,
+        )
+      ] = setNewAthlete(values, props.fieldsAddAthtlete.resultat);
+      saveContent();
       showMessage({
-        message: 'Athlète ajouté',
+        message: 'Athlète modifié',
         type: 'success',
       });
-    } else {
-      console.error('Athlète déjà présent dans ce concours.');
-      showMessage({
-        message: 'Athlète déjà présent dans ce concours.',
-        type: 'danger',
-      });
     }
+    props.setModalVisible(false);
   };
-  const sexValues = ['H', 'F', 'X'];
-  const categoryValues = ['PO', 'BE', 'MI', 'CA', 'JU', 'ES', 'SE', 'MA'];
+
+  const sexValues = ['M', 'F'];
+  const categoryValues = props.fieldsAddAthtlete?.categories;
   const categoryEasyValues = [
-    'Poussin',
-    'Benjamin',
-    'Minime',
-    'Cadet',
-    'Junior',
-    'Espoir',
-    'Senior',
-    'Master',
+    {id: 'EA', name: 'Eveil'},
+    {id: 'PO', name: 'Poussin'},
+    {id: 'BE', name: 'Benjamin'},
+    {id: 'MI', name: 'Minime'},
+    {id: 'CA', name: 'Cadet'},
+    {id: 'JU', name: 'Junior'},
+    {id: 'ES', name: 'Espoir'},
+    {id: 'SE', name: 'Senior'},
+    {id: 'MA', name: 'Master'},
   ];
 
-  const onChangeField = (field, value, setValues) => {
-    console.log('value', value);
-    console.log('props.fieldsAddAthtlete', props.fieldsAddAthtlete);
-    const result = {
+  const onChangeField = (field, value) => {
+    props.setFieldsAddAthtlete({
       ...props.fieldsAddAthtlete,
       [field]: value,
-    };
-    props.setFieldsAddAthtlete(result);
-    console.log(result);
+    });
+  };
+
+  const alertDeleteAthlete = () => {
+    Alert.alert(
+      i18n.t('toast:confirm_delete_athlete'),
+      props.fieldsAddAthtlete.firstname?.toString() +
+        ' ' +
+        props.fieldsAddAthtlete.name?.toString(),
+      [
+        {
+          text: i18n.t('toast:cancel'),
+        },
+        {
+          text: i18n.t('toast:ok'),
+          onPress: async () => {
+            props.athletesData.splice(
+              props.athletesData.findIndex(
+                a => a.$id === props.fieldsAddAthtlete.resultat.$id,
+              ),
+              1,
+            );
+            saveContent();
+            props.setModalVisible(false);
+            showMessage({
+              message: 'Athlète supprimé',
+              type: 'success',
+            });
+          },
+        },
+      ],
+    );
+  };
+
+  const findCategory = category => {
+    const result = categoryEasyValues.filter(cat => cat.id == category);
+    return result.length > 0 ? result[0].name : category;
   };
 
   return (
@@ -140,31 +212,43 @@ const ModalAddAthlete = props => {
               style={
                 ([{flex: 1}], Platform.OS === 'windows' && {maxHeight: 380})
               }>
-              <View>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={styles.titleText}>
-                  {i18n.t('competition:add_an_athlete')}
+                  {props.fieldsAddAthtlete.type === 'new'
+                    ? i18n.t('competition:add_an_athlete')
+                    : i18n.t('competition:edit_an_athlete')}
                 </Text>
+                {props.fieldsAddAthtlete.type === 'modify' && (
+                  <Button
+                    onPress={alertDeleteAthlete}
+                    styleView={styles.buttonDeleteAthlete}
+                    content={
+                      <Image
+                        style={styles.icon}
+                        source={require('../../../icons/delete.png')}
+                      />
+                    }
+                  />
+                )}
               </View>
               <View style={styles.content}>
                 <Formik
                   initialValues={props.fieldsAddAthtlete}
                   onSubmit={(values, actions) => handleSubmitForm(actions)}
-                  validationSchema={ValidatorsAddAthlete}>
-                  {({
-                    handleChange,
-                    handleSubmit,
-                    setValues,
-                    values,
-                    errors,
-                    touched,
-                  }) => {
+                  validationSchema={ValidatorsAddAthlete}
+                  validateOnBlur={false}
+                  validateOnChange={false}>
+                  {({handleSubmit, setValues, values, errors, touched}) => {
                     return (
                       <View style={styles.form}>
                         <Input
                           textContentType="nickname"
                           placeholder={i18n.t('competition:firstname') + ' *'}
                           onChange={value => {
-                            onChangeField('firstname', value, setValues);
+                            onChangeField('firstname', value);
+                          }}
+                          onBlur={value => {
+                            setValues(props.fieldsAddAthtlete);
                           }}
                           value={props.fieldsAddAthtlete.firstname}
                           touched={touched.firstname}
@@ -175,7 +259,10 @@ const ModalAddAthlete = props => {
                           textContentType="familyName"
                           placeholder={i18n.t('competition:name') + ' *'}
                           onChange={value => {
-                            onChangeField('name', value, setValues);
+                            onChangeField('name', value);
+                          }}
+                          onBlur={() => {
+                            setValues(props.fieldsAddAthtlete);
                           }}
                           value={props.fieldsAddAthtlete.name}
                           touched={touched.name}
@@ -197,7 +284,8 @@ const ModalAddAthlete = props => {
                             stylePickerIOS={{width: 200}}
                             placeholder={i18n.t('competition:sex') + '*'}
                             onValueChange={value => {
-                              onChangeField('sex', value, setValues);
+                              onChangeField('sex', value);
+                              setValues(props.fieldsAddAthtlete);
                             }}
                             data={sexValues.map(v => ({
                               label: v,
@@ -213,10 +301,11 @@ const ModalAddAthlete = props => {
                             stylePickerIOS={{width: 200}}
                             placeholder={i18n.t('competition:category')}
                             onValueChange={value => {
-                              onChangeField('category', value, setValues);
+                              onChangeField('category', value);
+                              setValues(props.fieldsAddAthtlete);
                             }}
                             data={categoryValues.map((v, index) => ({
-                              label: categoryEasyValues[index],
+                              label: findCategory(v),
                               value: v,
                             }))}
                             selectedValue={props.fieldsAddAthtlete.category}
@@ -224,18 +313,25 @@ const ModalAddAthlete = props => {
                         </View>
 
                         <MyDateTimePicker
-                          values={values}
                           value={props.fieldsAddAthtlete.birthDate}
                           touched={touched.birthDate}
                           error={errors.birthDate}
-                          setValues={setValues}
+                          onValueChange={value => {
+                            if (value != undefined) {
+                              onChangeField('birthDate', value);
+                              setValues(props.fieldsAddAthtlete);
+                            }
+                          }}
                         />
 
                         <Input
                           textContentType="username"
                           placeholder={i18n.t('competition:licence_number')}
                           onChange={value => {
-                            onChangeField('licence_number', value, setValues);
+                            onChangeField('licence_number', value);
+                          }}
+                          onBlur={() => {
+                            setValues(props.fieldsAddAthtlete);
                           }}
                           value={props.fieldsAddAthtlete.licence_number}
                           touched={touched.licence_number}
@@ -246,15 +342,36 @@ const ModalAddAthlete = props => {
                           textContentType="username"
                           placeholder={i18n.t('competition:club')}
                           onChange={value => {
-                            onChangeField('club', value, setValues);
+                            onChangeField('club', value);
+                          }}
+                          onBlur={() => {
+                            setValues(props.fieldsAddAthtlete);
                           }}
                           value={props.fieldsAddAthtlete.club}
                           touched={touched.club}
                           error={errors.club}
                         />
 
+                        <Input
+                          textContentType="username"
+                          placeholder={i18n.t('competition:dossard')}
+                          onChange={value => {
+                            onChangeField('dossard', value);
+                          }}
+                          onBlur={() => {
+                            setValues(props.fieldsAddAthtlete);
+                          }}
+                          value={props.fieldsAddAthtlete.dossard}
+                          touched={touched.dossard}
+                          error={errors.dossard}
+                        />
+
                         <Button
-                          onPress={handleSubmit}
+                          onPress={e => {
+                            setValues(props.fieldsAddAthtlete);
+
+                            handleSubmit(e);
+                          }}
                           styleView={styles.button}
                           content={
                             <Text style={styles.textButton}>
@@ -303,6 +420,16 @@ const styles = StyleSheet.create({
   content: {
     paddingVertical: 20,
     paddingHorizontal: 10,
+  },
+  buttonDeleteAthlete: {
+    borderWidth: 2,
+    backgroundColor: colors.red,
+    borderColor: colors.red_light,
+    borderRadius: 20,
+  },
+  icon: {
+    width: 20,
+    height: 20,
   },
 });
 

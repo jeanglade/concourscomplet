@@ -13,7 +13,6 @@ export const ValidatorsAddAthlete = Yup.object().shape({
     'birthDate',
     'Ce champ est obligatoire.',
     value => {
-      console.log(value);
       return (
         moment().format('DD/MM/YYYY') !==
         moment(Date.parse(value)).format('DD/MM/YYYY')

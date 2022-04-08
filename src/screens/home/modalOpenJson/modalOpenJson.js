@@ -3,6 +3,7 @@ import {colors} from '_config';
 import {Modal} from '_components';
 import {OpenJson} from '_screens';
 import {Image, StyleSheet, Platform} from 'react-native';
+import i18n from 'i18next';
 
 const ModalOpenJson = props => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -12,6 +13,7 @@ const ModalOpenJson = props => {
       setModalVisible={setModalVisible}
       buttonStyleView={styles.iconPosition}
       minWidth={Platform.OS === 'windows' ? 510 : 0}
+      buttonTooltip={i18n.t('common:new_epreuve')}
       buttonContent={
         <Image
           style={styles.iconImport}

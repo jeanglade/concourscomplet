@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import i18n from 'i18next';
+import i18n, {t} from 'i18next';
 import moment from 'moment';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
 
@@ -30,11 +30,15 @@ const Home = props => {
     return series;
   };
 
-  async function refreshData(tab, comp = null) {
+  async function refreshData(tab, idComp = null) {
     const competitions = getAllCompetitionsInfo(tab);
     setTableData(tab);
     setAllCompetitions(competitions);
-    setCompetition(comp == null ? getLastCompetition(competitions) : comp);
+    setCompetition(
+      idComp == null
+        ? getLastCompetition(competitions)
+        : competitions.find(c => c.idCompetition === idComp),
+    );
   }
 
   function initData() {
@@ -92,11 +96,12 @@ const Home = props => {
           data = await getFile(key);
         }
         //Met à jour les données des concours en triant par ordre croissant par date
-        tab.push(getInfoSerie(key, data));
+        const infos = getInfoSerie(key, data);
+        tab.push(infos);
         tab.sort((a, b) => {
           return a.date > b.date;
         });
-        refreshData(tab);
+        refreshData(tab, JSON.parse(infos.data).GuidCompetition);
       }
     }
   };
@@ -175,7 +180,7 @@ const Home = props => {
     if (comp !== null && JSON.stringify(comp) !== JSON.stringify({})) {
       if (comp.idCompetition !== undefined) {
         if (comp.idCompetition !== competition?.idCompetition?.toString()) {
-          refreshData(tableData, comp);
+          refreshData(tableData, comp.idCompetition);
         }
       }
     }

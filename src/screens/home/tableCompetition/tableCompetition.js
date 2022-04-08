@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View, Image, Alert} from 'react-native';
 import i18n from 'i18next';
 import {colors} from '_config';
-import {removeFile, removeFiles} from '../../../utils/myAsyncStorage';
+import {getFile, removeFile, removeFiles} from '../../../utils/myAsyncStorage';
 import {useOrientation} from '../../../utils/useOrientation';
 import {Button, DataTable} from '_components';
 import {showMessage} from 'react-native-flash-message';
@@ -62,7 +62,7 @@ const TableCompetition = props => {
 
   //Suppression d un concours
   const alertDeleteConcours = (id, epreuve) => {
-    Alert.alert(i18n.t('toast:confirm_delete'), epreuve, [
+    Alert.alert(i18n.t('toast:confirm_delete_concours'), epreuve, [
       {
         text: i18n.t('toast:cancel'),
       },
@@ -79,7 +79,7 @@ const TableCompetition = props => {
                 props.competition.idCompetition
               );
             }).length > 0
-              ? props.competition
+              ? props.competition.idCompetition
               : null,
           );
           showMessage({
@@ -94,7 +94,7 @@ const TableCompetition = props => {
   //Suppression de tous les concours d une competition
   const alertDeleteCompetition = () => {
     Alert.alert(
-      i18n.t('toast:confirm_delete'),
+      i18n.t('toast:confirm_delete_comp'),
       props.competition?.nomCompetition?.toString(),
       [
         {
@@ -154,7 +154,9 @@ const TableCompetition = props => {
         <View style={[styles.actions, styles.flex2]}>
           <Button
             styleView={[styles.cellButton]}
-            onPress={() => {
+            tooltip={i18n.t('common:competition_sheet')}
+            onPress={async () => {
+              item.data = await getFile(item.id);
               props.navigation.navigate('FeuilleDeConcours', {
                 item: item,
               });

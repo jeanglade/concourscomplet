@@ -16,7 +16,7 @@ export default {
   competitionSheetempty: 'Code compétition vide',
   required: 'Obligatoire',
   options: 'Options',
-  new_epreuve: 'Importer un concours',
+  new_epreuve: "Importer les concours d'une compétition",
   code: 'Code',
   filters: 'Filtres',
   ready: 'Prêt',

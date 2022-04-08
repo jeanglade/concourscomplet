@@ -8,15 +8,17 @@ import {colors} from '_config';
 const FeuilleDeConcours = props => {
   //Initialisation des données du concours
   const dataConcours = props.route.params.item;
-  const compData = JSON.parse(dataConcours.data);
+  const competitionData = JSON.parse(dataConcours.data);
   const listAthlete =
-    compData.EpreuveConcoursComplet.TourConcoursComplet
+    competitionData.EpreuveConcoursComplet.TourConcoursComplet
       .LstSerieConcoursComplet[0].LstResultats;
   const [tableData, setTableData] = useState(listAthlete);
 
   //Initialisation des variables Option Add an athlete
   const [modalAddAthlete, setModalAddAthlete] = useState(false);
-  const [fieldsAddAthtlete, setFieldsAddAthtlete] = useState({
+  const initFormAddAthlete = {
+    categories: competitionData.LstCategoriesAthlete,
+    type: 'new',
     firstname: '',
     name: '',
     sex: i18n.t('competition:sex') + '*',
@@ -24,7 +26,10 @@ const FeuilleDeConcours = props => {
     licence_number: '',
     club: '',
     category: i18n.t('competition:category'),
-  });
+    dossard: '',
+  };
+  const [fieldsAddAthtlete, setFieldsAddAthtlete] =
+    useState(initFormAddAthlete);
 
   return (
     <View style={styles.container}>
@@ -33,14 +38,15 @@ const FeuilleDeConcours = props => {
           {dataConcours.epreuve} - {dataConcours.dateInfo}
         </Text>
       </View>
-      {compData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
+      {competitionData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
         <TableConcoursSB
           dataConcours={dataConcours}
           tableData={tableData}
           setTableData={setTableData}
-          compData={compData}
+          compData={competitionData}
           setModalAddAthlete={setModalAddAthlete}
           setFieldsAddAthtlete={setFieldsAddAthtlete}
+          fieldsAddAthtlete={fieldsAddAthtlete}
         />
       )}
       <View style={styles.rowOptions}>
@@ -48,10 +54,15 @@ const FeuilleDeConcours = props => {
         <ModalAddAthlete
           setAthletesData={setTableData}
           modalVisible={modalAddAthlete}
-          setModalVisible={setModalAddAthlete}
+          setModalVisible={b => {
+            setFieldsAddAthtlete(initFormAddAthlete);
+            setModalAddAthlete(b);
+          }}
           athletesData={tableData}
           fieldsAddAthtlete={fieldsAddAthtlete}
           setFieldsAddAthtlete={setFieldsAddAthtlete}
+          fileContent={competitionData}
+          fileName={dataConcours.id}
         />
       </View>
     </View>

@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   textError: {
-    marginBottom: 5,
+    marginBottom: 15,
     fontSize: 13,
     color: colors.red,
   },

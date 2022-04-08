@@ -42,6 +42,7 @@ const MyModal = props => {
         }}
         styleView={props.buttonStyleView}
         content={props.buttonContent}
+        tooltip={props.buttonTooltip}
       />
       {Platform.OS === 'ios' || Platform.OS === 'android' ? (
         <Modal
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'flex-end',
   },
-  iconClosePosition: {position: 'absolute', top: 15, right: 15},
+  iconClosePosition: {position: 'absolute', top: -5, right: -5},
   iconClose: {
     width: 25,
     height: 25,
