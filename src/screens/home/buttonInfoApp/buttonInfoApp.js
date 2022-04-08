@@ -21,7 +21,7 @@ const ButtonInfoApp = props => {
             onPress={() => setModalVisible(!modalVisible)}
             content={
               <Text style={styles.text}>
-                {i18n.t('common:version')} {DeviceInfo.getVersion()}
+                {i18n.t('common:version')} : {DeviceInfo.getVersion()}
               </Text>
             }
           />

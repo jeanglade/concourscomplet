@@ -27,9 +27,8 @@ export const validateCompetitionCode = async codeCompetition => {
             </Body>\
         </Envelope>',
     }).catch(e => {
-      console.error(e);
       showMessage({
-        message: i18n.i18n.i18n.t('toast:wrong_code'),
+        message: i18n.t('toast:wrong_code'),
         type: 'danger',
       });
       Keyboard.dismiss();
@@ -44,18 +43,16 @@ export const validateCompetitionCode = async codeCompetition => {
       );
     } else {
       showMessage({
-        message: i18n.i18n.i18n.t('toast:import_error'),
+        message: i18n.t('toast:import_error'),
         type: 'danger',
       });
       Keyboard.dismiss();
     }
   } else {
-    console.error(i18n.i18n.i18n.t('toast:competition_sheet_empty'));
     showMessage({
-      message: i18n.i18n.i18n.t('toast:competition_sheet_empty'),
+      message: i18n.t('toast:competition_sheet_empty'),
       type: 'danger',
     });
-    Keyboard.dismiss();
   }
   return res;
 };

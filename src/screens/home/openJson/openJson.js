@@ -26,18 +26,17 @@ const OpenJson = props => {
       const jsonContent = await validateCompetitionCode(codeConcours);
       if (jsonContent != null) {
         saveEachSerie(jsonContent, props.addOneSerieDataTable);
+        Keyboard.dismiss();
+        setCodeConcours(null);
+        if (props.setModalVisible) {
+          props.setModalVisible(false);
+        }
       }
     } else {
-      console.error(i18n.t('toast:no_internet_connexion'));
       showMessage({
         message: i18n.t('toast:no_internet_connexion'),
         type: 'danger',
       });
-    }
-    Keyboard.dismiss();
-    setCodeConcours(null);
-    if (props.setModalVisible) {
-      props.setModalVisible(false);
     }
   };
 
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.ffa_blue_light,
     paddingHorizontal: 20,
-    paddingVertical: 13, //Same height than TextInput
+    paddingVertical: Platform.OS === 'windows' ? 17 : 18,
     marginHorizontal: 15,
   },
   textButton: {

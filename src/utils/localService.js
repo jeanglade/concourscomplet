@@ -31,7 +31,6 @@ export const pickOneDeviceFile = async addOneSerieDataTable => {
                 saveEachSerie(content, addOneSerieDataTable);
               })
               .catch(e => {
-                console.error(e);
                 showMessage({
                   message: i18n.t('toast:import_error'),
                   type: 'danger',
@@ -54,6 +53,5 @@ export const pickOneDeviceFile = async addOneSerieDataTable => {
       message: i18n.t('toast:loading_cancelled'),
       type: 'warning',
     });
-    console.error(e);
   }
 };

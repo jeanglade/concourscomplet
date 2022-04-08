@@ -142,19 +142,23 @@ const TableCompetition = props => {
           <Text style={styles.text}>{epreuve}</Text>
         </View>
         <View style={styles.flex1}>
-          <Text
-            style={[
-              styles.text,
-              {
-                textAlign: 'center',
-                color: colors.white,
-                backgroundColor: getStatusColor(statut),
-                borderRadius: 15,
-                padding: 3,
-              },
-            ]}>
-            {statut}
-          </Text>
+          <View
+            style={{
+              borderRadius: 15,
+              padding: 3,
+              backgroundColor: getStatusColor(statut),
+            }}>
+            <Text
+              style={[
+                styles.text,
+                {
+                  textAlign: 'center',
+                  color: colors.white,
+                },
+              ]}>
+              {statut}
+            </Text>
+          </View>
         </View>
         <View style={[styles.actions, styles.flex2]}>
           <Button
@@ -339,6 +343,7 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent: 'center',
   },
   buttonDeleteCompetition: {
     padding: 5,

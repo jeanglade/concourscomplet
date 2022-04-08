@@ -3,15 +3,15 @@ import i18n from 'i18next';
 import moment from 'moment';
 
 export const ValidatorsAddAthlete = Yup.object().shape({
-  firstname: Yup.string().required('Ce champ est obligatoire.'),
-  name: Yup.string().required('Ce champ est obligatoire.'),
+  firstname: Yup.string().required(i18n.t('toast:required_field')),
+  name: Yup.string().required(i18n.t('toast:required_field')),
   sex: Yup.string().notOneOf(
     [i18n.t('competition:sex') + '*', ''],
-    'Ce champ est obligatoire.',
+    i18n.t('toast:required_field'),
   ),
   birthDate: Yup.string().test(
     'birthDate',
-    'Ce champ est obligatoire.',
+    i18n.t('toast:required_field'),
     value => {
       return (
         moment().format('DD/MM/YYYY') !==

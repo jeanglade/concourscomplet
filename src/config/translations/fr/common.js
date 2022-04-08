@@ -9,7 +9,7 @@ export default {
   validate: 'Valider',
   via_local_file: 'Via un fichier local',
   date: 'Date',
-  discipline: 'Epreuve',
+  discipline: 'Épreuve',
   competition: 'Compétition',
   status: 'Statut',
   actions: 'Actions',
@@ -24,4 +24,5 @@ export default {
   finished: 'Terminé',
   send_to_elogica: 'Envoyé',
   choice_comp: 'Choix de la compétition',
+  version: 'Version',
 };

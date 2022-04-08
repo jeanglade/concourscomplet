@@ -108,7 +108,6 @@ const ModalAddAthlete = props => {
           type: 'success',
         });
       } else {
-        console.error('Athlète déjà présent dans ce concours.');
         showMessage({
           message: 'Athlète déjà présent dans ce concours.',
           type: 'danger',

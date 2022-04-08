@@ -17,4 +17,5 @@ export default {
   cancel: 'Annuler',
   ok: 'OK',
   no_internet_connexion: 'Pas de connexion internet',
+  required_field: 'Ce champ est obligatoire.',
 };
