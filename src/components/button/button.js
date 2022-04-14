@@ -2,7 +2,7 @@ import React, {useState, useRef} from 'react';
 import {View, Pressable, Text, Platform} from 'react-native';
 import Tooltip from 'react-native-walkthrough-tooltip';
 import {Flyout} from 'react-native-windows';
-import {colors} from '_config';
+import {styleSheet} from '_config';
 
 const Button = props => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
@@ -53,13 +53,15 @@ const Button = props => {
               isOpen={tooltipVisible}
               target={myRef.current}
               placement="bottom">
-              <View style={{padding: 5, backgroundColor: colors.white}}>
+              <View style={[styleSheet.backWhite, {padding: 5}]}>
                 <Text
-                  style={{
-                    color: colors.black,
-                    textAlign: 'center',
-                    minWidth: 150,
-                  }}>
+                  style={[
+                    styleSheet.text,
+                    styleSheet.textCenter,
+                    {
+                      minWidth: 150,
+                    },
+                  ]}>
                   {props.tooltip}
                 </Text>
               </View>

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import i18n from 'i18next';
 
 import {
@@ -8,8 +8,10 @@ import {
   TableConcoursSL,
   TableConcoursLR,
   ModalParam,
+  ModalInfoConcours,
+  ModalBar,
 } from '_screens';
-import {colors} from '_config';
+import {styleSheet} from '_config';
 
 const FeuilleDeConcours = props => {
   //Initialisation des données du concours
@@ -37,25 +39,60 @@ const FeuilleDeConcours = props => {
   const [fieldsAddAthtlete, setFieldsAddAthtlete] =
     useState(initFormAddAthlete);
 
+  const [modalInfoConcours, setModalInfoConcours] = useState(false);
+
   //Initalisatoin des variables Options Paramètres
   const [modalParam, setModalParam] = useState(false);
+  const [nbTries, setNbTries] = useState(6);
+  const [colPerfVisible, setColPerfVisible] = useState(true);
+  const [colFlagVisible, setColFlagVisible] = useState(false);
+  const [colWindVisible, setColWindVisible] = useState(true);
+  const [colMiddleRankVisible, setColMiddleRankVisible] = useState(true);
+
+  //Initalisatoin des variables Options Montées de barre
+  const [modalBarBarrage, setModalBarBarrage] = useState(false);
+  const [modalBar, setModalBar] = useState(false);
+  const [barRises, setBarRises] = useState(
+    competitionData.UtilisationMonteeBarre
+      ? competitionData.EpreuveConcoursComplet.MonteesBarre
+      : [],
+  );
+  const [barRisesBarrage, setBarRisesBarrage] = useState([]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styleSheet.backWhite, styleSheet.flex1, {padding: 10}]}>
       <View
-        style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          justifyContent: 'space-bewteen',
-          alignItems: 'center',
-        }}>
-        <Text style={styles.titleText}>
+        style={[
+          styleSheet.flexRowCenter,
+          styleSheet.flexWrap,
+          {justifyContent: 'space-between'},
+        ]}>
+        <Text style={styleSheet.textTitle}>
           {dataConcours.epreuve} - {dataConcours.dateInfo}
         </Text>
-        <View>
+        <View
+          style={[
+            styleSheet.flexRowCenter,
+            styleSheet.flexWrap,
+            {justifyContent: 'space-between'},
+          ]}>
+          <ModalInfoConcours
+            setModalVisible={setModalInfoConcours}
+            modalVisible={modalInfoConcours}
+          />
           <ModalParam
+            colFlagVisible={colFlagVisible}
+            setColFlagVisible={setColFlagVisible}
+            colPerfVisible={colPerfVisible}
+            setColPerfVisible={setColPerfVisible}
+            colWindVisible={colWindVisible}
+            setColWindVisible={setColWindVisible}
+            colMiddleRankVisible={colMiddleRankVisible}
+            setColMiddleRankVisible={setColMiddleRankVisible}
             setModalVisible={setModalParam}
             modalVisible={modalParam}
+            nbTries={nbTries}
+            setNbTries={setNbTries}
           />
         </View>
       </View>
@@ -92,8 +129,12 @@ const FeuilleDeConcours = props => {
           fieldsAddAthtlete={fieldsAddAthtlete}
         />
       )}
-      <View style={styles.rowOptions}>
-        <Text style={styles.titleText}>{i18n.t('common:options')} : </Text>
+      <View
+        style={[
+          styleSheet.flexRowCenter,
+          {justifyContent: 'flex-start', paddingBottom: 20},
+        ]}>
+        <Text style={styleSheet.textTitle}>{i18n.t('common:options')} : </Text>
         <ModalAddAthlete
           setAthletesData={setTableData}
           modalVisible={modalAddAthlete}
@@ -107,29 +148,27 @@ const FeuilleDeConcours = props => {
           fileContent={competitionData}
           fileName={dataConcours.id}
         />
+        {competitionData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
+          <>
+            <ModalBar
+              setModalVisible={setModalBar}
+              modalVisible={modalBar}
+              barRises={barRises}
+              setBarRises={setBarRises}
+              isBarrage={false}
+            />
+            <ModalBar
+              setModalVisible={setModalBarBarrage}
+              modalVisible={modalBarBarrage}
+              barRises={barRisesBarrage}
+              setBarRises={setBarRisesBarrage}
+              isBarrage={true}
+            />
+          </>
+        )}
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-    padding: 10,
-  },
-  titleText: {
-    fontSize: 20,
-    color: colors.ffa_blue_light,
-    marginLeft: 15,
-    marginVertical: 5,
-  },
-  rowOptions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingBottom: 20,
-  },
-});
 
 export default FeuilleDeConcours;

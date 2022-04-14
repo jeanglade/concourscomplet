@@ -1,12 +1,12 @@
 import React from 'react';
-import {View, Image, StyleSheet} from 'react-native';
+import {View, Image} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {useTranslation} from 'react-i18next';
 
 import {Home} from '_screens';
 import {FeuilleDeConcours} from '_screens';
 import {ButtonInfoApp} from '_screens';
-import {colors} from '_config';
+import {colors, styleSheet} from '_config';
 
 const Stack = createStackNavigator();
 
@@ -32,17 +32,16 @@ function AppNavigator() {
         options={{
           title: t('common:app_title'),
           headerLeft: () => (
-            <View style={styles.headerLeft}>
+            <View style={[styleSheet.flexRowCenter, {marginStart: 10}]}>
               <Image
-                style={styles.icon}
+                style={styleSheet.icon40}
                 source={require('../icons/logo.png')}
               />
             </View>
           ),
           headerRight: () => (
-            <View style={styles.headerRight}>
+            <View style={[styleSheet.flexRowCenter, {marginRight: 10}]}>
               <ButtonInfoApp />
-              {/* <DropdownLanguage /> */}
             </View>
           ),
         }}
@@ -57,21 +56,5 @@ function AppNavigator() {
     </Stack.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  headerLeft: {
-    justifyContent: 'center',
-    marginStart: 10,
-  },
-  icon: {
-    width: 40,
-    height: 40,
-  },
-});
 
 export default AppNavigator;

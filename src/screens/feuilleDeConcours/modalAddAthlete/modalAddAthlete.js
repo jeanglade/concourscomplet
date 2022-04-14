@@ -1,5 +1,5 @@
 import React from 'react';
-import {colors} from '_config';
+import {colors, styleSheet} from '_config';
 import {Modal, Button, Input, Dropdown, MyDateTimePicker} from '_components';
 import {
   View,
@@ -51,8 +51,7 @@ const ModalAddAthlete = props => {
   const setNewAthlete = (values, athlete) => {
     athlete.Athlete.Prenom =
       values.firstname.charAt(0).toUpperCase() + values.firstname.slice(1);
-    athlete.Athlete.Nom =
-      values.name.charAt(0).toUpperCase() + values.name.slice(1);
+    athlete.Athlete.Nom = values.name.toUpperCase();
     athlete.Athlete.Sexe = values.sex;
     athlete.Athlete.Categorie =
       values.category != i18n.t('competition:category') ? values.category : '';
@@ -189,12 +188,14 @@ const ModalAddAthlete = props => {
     <Modal
       modalVisible={props.modalVisible}
       setModalVisible={props.setModalVisible}
-      buttonStyleView={styles.button}
+      buttonStyleView={styleSheet.icon}
       minWidth={Platform.OS === 'windows' ? 300 : 0}
+      buttonTooltip={i18n.t('competition:add_an_athlete')}
       buttonContent={
-        <Text style={styles.textButton}>
-          {i18n.t('competition:add_an_athlete')}
-        </Text>
+        <Image
+          style={styleSheet.icon20}
+          source={require('../../icons/add_athlete.png')}
+        />
       }
       maxHeight={760}
       contentModal={
@@ -213,7 +214,7 @@ const ModalAddAthlete = props => {
                 ([{flex: 1}], Platform.OS === 'windows' && {maxHeight: 380})
               }>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={styles.titleText}>
+                <Text style={styleSheet.textTitle}>
                   {props.fieldsAddAthtlete.type === 'new'
                     ? i18n.t('competition:add_an_athlete')
                     : i18n.t('competition:edit_an_athlete')}
@@ -224,7 +225,7 @@ const ModalAddAthlete = props => {
                     styleView={styles.buttonDeleteAthlete}
                     content={
                       <Image
-                        style={styles.icon}
+                        style={styleSheet.icon20}
                         source={require('../../../icons/delete.png')}
                       />
                     }
@@ -371,9 +372,10 @@ const ModalAddAthlete = props => {
                             setValues(props.fieldsAddAthtlete);
                             handleSubmit(e);
                           }}
-                          styleView={styles.button}
+                          styleView={[styleSheet.button, {marginHorizontal: 0}]}
                           content={
-                            <Text style={styles.textButton}>
+                            <Text
+                              style={[styleSheet.text, styleSheet.textWhite]}>
                               {i18n.t('common:validate')}
                             </Text>
                           }
@@ -392,25 +394,6 @@ const ModalAddAthlete = props => {
 };
 
 const styles = StyleSheet.create({
-  titleText: {
-    fontSize: 20,
-    color: colors.ffa_blue_light,
-    margin: 15,
-  },
-  button: {
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.ffa_blue_light,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderWidth: 3,
-    borderColor: colors.ffa_blue_light,
-  },
-  textButton: {
-    color: colors.white,
-    fontSize: 16,
-  },
   container: {
     minWidth: Platform.OS === 'windows' ? 300 : '50%',
     paddingVertical: 20,
@@ -418,16 +401,6 @@ const styles = StyleSheet.create({
   content: {
     paddingVertical: 20,
     paddingHorizontal: 10,
-  },
-  buttonDeleteAthlete: {
-    borderWidth: 2,
-    backgroundColor: colors.red,
-    borderColor: colors.red_light,
-    borderRadius: 20,
-  },
-  icon: {
-    width: 20,
-    height: 20,
   },
 });
 

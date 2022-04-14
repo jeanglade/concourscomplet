@@ -19,7 +19,7 @@ const LANGUAGE_DETECTOR = {
         if (err) {
           console.error('Error fetching Languages from asyncstorage ', err);
         }
-        language = 'fr'; // default language
+        language = 'fr';
         callback(language);
         return;
       }

@@ -1,26 +1,37 @@
 import React, {useState} from 'react';
 import DeviceInfo from 'react-native-device-info';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, Image} from 'react-native';
 import i18n from 'i18next';
-import {colors} from '_config';
+import {styleSheet} from '_config';
 import {Button} from '_components';
 
-const ButtonInfoApp = props => {
+const ButtonInfoApp = () => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <>
       <Button
         onPress={() => setModalVisible(!modalVisible)}
         content={
-          <Image style={styles.icon} source={require('../../icons/info.png')} />
+          <Image
+            style={styleSheet.icon30}
+            source={require('../../icons/info.png')}
+          />
         }
       />
       {modalVisible && (
-        <View style={styles.parent}>
+        <View
+          style={[
+            styleSheet.backWhite,
+            {
+              position: 'absolute',
+              right: 40,
+            },
+          ]}>
           <Button
             onPress={() => setModalVisible(!modalVisible)}
             content={
-              <Text style={styles.text}>
+              <Text
+                style={[styleSheet.text, styleSheet.textRight, {padding: 10}]}>
                 {i18n.t('common:version')} : {DeviceInfo.getVersion()}
               </Text>
             }
@@ -30,24 +41,5 @@ const ButtonInfoApp = props => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  text: {
-    color: colors.black,
-    padding: 10,
-    textAlign: 'right',
-    fontSize: 16,
-  },
-  parent: {
-    backgroundColor: colors.white,
-    position: 'absolute',
-    right: 50,
-  },
-  icon: {
-    width: 40,
-    height: 40,
-    marginHorizontal: 5,
-  },
-});
 
 export default ButtonInfoApp;

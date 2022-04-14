@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import {colors} from '_config';
+import {styleSheet} from '_config';
 import {Modal} from '_components';
 import {OpenJson} from '_screens';
-import {Image, StyleSheet, Platform} from 'react-native';
+import {Image, Platform} from 'react-native';
 import i18n from 'i18next';
 
 const ModalOpenJson = props => {
@@ -11,12 +11,12 @@ const ModalOpenJson = props => {
     <Modal
       modalVisible={modalVisible}
       setModalVisible={setModalVisible}
-      buttonStyleView={styles.iconPosition}
+      buttonStyleView={styleSheet.icon}
       minWidth={Platform.OS === 'windows' ? 510 : 0}
       buttonTooltip={i18n.t('common:new_epreuve')}
       buttonContent={
         <Image
-          style={styles.iconImport}
+          style={styleSheet.icon20}
           source={require('../../icons/import_down.png')}
         />
       }
@@ -30,18 +30,5 @@ const ModalOpenJson = props => {
     />
   );
 };
-
-const styles = StyleSheet.create({
-  iconPosition: {
-    backgroundColor: colors.ffa_blue_light,
-    padding: 10,
-    margin: 5,
-    borderRadius: 3,
-  },
-  iconImport: {
-    width: 30,
-    height: 30,
-  },
-});
 
 export default ModalOpenJson;

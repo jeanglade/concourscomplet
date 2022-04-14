@@ -9,7 +9,6 @@ import {saveEachSerie} from '../../utils/myAsyncStorage';
 
 export const pickOneDeviceFile = async addOneSerieDataTable => {
   try {
-    //const [t] = i18n.t();
     const newFile = await DocumentPicker.pickSingle({
       presentationStyle: 'fullScreen',
       copyTo: 'cachesDirectory',

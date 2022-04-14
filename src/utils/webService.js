@@ -4,6 +4,7 @@ import {getFile} from '../../utils/myAsyncStorage';
 import {showMessage} from 'react-native-flash-message';
 import i18n from 'i18next';
 
+// Récupère le fichier JSON sur le serveur via le webservice
 export const validateCompetitionCode = async codeCompetition => {
   const soapRequest = require('easy-soap-request');
   var res = null;
@@ -57,6 +58,7 @@ export const validateCompetitionCode = async codeCompetition => {
   return res;
 };
 
+// A VALIDER - Envoi un JSON sur le serveur via le webservice
 export const sendJson = async fileName => {
   const soapRequest = require('easy-soap-request');
   var result = null;

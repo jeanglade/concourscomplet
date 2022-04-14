@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View, Image, Alert} from 'react-native';
 import i18n from 'i18next';
-import {colors} from '_config';
+import {colors, styleSheet} from '_config';
 import {getFile, removeFile, removeFiles} from '../../../utils/myAsyncStorage';
 import {useOrientation} from '../../../utils/useOrientation';
 import {Button, DataTable} from '_components';
@@ -134,14 +134,17 @@ const TableCompetition = props => {
   const Item = ({id, date, epreuve, statut, item}) => (
     <>
       <View style={styles.item}>
-        <View style={styles.flex2}>
-          <Text style={styles.text}>{date}</Text>
+        <View style={styleSheet.flex2}>
+          <Text style={styleSheet.text}>{date}</Text>
         </View>
-        <View style={[styles.epreuve, styles.flex5]}>
-          <Image style={styles.iconEpreuve} source={getImageEpreuve(epreuve)} />
-          <Text style={styles.text}>{epreuve}</Text>
+        <View style={[styles.epreuve, styleSheet.flex5]}>
+          <Image
+            style={[styleSheet.icon30, {marginRight: 5}]}
+            source={getImageEpreuve(epreuve)}
+          />
+          <Text style={styleSheet.text}>{epreuve}</Text>
         </View>
-        <View style={styles.flex1}>
+        <View style={styleSheet.flex1}>
           <View
             style={{
               borderRadius: 15,
@@ -150,19 +153,22 @@ const TableCompetition = props => {
             }}>
             <Text
               style={[
-                styles.text,
-                {
-                  textAlign: 'center',
-                  color: colors.white,
-                },
+                styleSheet.text,
+                styleSheet.textCenter,
+                styleSheet.textWhite,
               ]}>
               {statut}
             </Text>
           </View>
         </View>
-        <View style={[styles.actions, styles.flex2]}>
+        <View
+          style={[
+            styleSheet.flex2,
+            styleSheet.flexRowCenter,
+            styleSheet.flexWrap,
+          ]}>
           <Button
-            styleView={[styles.cellButton]}
+            styleView={[styleSheet.icon]}
             tooltip={i18n.t('common:competition_sheet')}
             onPress={async () => {
               item.data = await getFile(item.id);
@@ -172,17 +178,17 @@ const TableCompetition = props => {
             }}
             content={
               <Image
-                style={styles.icon}
+                style={styleSheet.icon20}
                 source={require('../icons/list.png')}
               />
             }
           />
           <Button
-            styleView={[styles.cellButton, styles.backRed]}
+            styleView={[styleSheet.icon, styleSheet.backRed]}
             onPress={() => alertDeleteConcours(id, epreuve)}
             content={
               <Image
-                style={styles.icon}
+                style={styleSheet.icon20}
                 source={require('../icons/delete.png')}
               />
             }
@@ -200,22 +206,18 @@ const TableCompetition = props => {
       ]}>
       {/* Titres */}
       <>
-        <View style={styles.containerTitle}>
+        <View style={styleSheet.flexRowCenter}>
           {/* S il y a 1 seule competition */}
-          <Text style={styles.titleText}>
+          <Text style={[styleSheet.textTitle, {margin: 0, marginEnd: 5}]}>
             {props.competition?.nomCompetition?.toString()}
           </Text>
           {/* Button de suppression de tous les concours d une competition */}
           <Button
             onPress={alertDeleteCompetition}
-            styleView={[
-              styles.cellButton,
-              styles.backRed,
-              styles.buttonDeleteCompetition,
-            ]}
+            styleView={[styleSheet.buttonDelete, styleSheet.backRed]}
             content={
               <Image
-                style={styles.iconDeleteCompetition}
+                style={styleSheet.icon10}
                 source={require('../icons/delete.png')}
               />
             }
@@ -223,15 +225,15 @@ const TableCompetition = props => {
         </View>
         {/* Lieu de la competition */}
         {props.competition?.lieuCompetition?.toString() && (
-          <Text style={[styles.text, styles.textCenter]}>
+          <Text style={[styleSheet.text, styleSheet.textCenter]}>
             {props.competition?.lieuCompetition?.toString()}
           </Text>
         )}
         {/* Nombre de concours dans la competition */}
         <Text
           style={[
-            styles.text,
-            styles.textCenter,
+            styleSheet.text,
+            styleSheet.textCenter,
             {color: colors.ffa_blue_light},
           ]}>
           {tableDataFilter().length} {i18n.t('common:list_competion_sheets')}
@@ -262,11 +264,6 @@ const TableCompetition = props => {
 };
 
 const styles = StyleSheet.create({
-  containerTitle: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   containerCenter: {
     flexDirection: 'column',
     justifyContent: 'flex-start',
@@ -275,12 +272,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   containerSize: {width: '80%', marginLeft: '10%'},
-  titleText: {
-    marginTop: 10,
-    fontSize: 20,
-    color: colors.ffa_blue_light,
-    textAlign: 'center',
-  },
   item: {
     flexDirection: 'row',
     backgroundColor: colors.gray_light,
@@ -289,68 +280,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 3,
   },
-  text: {
-    color: colors.black,
-    fontSize: 16,
-  },
-  textBold: {fontWeight: 'bold'},
-  textCenter: {textAlign: 'center'},
-  cellButton: {
-    backgroundColor: colors.ffa_blue_light,
-    padding: 5,
-    margin: 5,
-    borderRadius: 3,
-  },
-  backRed: {
-    backgroundColor: colors.red,
-  },
-  flex1: {
-    flex: 1,
-  },
-  flex2: {
-    flex: 2,
-  },
-  flex3: {
-    flex: 3,
-  },
-  flex4: {
-    flex: 4,
-  },
-  flex5: {
-    flex: 5,
-  },
-  flexGrow1: {
-    flexGrow: 1,
-  },
-  iconEpreuve: {
-    width: 30,
-    height: 30,
-    marginRight: 5,
-  },
   epreuve: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
   },
-  icon: {
-    width: 30,
-    height: 30,
-  },
-  iconDeleteCompetition: {
-    width: 15,
-    height: 15,
-  },
   actions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-  },
-  buttonDeleteCompetition: {
-    padding: 5,
-    margin: 0,
-    marginLeft: 10,
-    marginTop: 15,
-    borderRadius: 3,
   },
 });
 

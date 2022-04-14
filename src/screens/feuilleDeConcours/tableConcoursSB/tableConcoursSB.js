@@ -91,10 +91,16 @@ const TableConcoursSb = props => {
                 }}
                 content={
                   <Image
-                    style={{width: 15, height: 15, marginEnd: 5}}
+                    style={{width: 15, height: 15}}
                     source={require('../../../icons/pencil.png')}
                   />
                 }
+                styleView={{
+                  backgroundColor: colors.black,
+                  borderRadius: 5,
+                  padding: 1,
+                  marginEnd: 5,
+                }}
               />
             )}
             <Text

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Text, TextInput, StyleSheet, Platform} from 'react-native';
-import {colors} from '_config';
+import {colors, styleSheet} from '_config';
 
 const maxHeightField = 55;
 
@@ -27,24 +27,22 @@ const Input = ({
       placeholderTextColor={colors.muted}
       selectionColor={colors.ffa_blue_dark}
       autoCompleteType={restProps.autoCompleteType}
-      style={{
-        color: touched && error ? colors.red : colors.black,
-        borderWidth: 2,
-        borderColor: colors.muted,
-        padding: 15,
-        marginBottom: touched && error ? 5 : 10,
-        fontSize: 16,
-        backgroundColor: colors.white,
-        borderRadius: Platform.OS === 'ios' ? 50 : 0,
-        height: maxHeightField,
-      }}
+      style={[
+        styles.textInput,
+        styleSheet.text,
+        styleSheet.backWhite,
+        {
+          color: touched && error ? colors.red : colors.black,
+          marginBottom: touched && error ? 5 : 10,
+        },
+      ]}
       onChangeText={text => onChange(text)}
       onEndEditing={() => onBlur()}
       multiline={false}
       {...restProps}
     />
 
-    {touched && error && <Text style={styles.textError}>{error}</Text>}
+    {touched && error && <Text style={styleSheet.textError}>{error}</Text>}
   </>
 );
 
@@ -63,10 +61,12 @@ Input.defaultProps = {
 };
 
 const styles = StyleSheet.create({
-  textError: {
-    marginBottom: 15,
-    fontSize: 13,
-    color: colors.red,
+  textInput: {
+    borderWidth: 2,
+    borderColor: colors.muted,
+    padding: 15,
+    borderRadius: Platform.OS === 'ios' ? 50 : 0,
+    height: maxHeightField,
   },
 });
 

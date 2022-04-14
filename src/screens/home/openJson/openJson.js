@@ -8,7 +8,7 @@ import {
   Platform,
 } from 'react-native';
 import i18n from 'i18next';
-import {colors} from '_config';
+import {colors, styleSheet} from '_config';
 import {validateCompetitionCode} from '../../utils/webService';
 import {saveEachSerie} from '../../utils/myAsyncStorage';
 import {pickOneDeviceFile} from '../../utils/localService';
@@ -41,13 +41,18 @@ const OpenJson = props => {
   };
 
   return (
-    <View style={props.modal != null ? {} : styles.container}>
-      <Text style={styles.titleText}>{i18n.t('common:new_epreuve')}</Text>
-      <View style={[styles.row]}>
+    <View
+      style={[
+        props.modal != null ? {} : styles.container,
+        styleSheet.backWhite,
+      ]}>
+      <Text style={styleSheet.textTitle}>{i18n.t('common:new_epreuve')}</Text>
+      <View style={[styleSheet.flexRowCenter]}>
         <TextInput
           style={[
-            styles.textinput,
-            Platform.OS === 'windows' && styles.textInputSize,
+            styleSheet.textInput,
+            Platform.OS === 'windows' && {height: 45},
+            {width: 130},
           ]}
           onChangeText={setCodeConcours}
           value={codeConcours}
@@ -56,9 +61,11 @@ const OpenJson = props => {
         />
         <Button
           onPress={manageCode}
-          styleView={styles.button}
+          styleView={styleSheet.button}
           content={
-            <Text style={styles.textButton}>{i18n.t('common:validate')}</Text>
+            <Text style={[styleSheet.text, styleSheet.textWhite]}>
+              {i18n.t('common:validate')}
+            </Text>
           }
         />
         <View style={styles.dividerLeft}>
@@ -69,9 +76,9 @@ const OpenJson = props => {
                 props.setModalVisible(false);
               }
             }}
-            styleView={styles.button}
+            styleView={styleSheet.button}
             content={
-              <Text style={styles.textButton}>
+              <Text style={[styleSheet.text, styleSheet.textWhite]}>
                 {i18n.t('common:via_local_file')}
               </Text>
             }
@@ -87,47 +94,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 20,
-    paddingBottom: 20,
-    backgroundColor: colors.white,
-  },
-  titleText: {
-    fontSize: 20,
-    color: colors.ffa_blue_light,
-    margin: 15,
-  },
-  row: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textinput: {
-    fontSize: 16,
-    padding: 10,
-    paddingVertical: 14,
-    width: 130,
-    color: colors.black,
-    backgroundColor: colors.white,
-    borderColor: colors.muted,
-    borderWidth: 1,
-  },
-  button: {
-    alignItems: 'center',
-    backgroundColor: colors.ffa_blue_light,
-    paddingHorizontal: 20,
-    paddingVertical: Platform.OS === 'windows' ? 17 : 18,
-    marginHorizontal: 15,
-  },
-  textButton: {
-    color: colors.white,
-    fontSize: 16,
   },
   dividerLeft: {
     borderColor: colors.muted,
     borderLeftWidth: 1,
     borderWidth: 0,
+    marginHorizontal: 5,
+    paddingStart: 5,
   },
-  textInputSize: {height: 55},
 });
 
 export default OpenJson;

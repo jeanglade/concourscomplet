@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import i18n, {t} from 'i18next';
+import i18n from 'i18next';
 import moment from 'moment';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {SafeAreaView, View} from 'react-native';
 
 import {getAllKeys, getFile, getFiles} from '../../utils/myAsyncStorage';
 import {
@@ -10,7 +10,7 @@ import {
   ModalOpenJson,
   ModalChoiceCompetition,
 } from '_screens';
-import {colors} from '_config';
+import {styleSheet} from '_config';
 
 const Home = props => {
   //Tableau avec toutes les données concours complet
@@ -187,7 +187,8 @@ const Home = props => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[styleSheet.flex1, styleSheet.backWhite, {padding: 10}]}>
       {tableData.length === 0 && (
         <OpenJson addOneSerieDataTable={addOneSerieDataTable} />
       )}
@@ -218,13 +219,5 @@ const Home = props => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-    padding: 10,
-  },
-});
 
 export default Home;

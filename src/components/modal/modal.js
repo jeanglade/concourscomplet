@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  SafeAreaView,
-  Modal,
-  Image,
-  StyleSheet,
-  Platform,
-} from 'react-native';
+import {View, Modal, Image, StyleSheet, Platform} from 'react-native';
 import {Popup} from 'react-native-windows';
 import {Button} from '_components';
 import {colors} from '_config';
@@ -78,7 +71,7 @@ const styles = StyleSheet.create({
     borderColor: Platform.OS === 'windows' ? colors.muted : colors.white,
     borderWidth: Platform.OS === 'windows' ? 2 : 0,
     borderBottomWidth: Platform.OS === 'windows' ? 3 : 0,
-    borderRadius: Platform.OS === 'windows' ? 0 : 15,
+    borderRadius: Platform.OS === 'windows' ? 0 : 5,
     padding: 20,
     alignItems: 'flex-end',
   },

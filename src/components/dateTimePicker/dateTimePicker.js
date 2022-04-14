@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {View, StyleSheet, Platform, Text} from 'react-native';
 import PropTypes from 'prop-types';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {colors} from '_config';
+import {colors, styleSheet} from '_config';
 import moment from 'moment';
 import {Button} from '_components';
 
@@ -69,7 +69,7 @@ const MyDateTimePicker = ({name, type, error, onChange, touched, ...props}) => {
           />
         )}
       </View>
-      {touched && error && <Text style={styles.textError}>{error}</Text>}
+      {touched && error && <Text style={styleSheet.textError}>{error}</Text>}
     </>
   );
 };
@@ -108,11 +108,6 @@ const styles = StyleSheet.create({
   dropdownItem: {
     color: Platform.OS === 'windows' ? colors.white : colors.black,
     fontSize: 16,
-  },
-  textError: {
-    marginBottom: 15,
-    fontSize: 13,
-    color: colors.red,
   },
 });
 
