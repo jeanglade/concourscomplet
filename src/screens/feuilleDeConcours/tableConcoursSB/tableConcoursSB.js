@@ -6,7 +6,7 @@ import {MyDataTable, MyButton, MyInput} from '_components';
 import moment from 'moment';
 
 const TableConcoursSb = props => {
-  const [hasDossard, setHasDossard] = useState(() => {
+  const [hasDossard] = useState(() => {
     return (
       props.tableData.filter(row => row.Athlete.Dossard?.toString()).length > 0
     );
@@ -226,7 +226,7 @@ const TableConcoursSb = props => {
     var result = null;
     var athleteInfo = item.Athlete.Categorie?.toString();
     athleteInfo +=
-      athleteInfo != '' && item.Athlete.Club?.toString() != '' ? ' - ' : '';
+      athleteInfo !== '' && item.Athlete.Club?.toString() !== '' ? ' - ' : '';
     athleteInfo += item.Athlete.Club?.toString();
     result = (
       <Item

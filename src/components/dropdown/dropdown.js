@@ -6,7 +6,7 @@ import {colors, styleSheet} from '_config';
 const MyDropdown = props => {
   return (
     <>
-      <View style={[styles.viewDropdown, props.styleContainer]}>
+      <View style={[styles.view]}>
         {Platform.OS === 'ios' ? (
           <PickerIOS
             style={[styles.dropdownIOS, props.stylePickerIOS]}
@@ -28,11 +28,12 @@ const MyDropdown = props => {
             style={styles.dropdown}
             itemStyle={styles.dropdownItem}
             selectedValue={props.selectedValue}
-            dropdownIconColor={colors.black}
+            dropdownIconColor={colors.muted}
             onValueChange={props.onValueChange}
             mode="dropdown">
             {props.placeholder && (
               <Picker.Item
+                color={colors.muted}
                 style={styles.item}
                 label={props.placeholder}
                 value={props.placeholder}
@@ -58,7 +59,7 @@ const MyDropdown = props => {
 };
 
 const styles = StyleSheet.create({
-  viewDropdown: {
+  view: {
     borderWidth: 1,
     borderColor: colors.muted,
     marginHorizontal: 5,
@@ -66,13 +67,12 @@ const styles = StyleSheet.create({
     backgroundColor: Platform.OS === 'windows' ? colors.muted : colors.white,
   },
   dropdown: {
-    height: 55,
     backgroundColor: Platform.OS === 'windows' ? colors.muted : colors.white,
   },
-  dropdownIOS: {},
   dropdownItem: {
     color: Platform.OS === 'windows' ? colors.white : colors.black,
   },
+  dropdownIOS: {},
   item: {
     fontSize: 14,
   },

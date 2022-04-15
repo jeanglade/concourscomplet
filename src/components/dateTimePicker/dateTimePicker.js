@@ -1,9 +1,10 @@
+import moment from 'moment';
 import React, {useState} from 'react';
 import {View, StyleSheet, Platform, Text} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {colors, styleSheet} from '_config';
-import moment from 'moment';
+
 import {MyButton} from '_components';
+import {colors, styleSheet} from '_config';
 
 const maxHeightField = 55;
 
@@ -18,18 +19,21 @@ const MyDateTimePicker = props => {
       <View style={styles.view}>
         {Platform.OS === 'android' ? (
           <MyButton
-            styleView={{padding: 15}}
+            styleView={styles.button}
             onPress={() => setDateTimePickerVisible(true)}
             content={
               <>
                 <Text
-                  style={{
-                    color:
-                      setDateFormat(props.value).toString() !==
-                      setDateFormat(new Date()).toString()
-                        ? colors.black
-                        : colors.muted,
-                  }}>
+                  style={[
+                    styleSheet.text,
+                    {
+                      color:
+                        setDateFormat(props.value).toString() !==
+                        setDateFormat(new Date()).toString()
+                          ? colors.black
+                          : colors.muted,
+                    },
+                  ]}>
                   {setDateFormat(props.value)}
                 </Text>
                 {dateTimePickerVisible && (
@@ -48,10 +52,7 @@ const MyDateTimePicker = props => {
           />
         ) : (
           <DateTimePicker
-            style={{
-              height: maxHeightField,
-              width: 280,
-            }}
+            style={{width: '100%'}}
             value={props.value}
             maximumDate={new Date()}
             onChange={(event, date) => {
@@ -70,25 +71,15 @@ const MyDateTimePicker = props => {
 
 const styles = StyleSheet.create({
   view: {
-    color: colors.black,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: colors.muted,
-    marginBottom: 10,
-    fontSize: 16,
-    borderRadius: Platform.OS === 'ios' ? 50 : 0,
-    maxHeight: maxHeightField,
+    color: colors.black,
+    borderRadius: Platform.OS === 'ios' ? 50 : 3,
+    maxHeight: 55,
     backgroundColor: Platform.OS === 'windows' ? colors.muted : colors.white,
+    marginHorizontal: 5,
   },
-  dropdown: {
-    height: 55,
-    alignItems: 'center',
-    backgroundColor: Platform.OS === 'windows' ? colors.muted : colors.white,
-  },
-  dropdownIOS: {},
-  dropdownItem: {
-    color: Platform.OS === 'windows' ? colors.white : colors.black,
-    fontSize: 16,
-  },
+  button: {padding: 5, paddingVertical: 10},
 });
 
 export default MyDateTimePicker;

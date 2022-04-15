@@ -1,5 +1,5 @@
 import colors from './colors';
-import {StyleSheet, Platform} from 'react-native';
+import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
   //TEXT
@@ -15,7 +15,8 @@ export default StyleSheet.create({
   textError: {
     fontSize: 13,
     color: colors.red,
-    marginBottom: 15,
+    marginBottom: 10,
+    marginStart: 5,
   },
   textWhite: {
     color: colors.white,

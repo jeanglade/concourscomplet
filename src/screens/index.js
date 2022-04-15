@@ -9,8 +9,8 @@ import {
 } from './home';
 import {
   TableConcoursSB,
-  TableConcoursSL,
-  TableConcoursLR,
+  // TableConcoursSL,
+  // TableConcoursLR,
   ModalAddAthlete,
   ModalParam,
   ModalBar,
@@ -26,8 +26,8 @@ export {
   ModalOpenJson,
   ModalChoiceCompetition,
   TableConcoursSB,
-  TableConcoursSL,
-  TableConcoursLR,
+  // TableConcoursSL,
+  // TableConcoursLR,
   ModalAddAthlete,
   ModalParam,
   ModalBar,

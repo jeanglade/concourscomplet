@@ -17,7 +17,6 @@ const MyInput = props => {
           props.style,
           styles.input,
           {
-            color: props.touched && props.error ? colors.red : colors.black,
             marginBottom: props.touched && props.error ? 5 : 0,
           },
         ]}
@@ -27,6 +26,7 @@ const MyInput = props => {
         keyboardType={props.keyboardType}
         multiline={false}
         maxLength={props.maxLength}
+        onSubmitEditing={props.onSubmitEditing}
       />
 
       {props.touched && props.error && (

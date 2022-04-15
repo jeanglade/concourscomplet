@@ -7,15 +7,16 @@ import {styleSheet} from '_config';
 const MyButton = props => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const myRef = useRef();
+
   return (
     <Pressable
       onPressIn={() => {
-        if (props.tooltip != undefined && Platform.OS !== 'windows') {
+        if (props.tooltip !== undefined && Platform.OS !== 'windows') {
           setTooltipVisible(true);
         }
       }}
       onPressOut={() => {
-        if (props.tooltip != undefined && Platform.OS !== 'windows') {
+        if (props.tooltip !== undefined && Platform.OS !== 'windows') {
           setTooltipVisible(false);
         }
       }}
@@ -26,7 +27,7 @@ const MyButton = props => {
       <View
         style={props.styleView}
         onMouseEnter={() => {
-          if (props.tooltip != undefined && Platform.OS === 'windows') {
+          if (props.tooltip !== undefined && Platform.OS === 'windows') {
             setTooltipVisible(true);
             setTimeout(() => {
               setTooltipVisible(false);

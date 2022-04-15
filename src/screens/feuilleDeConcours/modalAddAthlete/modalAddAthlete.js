@@ -45,11 +45,11 @@ const ModalAddAthlete = props => {
   const isAthleteExist = athlete => {
     return (
       props.athletesData.filter(athleteData => {
-        athleteData.Athlete.Prenom == athlete.Athlete.Prenom &&
-          athleteData.Athlete.Nom == athlete.Athlete.Nom &&
-          athleteData.Athlete.Sexe == athlete.Athlete.Sexe &&
-          athleteData.Athlete.Categorie == athlete.Athlete.Categorie &&
-          athleteData.Athlete.Club == athlete.Athlete.Club;
+        athleteData.Athlete.Prenom === athlete.Athlete.Prenom &&
+          athleteData.Athlete.Nom === athlete.Athlete.Nom &&
+          athleteData.Athlete.Sexe === athlete.Athlete.Sexe &&
+          athleteData.Athlete.Categorie === athlete.Athlete.Categorie &&
+          athleteData.Athlete.Club === athlete.Athlete.Club;
       }).lenght > 0
     );
   };
@@ -60,9 +60,9 @@ const ModalAddAthlete = props => {
     athlete.Athlete.Nom = values.name.toUpperCase();
     athlete.Athlete.Sexe = values.sex;
     athlete.Athlete.Categorie =
-      values.category != i18n.t('competition:category') ? values.category : '';
+      values.category !== i18n.t('competition:category') ? values.category : '';
     athlete.Athlete.Club =
-      values.club != ''
+      values.club !== ''
         ? values.club.charAt(0).toUpperCase() + values.club.slice(1)
         : '';
     athlete.Athlete.Licence = values.licence_number;
@@ -81,7 +81,6 @@ const ModalAddAthlete = props => {
   const handleSubmitForm = actions => {
     const values = props.fieldsAddAthtlete;
     var newAthlete = null;
-    var athlete = null;
     if (values.type === 'new') {
       const lastId = getLastIdResultat();
       newAthlete = {
@@ -189,7 +188,7 @@ const ModalAddAthlete = props => {
   };
 
   const findCategory = category => {
-    const result = categoryEasyValues.filter(cat => cat.id == category);
+    const result = categoryEasyValues.filter(cat => cat.id === category);
     return result.length > 0 ? result[0].name : category;
   };
 
@@ -234,7 +233,7 @@ const ModalAddAthlete = props => {
                     styleView={[
                       styleSheet.buttonDelete,
                       styleSheet.backRed,
-                      {marginStart: 5},
+                      {marginLeft: 5},
                     ]}
                     content={
                       <Image
@@ -306,6 +305,20 @@ const ModalAddAthlete = props => {
                           />
                         </View>
 
+                        <View style={styles.field}>
+                          <MyDateTimePicker
+                            value={props.fieldsAddAthtlete?.birthDate}
+                            touched={touched.birthDate}
+                            error={errors.birthDate}
+                            onValueChange={value => {
+                              if (value !== undefined) {
+                                onChangeField('birthDate', value);
+                                setValues(props.fieldsAddAthtlete);
+                              }
+                            }}
+                          />
+                        </View>
+
                         <View
                           style={{
                             flexDirection:
@@ -354,20 +367,6 @@ const ModalAddAthlete = props => {
                         </View>
 
                         <View style={styles.field}>
-                          <MyDateTimePicker
-                            value={props.fieldsAddAthtlete?.birthDate}
-                            touched={touched.birthDate}
-                            error={errors.birthDate}
-                            onValueChange={value => {
-                              if (value != undefined) {
-                                onChangeField('birthDate', value);
-                                setValues(props.fieldsAddAthtlete);
-                              }
-                            }}
-                          />
-                        </View>
-
-                        <View style={styles.field}>
                           <MyInput
                             type="username"
                             placeholder={i18n.t('competition:licence_number')}
@@ -412,6 +411,7 @@ const ModalAddAthlete = props => {
                             value={props.fieldsAddAthtlete?.dossard}
                             touched={touched.dossard}
                             error={errors.dossard}
+                            keyboardType="numeric"
                           />
                         </View>
 
@@ -423,7 +423,7 @@ const ModalAddAthlete = props => {
                             }}
                             styleView={[
                               styleSheet.button,
-                              {marginHorizontal: 0},
+                              {marginHorizontal: 5},
                             ]}
                             content={
                               <Text
@@ -452,8 +452,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   content: {
-    paddingVertical: 20,
-    paddingHorizontal: 10,
+    paddingVertical: 10,
   },
   field: {
     marginVertical: 5,

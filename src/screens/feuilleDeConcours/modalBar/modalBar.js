@@ -221,6 +221,7 @@ const ModalBar = props => {
                 placeholder={i18n.t('competition:new_bar_rise_barrage')}
                 keyboardType="numeric"
                 maxLength={3}
+                onSubmitEditing={addBarRise}
               />
               <View>
                 <MyButton
