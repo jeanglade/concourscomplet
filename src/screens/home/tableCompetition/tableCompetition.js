@@ -131,72 +131,81 @@ const TableCompetition = props => {
     );
   };
 
-  const Item = ({id, date, epreuve, statut, item}) => (
-    <>
-      <View style={styles.item}>
-        <View style={styleSheet.flex2}>
-          <Text style={styleSheet.text}>{date}</Text>
-        </View>
-        <View style={[styles.epreuve, styleSheet.flex5]}>
-          <Image
-            style={[styleSheet.icon30, {marginRight: 5}]}
-            source={getImageEpreuve(epreuve)}
-          />
-          <Text style={styleSheet.text}>{epreuve}</Text>
-        </View>
-        <View style={styleSheet.flex1}>
+  const Item = ({id, date, epreuve, statut, item}) => {
+    const status = (
+      <View
+        style={{
+          borderRadius: 15,
+          padding: 3,
+          paddingHorizontal: 10,
+          backgroundColor: getStatusColor(statut),
+        }}>
+        <Text
+          style={[
+            styleSheet.text,
+            styleSheet.textCenter,
+            styleSheet.textWhite,
+          ]}>
+          {statut}
+        </Text>
+      </View>
+    );
+    const image = (
+      <Image
+        style={[styleSheet.icon30, {marginRight: 5}]}
+        source={getImageEpreuve(epreuve)}
+      />
+    );
+    return (
+      <>
+        <View style={styles.item}>
+          <View style={styleSheet.flex2}>
+            <Text style={styleSheet.text}>{date}</Text>
+          </View>
+          <View style={[styles.epreuve, styleSheet.flex5]}>
+            {image}
+            <Text style={styleSheet.text}>{epreuve}</Text>
+          </View>
+          <View style={styleSheet.flex1}>{status}</View>
           <View
-            style={{
-              borderRadius: 15,
-              padding: 3,
-              backgroundColor: getStatusColor(statut),
-            }}>
-            <Text
-              style={[
-                styleSheet.text,
-                styleSheet.textCenter,
-                styleSheet.textWhite,
-              ]}>
-              {statut}
-            </Text>
+            style={[
+              styleSheet.flex2,
+              styleSheet.flexRowCenter,
+              styleSheet.flexWrap,
+            ]}>
+            <MyButton
+              styleView={[styleSheet.icon]}
+              tooltip={i18n.t('common:competition_sheet')}
+              onPress={async () => {
+                item.data = await getFile(item.id);
+                props.navigation.navigate('FeuilleDeConcours', {
+                  item: item,
+                  image: image,
+                  status: status,
+                });
+              }}
+              content={
+                <Image
+                  style={styleSheet.icon20}
+                  source={require('../icons/list.png')}
+                />
+              }
+            />
+            <MyButton
+              styleView={[styleSheet.icon, styleSheet.backRed]}
+              onPress={() => alertDeleteConcours(id, epreuve)}
+              content={
+                <Image
+                  style={styleSheet.icon20}
+                  source={require('../icons/delete.png')}
+                />
+              }
+            />
           </View>
         </View>
-        <View
-          style={[
-            styleSheet.flex2,
-            styleSheet.flexRowCenter,
-            styleSheet.flexWrap,
-          ]}>
-          <MyButton
-            styleView={[styleSheet.icon]}
-            tooltip={i18n.t('common:competition_sheet')}
-            onPress={async () => {
-              item.data = await getFile(item.id);
-              props.navigation.navigate('FeuilleDeConcours', {
-                item: item,
-              });
-            }}
-            content={
-              <Image
-                style={styleSheet.icon20}
-                source={require('../icons/list.png')}
-              />
-            }
-          />
-          <MyButton
-            styleView={[styleSheet.icon, styleSheet.backRed]}
-            onPress={() => alertDeleteConcours(id, epreuve)}
-            content={
-              <Image
-                style={styleSheet.icon20}
-                source={require('../icons/delete.png')}
-              />
-            }
-          />
-        </View>
-      </View>
-    </>
-  );
+      </>
+    );
+  };
 
   return (
     <View

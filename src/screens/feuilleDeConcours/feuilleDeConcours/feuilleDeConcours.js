@@ -15,6 +15,8 @@ import {styleSheet, colors} from '_config';
 const FeuilleDeConcours = props => {
   //Initialisation des données du concours
   const dataConcours = props.route.params.item;
+  const concoursStatus = props.route.params.status;
+  const concoursImage = props.route.params.image;
   const competitionData = JSON.parse(dataConcours.data);
   const listAthlete =
     competitionData.EpreuveConcoursComplet.TourConcoursComplet
@@ -51,6 +53,8 @@ const FeuilleDeConcours = props => {
   //Initalisatoin des variables Options Montées de barre
   const [modalBar, setModalBar] = useState(false);
 
+  const refreshColumns = () => {};
+
   return (
     <View
       style={[
@@ -64,9 +68,17 @@ const FeuilleDeConcours = props => {
           styleSheet.flexWrap,
           {justifyContent: 'space-between'},
         ]}>
-        <Text style={[styleSheet.textTitle, {color: colors.black}]}>
-          {dataConcours.epreuve} - {dataConcours.dateInfo}
-        </Text>
+        <View style={[styleSheet.flexRowCenter]}>
+          <>{concoursImage}</>
+          <Text
+            style={[
+              styleSheet.textTitle,
+              {color: colors.black, marginEnd: 10},
+            ]}>
+            {dataConcours.epreuve} - {dataConcours.dateInfo}
+          </Text>
+          <>{concoursStatus}</>
+        </View>
         <View
           style={[
             styleSheet.flexRowCenter,

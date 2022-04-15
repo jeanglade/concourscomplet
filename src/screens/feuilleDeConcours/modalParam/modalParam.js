@@ -40,22 +40,24 @@ const ModalParam = props => {
             <Text style={styleSheet.textTitle}>
               {i18n.t('competition:param')}
             </Text>
-            <View style={styleSheet.flexRow}>
-              <Text style={styleSheet.text}>
-                {i18n.t('competition:nb_tries')}
-              </Text>
-              <MyDropdown
-                styleContainer={{}}
-                stylePickerIOS={{width: 200}}
-                onValueChange={v => {
-                  props.setNbTries(v);
-                }}
-                data={['1', '2', '3', '4', '5', '6'].map(v => ({
-                  label: v,
-                  value: v,
-                }))}
-                selectedValue={props.nbTries}
-              />
+            <View>
+              <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
+                <Text style={styleSheet.text}>
+                  {i18n.t('competition:nb_tries')}
+                </Text>
+                <View style={{width: 100}}>
+                  <MyDropdown
+                    onValueChange={v => {
+                      props.setNbTries(v);
+                    }}
+                    data={['3', '4', '6'].map(v => ({
+                      label: v,
+                      value: v,
+                    }))}
+                    selectedValue={props.nbTries}
+                  />
+                </View>
+              </View>
             </View>
             <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
               <MyCheckBox
@@ -103,12 +105,11 @@ const ModalParam = props => {
 
 const styles = StyleSheet.create({
   container: {
-    minWidth: Platform.OS === 'windows' ? 300 : '50%',
+    minWidth: 300,
     paddingVertical: 20,
   },
   content: {
-    paddingVertical: 20,
-    paddingHorizontal: 10,
+    paddingVertical: 10,
   },
 });
 
