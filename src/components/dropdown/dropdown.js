@@ -22,6 +22,7 @@ const Dropdown = ({name, type, error, onChange, touched, ...props}) => {
             onValueChange={props.onValueChange}>
             {props.placeholder && (
               <PickerIOS.Item
+                style={styles.item}
                 label={props.placeholder}
                 value={props.placeholder}
               />
@@ -40,12 +41,19 @@ const Dropdown = ({name, type, error, onChange, touched, ...props}) => {
             mode="dropdown">
             {props.placeholder && (
               <Picker.Item
+                style={styles.item}
                 label={props.placeholder}
                 value={props.placeholder}
               />
             )}
             {props.data.map(d => {
-              return <Picker.Item label={d.label} value={d.value} />;
+              return (
+                <Picker.Item
+                  style={styles.item}
+                  label={d.label}
+                  value={d.value}
+                />
+              );
             })}
           </Picker>
         )}
@@ -79,13 +87,14 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     height: 55,
-    alignItems: 'center',
     backgroundColor: Platform.OS === 'windows' ? colors.muted : colors.white,
   },
   dropdownIOS: {},
   dropdownItem: {
     color: Platform.OS === 'windows' ? colors.white : colors.black,
-    fontSize: 16,
+  },
+  item: {
+    fontSize: 14,
   },
 });
 

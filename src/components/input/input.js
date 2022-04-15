@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {Text, TextInput, StyleSheet, Platform} from 'react-native';
 import {colors, styleSheet} from '_config';
 
-const maxHeightField = 55;
+const maxHeightField = 48;
 
 /**
  * Input

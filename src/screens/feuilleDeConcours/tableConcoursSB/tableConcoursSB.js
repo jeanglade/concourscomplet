@@ -289,7 +289,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'stretch',
-    marginHorizontal: 20,
     flex: 1,
   },
   item: {

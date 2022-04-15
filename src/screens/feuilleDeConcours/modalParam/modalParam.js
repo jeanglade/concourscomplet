@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {colors, styleSheet} from '_config';
 import {Modal, Dropdown} from '_components';
 import {
@@ -17,12 +17,12 @@ const ModalParam = props => {
     <Modal
       modalVisible={props.modalVisible}
       setModalVisible={props.setModalVisible}
-      buttonStyleView={styles.button}
+      buttonStyleView={[styleSheet.icon, {backgroundColor: colors.muted}]}
       minWidth={Platform.OS === 'windows' ? 300 : 0}
       buttonTooltip={i18n.t('competition:param')}
       buttonContent={
         <Image
-          style={styles.icon}
+          style={styleSheet.icon20}
           source={require('../../icons/settings.png')}
         />
       }
@@ -41,8 +41,10 @@ const ModalParam = props => {
             <Text style={styleSheet.textTitle}>
               {i18n.t('competition:param')}
             </Text>
-            <View style={styles.row}>
-              <Text style={styles.text}>{i18n.t('competition:nb_tries')}</Text>
+            <View style={styleSheet.flexRow}>
+              <Text style={styleSheet.text}>
+                {i18n.t('competition:nb_tries')}
+              </Text>
               <Dropdown
                 styleContainer={{with: 200}}
                 stylePickerIOS={{width: 200}}
@@ -56,40 +58,40 @@ const ModalParam = props => {
                 selectedValue={props.nbTries.toString()}
               />
             </View>
-            <View style={styles.row}>
+            <View style={styleSheet.flexRowCenter}>
               <CheckBox
                 value={props.colFlagVisible}
                 onValueChange={v => props.setColFlagVisible(v)}
               />
-              <Text style={styles.text}>
+              <Text style={styleSheet.text}>
                 {i18n.t('competition:col_flag_visible')}
               </Text>
             </View>
-            <View style={styles.row}>
+            <View style={styleSheet.flexRow}>
               <CheckBox
                 value={props.colPerfVisible}
                 onValueChange={v => props.setColPerfVisible(v)}
               />
-              <Text style={styles.text}>
+              <Text style={styleSheet.text}>
                 {i18n.t('competition:col_perf_visible')}
               </Text>
             </View>
-            <View style={styles.row}>
+            <View style={styleSheet.flexRow}>
               <CheckBox
                 value={props.colWindVisible}
                 onValueChange={v => props.setColWindVisible(v)}
               />
-              <Text style={styles.text}>
+              <Text style={styleSheet.text}>
                 {i18n.t('competition:col_wind_visible')}
               </Text>
             </View>
-            <View style={styles.row}>
+            <View style={styleSheet.flexRow}>
               <CheckBox
                 disabled={false}
                 value={props.colMiddleRankVisible}
                 onValueChange={v => props.setColMiddleRankVisible(v)}
               />
-              <Text style={styles.text}>
+              <Text style={styleSheet.text}>
                 {i18n.t('competition:col_middle_rank_visible')}
               </Text>
             </View>
@@ -101,17 +103,6 @@ const ModalParam = props => {
 };
 
 const styles = StyleSheet.create({
-  titleText: {
-    fontSize: 20,
-    color: colors.ffa_blue_light,
-    margin: 15,
-  },
-  button: {
-    backgroundColor: colors.ffa_blue_light,
-    padding: 10,
-    margin: 5,
-    borderRadius: 3,
-  },
   container: {
     minWidth: Platform.OS === 'windows' ? 300 : '50%',
     paddingVertical: 20,
@@ -119,18 +110,6 @@ const styles = StyleSheet.create({
   content: {
     paddingVertical: 20,
     paddingHorizontal: 10,
-  },
-  icon: {
-    width: 30,
-    height: 30,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 14,
-    color: colors.black,
   },
 });
 

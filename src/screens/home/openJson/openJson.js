@@ -41,17 +41,13 @@ const OpenJson = props => {
   };
 
   return (
-    <View
-      style={[
-        props.modal != null ? {} : styles.container,
-        styleSheet.backWhite,
-      ]}>
+    <View style={[styles.container, styleSheet.backWhite]}>
       <Text style={styleSheet.textTitle}>{i18n.t('common:new_epreuve')}</Text>
       <View style={[styleSheet.flexRowCenter]}>
         <TextInput
           style={[
             styleSheet.textInput,
-            Platform.OS === 'windows' && {height: 45},
+            Platform.OS === 'windows' && {height: 38},
             {width: 130},
           ]}
           onChangeText={setCodeConcours}

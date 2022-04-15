@@ -42,7 +42,7 @@ const Button = props => {
           <Tooltip
             isVisible={tooltipVisible}
             placement="bottom"
-            content={<Text>{props.tooltip}</Text>}>
+            content={<Text style={{fontSize: 13}}>{props.tooltip}</Text>}>
             <>{props.content}</>
           </Tooltip>
         )}
@@ -60,6 +60,7 @@ const Button = props => {
                     styleSheet.textCenter,
                     {
                       minWidth: 150,
+                      fontSize: 13,
                     },
                   ]}>
                   {props.tooltip}

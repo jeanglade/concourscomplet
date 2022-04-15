@@ -23,7 +23,7 @@ export default {
   param: 'Paramètres',
   bar_rise: 'Montées de barre',
   new_bar_rise: 'Nouvelle en cm',
-  bar_rise_barrage: 'Montées de barre de barrage',
+  bar_rise_barrage: 'Barre de barrage',
   new_bar_rise_barrage: 'Nouvelle en cm',
   hauteur: 'Hauteur',
   nb_tries: "Nombre d'essais",

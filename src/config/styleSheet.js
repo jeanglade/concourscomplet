@@ -4,12 +4,12 @@ import {StyleSheet} from 'react-native';
 export default StyleSheet.create({
   //TEXT
   textTitle: {
-    fontSize: 18,
+    fontSize: 16,
     color: colors.ffa_blue_light,
-    margin: 15,
+    marginVertical: 15,
   },
   text: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.black,
   },
   textError: {
@@ -95,6 +95,7 @@ export default StyleSheet.create({
   },
   //BUTTON
   button: {
+    alignItems: 'center',
     backgroundColor: colors.ffa_blue_light,
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -117,7 +118,7 @@ export default StyleSheet.create({
     backgroundColor: colors.white,
     borderColor: colors.muted,
     borderWidth: 1,
-    fontSize: 16,
+    fontSize: 14,
     marginHorizontal: 5,
   },
 });

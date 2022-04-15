@@ -11,7 +11,7 @@ import {
   ModalInfoConcours,
   ModalBar,
 } from '_screens';
-import {styleSheet} from '_config';
+import {styleSheet, colors} from '_config';
 
 const FeuilleDeConcours = props => {
   //Initialisation des données du concours
@@ -50,24 +50,22 @@ const FeuilleDeConcours = props => {
   const [colMiddleRankVisible, setColMiddleRankVisible] = useState(true);
 
   //Initalisatoin des variables Options Montées de barre
-  const [modalBarBarrage, setModalBarBarrage] = useState(false);
   const [modalBar, setModalBar] = useState(false);
-  const [barRises, setBarRises] = useState(
-    competitionData.UtilisationMonteeBarre
-      ? competitionData.EpreuveConcoursComplet.MonteesBarre
-      : [],
-  );
-  const [barRisesBarrage, setBarRisesBarrage] = useState([]);
 
   return (
-    <View style={[styleSheet.backWhite, styleSheet.flex1, {padding: 10}]}>
+    <View
+      style={[
+        styleSheet.backWhite,
+        styleSheet.flex1,
+        {padding: 10, paddingHorizontal: 20},
+      ]}>
       <View
         style={[
           styleSheet.flexRowCenter,
           styleSheet.flexWrap,
           {justifyContent: 'space-between'},
         ]}>
-        <Text style={styleSheet.textTitle}>
+        <Text style={[styleSheet.textTitle, {color: colors.black}]}>
           {dataConcours.epreuve} - {dataConcours.dateInfo}
         </Text>
         <View
@@ -135,7 +133,7 @@ const FeuilleDeConcours = props => {
           {justifyContent: 'flex-start', paddingBottom: 20},
         ]}>
         <Text style={styleSheet.textTitle}>{i18n.t('common:options')} : </Text>
-        <ModalAddAthlete
+        {/* <ModalAddAthlete
           setAthletesData={setTableData}
           modalVisible={modalAddAthlete}
           setModalVisible={b => {
@@ -147,22 +145,14 @@ const FeuilleDeConcours = props => {
           setFieldsAddAthtlete={setFieldsAddAthtlete}
           fileContent={competitionData}
           fileName={dataConcours.id}
-        />
+        /> */}
         {competitionData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
           <>
             <ModalBar
               setModalVisible={setModalBar}
               modalVisible={modalBar}
-              barRises={barRises}
-              setBarRises={setBarRises}
-              isBarrage={false}
-            />
-            <ModalBar
-              setModalVisible={setModalBarBarrage}
-              modalVisible={modalBarBarrage}
-              barRises={barRisesBarrage}
-              setBarRises={setBarRisesBarrage}
-              isBarrage={true}
+              concoursData={competitionData}
+              concoursId={dataConcours.id}
             />
           </>
         )}

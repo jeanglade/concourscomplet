@@ -1,5 +1,5 @@
-import React from 'react';
-import {colors, styleSheet} from '_config';
+import React, {useEffect} from 'react';
+import {styleSheet} from '_config';
 import {Modal, Button, Input, Dropdown, MyDateTimePicker} from '_components';
 import {
   View,
@@ -100,7 +100,10 @@ const ModalAddAthlete = props => {
       newAthlete = setNewAthlete(values, newAthlete);
       if (!isAthleteExist(newAthlete)) {
         props.athletesData.push(newAthlete);
-        actions.resetForm(props.fieldsAddAthtlete);
+        actions.setSubmitting(false);
+        actions.resetForm({
+          values: props.fieldsAddAthtlete,
+        });
         saveContent();
         showMessage({
           message: 'Athlète ajouté',
@@ -115,9 +118,9 @@ const ModalAddAthlete = props => {
     } else {
       props.athletesData[
         props.athletesData.findIndex(
-          a => a.$id === props.fieldsAddAthtlete.resultat.$id,
+          a => a.$id === props.fieldsAddAthtlete?.resultat.$id,
         )
-      ] = setNewAthlete(values, props.fieldsAddAthtlete.resultat);
+      ] = setNewAthlete(values, props.fieldsAddAthtlete?.resultat);
       saveContent();
       showMessage({
         message: 'Athlète modifié',
@@ -151,9 +154,9 @@ const ModalAddAthlete = props => {
   const alertDeleteAthlete = () => {
     Alert.alert(
       i18n.t('toast:confirm_delete_athlete'),
-      props.fieldsAddAthtlete.firstname?.toString() +
+      props.fieldsAddAthtlete?.firstname?.toString() +
         ' ' +
-        props.fieldsAddAthtlete.name?.toString(),
+        props.fieldsAddAthtlete?.name?.toString(),
       [
         {
           text: i18n.t('toast:cancel'),
@@ -163,7 +166,7 @@ const ModalAddAthlete = props => {
           onPress: async () => {
             props.athletesData.splice(
               props.athletesData.findIndex(
-                a => a.$id === props.fieldsAddAthtlete.resultat.$id,
+                a => a.$id === props.fieldsAddAthtlete?.resultat.$id,
               ),
               1,
             );
@@ -213,19 +216,23 @@ const ModalAddAthlete = props => {
               style={
                 ([{flex: 1}], Platform.OS === 'windows' && {maxHeight: 380})
               }>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View style={styleSheet.flexRowCenter}>
                 <Text style={styleSheet.textTitle}>
-                  {props.fieldsAddAthtlete.type === 'new'
+                  {props.fieldsAddAthtlete?.type === 'new'
                     ? i18n.t('competition:add_an_athlete')
                     : i18n.t('competition:edit_an_athlete')}
                 </Text>
-                {props.fieldsAddAthtlete.type === 'modify' && (
+                {props.fieldsAddAthtlete?.type === 'modify' && (
                   <Button
                     onPress={alertDeleteAthlete}
-                    styleView={styles.buttonDeleteAthlete}
+                    styleView={[
+                      styleSheet.buttonDelete,
+                      styleSheet.backRed,
+                      {marginStart: 5},
+                    ]}
                     content={
                       <Image
-                        style={styleSheet.icon20}
+                        style={styleSheet.icon10}
                         source={require('../../../icons/delete.png')}
                       />
                     }
@@ -234,12 +241,23 @@ const ModalAddAthlete = props => {
               </View>
               <View style={styles.content}>
                 <Formik
-                  initialValues={props.fieldsAddAthtlete}
+                  initialValues={
+                    props.fieldsAddAthtlete !== undefined
+                      ? props.fieldsAddAthtlete
+                      : {}
+                  }
                   onSubmit={(values, actions) => handleSubmitForm(actions)}
                   validationSchema={ValidatorsAddAthlete}
                   validateOnBlur={false}
                   validateOnChange={false}>
-                  {({handleSubmit, setValues, values, errors, touched}) => {
+                  {({
+                    handleSubmit,
+                    setValues,
+                    values,
+                    errors,
+                    touched,
+                    validateForm,
+                  }) => {
                     return (
                       <View style={styles.form}>
                         <Input
@@ -247,11 +265,15 @@ const ModalAddAthlete = props => {
                           placeholder={i18n.t('competition:firstname') + ' *'}
                           onChange={value => {
                             onChangeField('firstname', value);
+                            props.setFieldsAddAthtlete(oldFields => ({
+                              ...oldFields,
+                              firstname: value,
+                            }));
                           }}
                           onBlur={value => {
                             setValues(props.fieldsAddAthtlete);
                           }}
-                          value={props.fieldsAddAthtlete.firstname}
+                          value={props.fieldsAddAthtlete?.firstname}
                           touched={touched.firstname}
                           error={errors.firstname}
                         />
@@ -261,11 +283,15 @@ const ModalAddAthlete = props => {
                           placeholder={i18n.t('competition:name') + ' *'}
                           onChange={value => {
                             onChangeField('name', value);
+                            props.setFieldsAddAthtlete(oldFields => ({
+                              ...oldFields,
+                              name: value,
+                            }));
                           }}
                           onBlur={() => {
                             setValues(props.fieldsAddAthtlete);
                           }}
-                          value={props.fieldsAddAthtlete.name}
+                          value={props.fieldsAddAthtlete?.name}
                           touched={touched.name}
                           error={errors.name}
                         />
@@ -292,7 +318,7 @@ const ModalAddAthlete = props => {
                               label: v,
                               value: v,
                             }))}
-                            selectedValue={props.fieldsAddAthtlete.sex}
+                            selectedValue={props.fieldsAddAthtlete?.sex}
                             touched={touched.sex}
                             error={errors.sex}
                           />
@@ -309,12 +335,12 @@ const ModalAddAthlete = props => {
                               label: findCategory(v),
                               value: v,
                             }))}
-                            selectedValue={props.fieldsAddAthtlete.category}
+                            selectedValue={props.fieldsAddAthtlete?.category}
                           />
                         </View>
 
                         <MyDateTimePicker
-                          value={props.fieldsAddAthtlete.birthDate}
+                          value={props.fieldsAddAthtlete?.birthDate}
                           touched={touched.birthDate}
                           error={errors.birthDate}
                           onValueChange={value => {
@@ -334,7 +360,7 @@ const ModalAddAthlete = props => {
                           onBlur={() => {
                             setValues(props.fieldsAddAthtlete);
                           }}
-                          value={props.fieldsAddAthtlete.licence_number}
+                          value={props.fieldsAddAthtlete?.licence_number}
                           touched={touched.licence_number}
                           error={errors.licence_number}
                         />
@@ -348,7 +374,7 @@ const ModalAddAthlete = props => {
                           onBlur={() => {
                             setValues(props.fieldsAddAthtlete);
                           }}
-                          value={props.fieldsAddAthtlete.club}
+                          value={props.fieldsAddAthtlete?.club}
                           touched={touched.club}
                           error={errors.club}
                         />
@@ -362,7 +388,7 @@ const ModalAddAthlete = props => {
                           onBlur={() => {
                             setValues(props.fieldsAddAthtlete);
                           }}
-                          value={props.fieldsAddAthtlete.dossard}
+                          value={props.fieldsAddAthtlete?.dossard}
                           touched={touched.dossard}
                           error={errors.dossard}
                         />

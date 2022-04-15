@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet, FlatList} from 'react-native';
-import {colors, styleSheet} from '_config';
+import {View, Text, FlatList} from 'react-native';
+import {styleSheet} from '_config';
 import {Button} from '_components';
 
 const DataTable = props => {
@@ -12,7 +12,9 @@ const DataTable = props => {
           if (item.type === 'text') {
             res = (
               <View style={{flex: item.flex}}>
-                <Text style={styleSheet.text}>{item.text}</Text>
+                <Text style={[styleSheet.text, {fontSize: 13}]}>
+                  {item.text}
+                </Text>
               </View>
             );
           } else {

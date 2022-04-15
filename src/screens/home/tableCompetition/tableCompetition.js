@@ -208,7 +208,11 @@ const TableCompetition = props => {
       <>
         <View style={styleSheet.flexRowCenter}>
           {/* S il y a 1 seule competition */}
-          <Text style={[styleSheet.textTitle, {margin: 0, marginEnd: 5}]}>
+          <Text
+            style={[
+              styleSheet.textTitle,
+              {margin: 0, marginVertical: 0, marginEnd: 5},
+            ]}>
             {props.competition?.nomCompetition?.toString()}
           </Text>
           {/* Button de suppression de tous les concours d une competition */}
