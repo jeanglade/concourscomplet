@@ -1,21 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {colors, styleSheet} from '_config';
-import {Modal, Button, DataTable} from '_components';
-import CheckBox from '@react-native-community/checkbox';
+import {MyModal, MyButton, MyDataTable, MyInput, MyCheckBox} from '_components';
 import {
   View,
   StyleSheet,
   Text,
   Platform,
   KeyboardAvoidingView,
-  TextInput,
   Image,
 } from 'react-native';
 import {setFile} from '../../../utils/myAsyncStorage';
 import i18n from 'i18next';
 
 const ModalBar = props => {
-  // Textinput state
+  // Input state
   const [newBarRise, setNewBarRise] = useState(null);
   // Checkbox state
   const [isBarrage, setIsBarrage] = useState(false);
@@ -68,7 +66,11 @@ const ModalBar = props => {
   const saveMonteeDeBarre = async () => {
     if (hasChanged) {
       var res = {
-        $id: props.concoursData.EpreuveConcoursComplet.MonteesBarre.$id,
+        $id: props.concoursData.EpreuveConcoursComplet.hasOwnProperty(
+          'MonteesBarre',
+        )
+          ? props.concoursData.EpreuveConcoursComplet.MonteesBarre.$id
+          : '1',
       };
       barRises.forEach((bar, index) => {
         const i = index + 1;
@@ -109,7 +111,7 @@ const ModalBar = props => {
       }
       setHasChanged(true);
     }
-    setNewBarRise(null);
+    setNewBarRise('');
   };
 
   const removeBarRise = index => {
@@ -143,7 +145,7 @@ const ModalBar = props => {
           </Text>
         </View>
         <View style={[styleSheet.flexRow, styleSheet.flex1]}>
-          <Button
+          <MyButton
             styleView={[styleSheet.buttonDelete, styleSheet.backRed]}
             onPress={() => removeBarRise(index)}
             content={
@@ -159,7 +161,7 @@ const ModalBar = props => {
   );
 
   return (
-    <Modal
+    <MyModal
       modalVisible={props.modalVisible}
       setModalVisible={bool => {
         if (!bool) {
@@ -195,7 +197,7 @@ const ModalBar = props => {
             </Text>
             {barRises?.length > 0 && (
               <View style={[styles.containerCenter]}>
-                <DataTable
+                <MyDataTable
                   headerTable={[
                     {
                       type: 'text',
@@ -212,21 +214,16 @@ const ModalBar = props => {
               </View>
             )}
             <View style={[styleSheet.flexRow, {marginTop: 20}]}>
-              <TextInput
-                style={[
-                  styleSheet.textInput,
-                  Platform.OS === 'windows' && {height: 39},
-                  {width: 150},
-                ]}
-                onChangeText={setNewBarRise}
+              <MyInput
+                style={{width: 150}}
+                onChange={setNewBarRise}
                 value={newBarRise}
                 placeholder={i18n.t('competition:new_bar_rise_barrage')}
-                placeholderTextColor={colors.muted}
                 keyboardType="numeric"
                 maxLength={3}
               />
               <View>
-                <Button
+                <MyButton
                   onPress={addBarRise}
                   styleView={styleSheet.button}
                   content={
@@ -237,19 +234,18 @@ const ModalBar = props => {
                 />
               </View>
             </View>
-            <View
-              style={[
-                styleSheet.flexRow,
-                {alignItems: 'center', marginStart: 5},
-              ]}>
-              <CheckBox
-                value={isBarrage}
-                onValueChange={v => setIsBarrage(v)}
-              />
-              <Text style={styleSheet.text}>
-                {i18n.t('competition:bar_rise_barrage')}
-              </Text>
-            </View>
+            {barRises?.length > 0 && (
+              <View
+                style={[
+                  styleSheet.flexRow,
+                  {alignItems: 'center', marginStart: 5},
+                ]}>
+                <MyCheckBox isChecked={isBarrage} setIsChecked={setIsBarrage} />
+                <Text style={[styleSheet.text, {color: colors.ffa_blue_light}]}>
+                  {i18n.t('competition:bar_rise_barrage')}
+                </Text>
+              </View>
+            )}
           </KeyboardAvoidingView>
         </View>
       }
@@ -275,7 +271,6 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     flex: 1,
   },
-  textInputSize: {height: 48},
 });
 
 export default ModalBar;

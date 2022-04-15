@@ -1,6 +1,6 @@
 import React from 'react';
 import {styleSheet} from '_config';
-import {Modal, Dropdown} from '_components';
+import {MyModal} from '_components';
 import {
   View,
   StyleSheet,
@@ -9,12 +9,11 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
 import i18n from 'i18next';
 
 const ModalInfoConcours = props => {
   return (
-    <Modal
+    <MyModal
       modalVisible={props.modalVisible}
       setModalVisible={props.setModalVisible}
       buttonStyleView={[styleSheet.icon]}

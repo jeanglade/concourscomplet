@@ -1,21 +1,13 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, Platform, Text} from 'react-native';
-import PropTypes from 'prop-types';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {colors, styleSheet} from '_config';
 import moment from 'moment';
-import {Button} from '_components';
+import {MyButton} from '_components';
 
 const maxHeightField = 55;
 
-/**
- * Dropdown
- * @param {string} name
- * @param {string} type
- * @param {string} error
- * @param {boolean} touched
- */
-const MyDateTimePicker = ({name, type, error, onChange, touched, ...props}) => {
+const MyDateTimePicker = props => {
   const [dateTimePickerVisible, setDateTimePickerVisible] = useState(false);
   const setDateFormat = date => {
     return moment(date, moment.ISO_8601).format('DD/MM/YYYY');
@@ -25,7 +17,7 @@ const MyDateTimePicker = ({name, type, error, onChange, touched, ...props}) => {
     <>
       <View style={styles.view}>
         {Platform.OS === 'android' ? (
-          <Button
+          <MyButton
             styleView={{padding: 15}}
             onPress={() => setDateTimePickerVisible(true)}
             content={
@@ -69,23 +61,11 @@ const MyDateTimePicker = ({name, type, error, onChange, touched, ...props}) => {
           />
         )}
       </View>
-      {touched && error && <Text style={styleSheet.textError}>{error}</Text>}
+      {props.touched && props.error && (
+        <Text style={styleSheet.textError}>{props.error}</Text>
+      )}
     </>
   );
-};
-
-DateTimePicker.displayName = 'DateTimePicker';
-
-DateTimePicker.propTypes = {
-  name: PropTypes.string,
-  type: PropTypes.string,
-  error: PropTypes.string,
-  touched: PropTypes.bool,
-};
-
-DateTimePicker.defaultProps = {
-  type: 'none',
-  touched: false,
 };
 
 const styles = StyleSheet.create({

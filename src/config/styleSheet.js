@@ -1,5 +1,5 @@
 import colors from './colors';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Platform} from 'react-native';
 
 export default StyleSheet.create({
   //TEXT
@@ -110,15 +110,5 @@ export default StyleSheet.create({
     padding: 5,
     margin: 0,
     borderRadius: 3,
-  },
-  //TEXTINPUT
-  textInput: {
-    padding: 5,
-    color: colors.black,
-    backgroundColor: colors.white,
-    borderColor: colors.muted,
-    borderWidth: 1,
-    fontSize: 14,
-    marginHorizontal: 5,
   },
 });

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {styleSheet} from '_config';
-import {Modal} from '_components';
+import {MyModal} from '_components';
 import {OpenJson} from '_screens';
 import {Image, Platform} from 'react-native';
 import i18n from 'i18next';
@@ -8,7 +8,7 @@ import i18n from 'i18next';
 const ModalOpenJson = props => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
-    <Modal
+    <MyModal
       modalVisible={modalVisible}
       setModalVisible={setModalVisible}
       buttonStyleView={styleSheet.icon}

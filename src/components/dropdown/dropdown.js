@@ -1,17 +1,9 @@
 import React from 'react';
 import {View, StyleSheet, Platform, Text} from 'react-native';
-import PropTypes from 'prop-types';
 import {Picker, PickerIOS} from '@react-native-picker/picker';
 import {colors, styleSheet} from '_config';
 
-/**
- * Dropdown
- * @param {string} name
- * @param {string} type
- * @param {string} error
- * @param {boolean} touched
- */
-const Dropdown = ({name, type, error, onChange, touched, ...props}) => {
+const MyDropdown = props => {
   return (
     <>
       <View style={[styles.viewDropdown, props.styleContainer]}>
@@ -58,32 +50,20 @@ const Dropdown = ({name, type, error, onChange, touched, ...props}) => {
           </Picker>
         )}
       </View>
-      {touched && error && <Text style={styleSheet.textError}>{error}</Text>}
+      {props.touched && props.error && (
+        <Text style={styleSheet.textError}>{props.error}</Text>
+      )}
     </>
   );
 };
 
-Dropdown.displayName = 'Dropdown';
-
-Dropdown.propTypes = {
-  name: PropTypes.string,
-  type: PropTypes.string,
-  error: PropTypes.string,
-  touched: PropTypes.bool,
-};
-
-Dropdown.defaultProps = {
-  type: 'none',
-  touched: false,
-};
-
 const styles = StyleSheet.create({
   viewDropdown: {
+    borderWidth: 1,
     borderColor: colors.muted,
-    borderWidth: 2,
-    borderRadius: Platform.OS === 'ios' ? 50 : 0,
+    marginHorizontal: 5,
+    borderRadius: Platform.OS === 'ios' ? 50 : 3,
     backgroundColor: Platform.OS === 'windows' ? colors.muted : colors.white,
-    marginBottom: 10,
   },
   dropdown: {
     height: 55,
@@ -98,4 +78,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Dropdown;
+export default MyDropdown;

@@ -1,6 +1,6 @@
 import React from 'react';
 import {colors, styleSheet} from '_config';
-import {Modal, Dropdown} from '_components';
+import {MyModal, MyDropdown, MyCheckBox} from '_components';
 import {
   View,
   StyleSheet,
@@ -9,12 +9,11 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
 import i18n from 'i18next';
 
 const ModalParam = props => {
   return (
-    <Modal
+    <MyModal
       modalVisible={props.modalVisible}
       setModalVisible={props.setModalVisible}
       buttonStyleView={[styleSheet.icon, {backgroundColor: colors.muted}]}
@@ -45,8 +44,8 @@ const ModalParam = props => {
               <Text style={styleSheet.text}>
                 {i18n.t('competition:nb_tries')}
               </Text>
-              <Dropdown
-                styleContainer={{with: 200}}
+              <MyDropdown
+                styleContainer={{}}
                 stylePickerIOS={{width: 200}}
                 onValueChange={v => {
                   props.setNbTries(v);
@@ -55,41 +54,41 @@ const ModalParam = props => {
                   label: v,
                   value: v,
                 }))}
-                selectedValue={props.nbTries.toString()}
+                selectedValue={props.nbTries}
               />
             </View>
-            <View style={styleSheet.flexRowCenter}>
-              <CheckBox
-                value={props.colFlagVisible}
-                onValueChange={v => props.setColFlagVisible(v)}
+            <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
+              <MyCheckBox
+                isChecked={props.colFlagVisible}
+                setIsChecked={v => props.setColFlagVisible(v)}
               />
               <Text style={styleSheet.text}>
                 {i18n.t('competition:col_flag_visible')}
               </Text>
             </View>
-            <View style={styleSheet.flexRow}>
-              <CheckBox
-                value={props.colPerfVisible}
-                onValueChange={v => props.setColPerfVisible(v)}
+            <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
+              <MyCheckBox
+                isChecked={props.colPerfVisible}
+                setIsChecked={v => props.setColPerfVisible(v)}
               />
               <Text style={styleSheet.text}>
                 {i18n.t('competition:col_perf_visible')}
               </Text>
             </View>
-            <View style={styleSheet.flexRow}>
-              <CheckBox
-                value={props.colWindVisible}
-                onValueChange={v => props.setColWindVisible(v)}
+            <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
+              <MyCheckBox
+                isChecked={props.colWindVisible}
+                setIsChecked={v => props.setColWindVisible(v)}
               />
               <Text style={styleSheet.text}>
                 {i18n.t('competition:col_wind_visible')}
               </Text>
             </View>
-            <View style={styleSheet.flexRow}>
-              <CheckBox
+            <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
+              <MyCheckBox
                 disabled={false}
-                value={props.colMiddleRankVisible}
-                onValueChange={v => props.setColMiddleRankVisible(v)}
+                isChecked={props.colMiddleRankVisible}
+                setIsChecked={v => props.setColMiddleRankVisible(v)}
               />
               <Text style={styleSheet.text}>
                 {i18n.t('competition:col_middle_rank_visible')}

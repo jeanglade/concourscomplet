@@ -1,6 +1,12 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {styleSheet} from '_config';
-import {Modal, Button, Input, Dropdown, MyDateTimePicker} from '_components';
+import {
+  MyModal,
+  MyButton,
+  MyInput,
+  MyDropdown,
+  MyDateTimePicker,
+} from '_components';
 import {
   View,
   StyleSheet,
@@ -67,9 +73,9 @@ const ModalAddAthlete = props => {
   };
 
   const saveContent = async () => {
-    props.fileContent.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats =
+    props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats =
       props.athletesData;
-    await setFile(props.fileName, JSON.stringify(props.fileContent));
+    await setFile(props.concoursId, JSON.stringify(props.concoursData));
   };
 
   const handleSubmitForm = actions => {
@@ -188,7 +194,7 @@ const ModalAddAthlete = props => {
   };
 
   return (
-    <Modal
+    <MyModal
       modalVisible={props.modalVisible}
       setModalVisible={props.setModalVisible}
       buttonStyleView={styleSheet.icon}
@@ -223,7 +229,7 @@ const ModalAddAthlete = props => {
                     : i18n.t('competition:edit_an_athlete')}
                 </Text>
                 {props.fieldsAddAthtlete?.type === 'modify' && (
-                  <Button
+                  <MyButton
                     onPress={alertDeleteAthlete}
                     styleView={[
                       styleSheet.buttonDelete,
@@ -260,41 +266,45 @@ const ModalAddAthlete = props => {
                   }) => {
                     return (
                       <View style={styles.form}>
-                        <Input
-                          textContentType="nickname"
-                          placeholder={i18n.t('competition:firstname') + ' *'}
-                          onChange={value => {
-                            onChangeField('firstname', value);
-                            props.setFieldsAddAthtlete(oldFields => ({
-                              ...oldFields,
-                              firstname: value,
-                            }));
-                          }}
-                          onBlur={value => {
-                            setValues(props.fieldsAddAthtlete);
-                          }}
-                          value={props.fieldsAddAthtlete?.firstname}
-                          touched={touched.firstname}
-                          error={errors.firstname}
-                        />
+                        <View style={styles.field}>
+                          <MyInput
+                            type="nickname"
+                            placeholder={i18n.t('competition:firstname') + ' *'}
+                            onChange={value => {
+                              onChangeField('firstname', value);
+                              props.setFieldsAddAthtlete(oldFields => ({
+                                ...oldFields,
+                                firstname: value,
+                              }));
+                            }}
+                            onBlur={value => {
+                              setValues(props.fieldsAddAthtlete);
+                            }}
+                            value={props.fieldsAddAthtlete?.firstname}
+                            touched={touched.firstname}
+                            error={errors.firstname}
+                          />
+                        </View>
 
-                        <Input
-                          textContentType="familyName"
-                          placeholder={i18n.t('competition:name') + ' *'}
-                          onChange={value => {
-                            onChangeField('name', value);
-                            props.setFieldsAddAthtlete(oldFields => ({
-                              ...oldFields,
-                              name: value,
-                            }));
-                          }}
-                          onBlur={() => {
-                            setValues(props.fieldsAddAthtlete);
-                          }}
-                          value={props.fieldsAddAthtlete?.name}
-                          touched={touched.name}
-                          error={errors.name}
-                        />
+                        <View style={styles.field}>
+                          <MyInput
+                            type="familyName"
+                            placeholder={i18n.t('competition:name') + ' *'}
+                            onChange={value => {
+                              onChangeField('name', value);
+                              props.setFieldsAddAthtlete(oldFields => ({
+                                ...oldFields,
+                                name: value,
+                              }));
+                            }}
+                            onBlur={() => {
+                              setValues(props.fieldsAddAthtlete);
+                            }}
+                            value={props.fieldsAddAthtlete?.name}
+                            touched={touched.name}
+                            error={errors.name}
+                          />
+                        </View>
 
                         <View
                           style={{
@@ -305,107 +315,124 @@ const ModalAddAthlete = props => {
                                 ? 'space-around'
                                 : 'flex-start',
                           }}>
-                          <Dropdown
-                            name="sex"
-                            styleContainer={{}}
-                            stylePickerIOS={{width: 200}}
-                            placeholder={i18n.t('competition:sex') + '*'}
-                            onValueChange={value => {
-                              onChangeField('sex', value);
-                              setValues(props.fieldsAddAthtlete);
-                            }}
-                            data={sexValues.map(v => ({
-                              label: v,
-                              value: v,
-                            }))}
-                            selectedValue={props.fieldsAddAthtlete?.sex}
-                            touched={touched.sex}
-                            error={errors.sex}
-                          />
+                          <View style={styles.field}>
+                            <MyDropdown
+                              name="sex"
+                              styleContainer={{}}
+                              stylePickerIOS={{width: 200}}
+                              placeholder={i18n.t('competition:sex') + '*'}
+                              onValueChange={value => {
+                                onChangeField('sex', value);
+                                setValues(props.fieldsAddAthtlete);
+                              }}
+                              data={sexValues.map(v => ({
+                                label: v,
+                                value: v,
+                              }))}
+                              selectedValue={props.fieldsAddAthtlete?.sex}
+                              touched={touched.sex}
+                              error={errors.sex}
+                            />
+                          </View>
 
-                          <Dropdown
-                            styleContainer={{}}
-                            stylePickerIOS={{width: 200}}
-                            placeholder={i18n.t('competition:category')}
+                          <View style={styles.field}>
+                            <MyDropdown
+                              styleContainer={{}}
+                              stylePickerIOS={{width: 200}}
+                              placeholder={i18n.t('competition:category')}
+                              onValueChange={value => {
+                                onChangeField('category', value);
+                                setValues(props.fieldsAddAthtlete);
+                              }}
+                              data={categoryValues.map((v, index) => ({
+                                label: findCategory(v),
+                                value: v,
+                              }))}
+                              selectedValue={props.fieldsAddAthtlete?.category}
+                            />
+                          </View>
+                        </View>
+
+                        <View style={styles.field}>
+                          <MyDateTimePicker
+                            value={props.fieldsAddAthtlete?.birthDate}
+                            touched={touched.birthDate}
+                            error={errors.birthDate}
                             onValueChange={value => {
-                              onChangeField('category', value);
-                              setValues(props.fieldsAddAthtlete);
+                              if (value != undefined) {
+                                onChangeField('birthDate', value);
+                                setValues(props.fieldsAddAthtlete);
+                              }
                             }}
-                            data={categoryValues.map((v, index) => ({
-                              label: findCategory(v),
-                              value: v,
-                            }))}
-                            selectedValue={props.fieldsAddAthtlete?.category}
                           />
                         </View>
 
-                        <MyDateTimePicker
-                          value={props.fieldsAddAthtlete?.birthDate}
-                          touched={touched.birthDate}
-                          error={errors.birthDate}
-                          onValueChange={value => {
-                            if (value != undefined) {
-                              onChangeField('birthDate', value);
+                        <View style={styles.field}>
+                          <MyInput
+                            type="username"
+                            placeholder={i18n.t('competition:licence_number')}
+                            onChange={value => {
+                              onChangeField('licence_number', value);
+                            }}
+                            onBlur={() => {
                               setValues(props.fieldsAddAthtlete);
+                            }}
+                            value={props.fieldsAddAthtlete?.licence_number}
+                            touched={touched.licence_number}
+                            error={errors.licence_number}
+                          />
+                        </View>
+
+                        <View style={styles.field}>
+                          <MyInput
+                            type="username"
+                            placeholder={i18n.t('competition:club')}
+                            onChange={value => {
+                              onChangeField('club', value);
+                            }}
+                            onBlur={() => {
+                              setValues(props.fieldsAddAthtlete);
+                            }}
+                            value={props.fieldsAddAthtlete?.club}
+                            touched={touched.club}
+                            error={errors.club}
+                          />
+                        </View>
+
+                        <View style={styles.field}>
+                          <MyInput
+                            type="username"
+                            placeholder={i18n.t('competition:dossard')}
+                            onChange={value => {
+                              onChangeField('dossard', value);
+                            }}
+                            onBlur={() => {
+                              setValues(props.fieldsAddAthtlete);
+                            }}
+                            value={props.fieldsAddAthtlete?.dossard}
+                            touched={touched.dossard}
+                            error={errors.dossard}
+                          />
+                        </View>
+
+                        <View style={styles.field}>
+                          <MyButton
+                            onPress={e => {
+                              setValues(props.fieldsAddAthtlete);
+                              handleSubmit(e);
+                            }}
+                            styleView={[
+                              styleSheet.button,
+                              {marginHorizontal: 0},
+                            ]}
+                            content={
+                              <Text
+                                style={[styleSheet.text, styleSheet.textWhite]}>
+                                {i18n.t('common:validate')}
+                              </Text>
                             }
-                          }}
-                        />
-
-                        <Input
-                          textContentType="username"
-                          placeholder={i18n.t('competition:licence_number')}
-                          onChange={value => {
-                            onChangeField('licence_number', value);
-                          }}
-                          onBlur={() => {
-                            setValues(props.fieldsAddAthtlete);
-                          }}
-                          value={props.fieldsAddAthtlete?.licence_number}
-                          touched={touched.licence_number}
-                          error={errors.licence_number}
-                        />
-
-                        <Input
-                          textContentType="username"
-                          placeholder={i18n.t('competition:club')}
-                          onChange={value => {
-                            onChangeField('club', value);
-                          }}
-                          onBlur={() => {
-                            setValues(props.fieldsAddAthtlete);
-                          }}
-                          value={props.fieldsAddAthtlete?.club}
-                          touched={touched.club}
-                          error={errors.club}
-                        />
-
-                        <Input
-                          textContentType="username"
-                          placeholder={i18n.t('competition:dossard')}
-                          onChange={value => {
-                            onChangeField('dossard', value);
-                          }}
-                          onBlur={() => {
-                            setValues(props.fieldsAddAthtlete);
-                          }}
-                          value={props.fieldsAddAthtlete?.dossard}
-                          touched={touched.dossard}
-                          error={errors.dossard}
-                        />
-
-                        <Button
-                          onPress={e => {
-                            setValues(props.fieldsAddAthtlete);
-                            handleSubmit(e);
-                          }}
-                          styleView={[styleSheet.button, {marginHorizontal: 0}]}
-                          content={
-                            <Text
-                              style={[styleSheet.text, styleSheet.textWhite]}>
-                              {i18n.t('common:validate')}
-                            </Text>
-                          }
-                        />
+                          />
+                        </View>
                       </View>
                     );
                   }}
@@ -421,12 +448,15 @@ const ModalAddAthlete = props => {
 
 const styles = StyleSheet.create({
   container: {
-    minWidth: Platform.OS === 'windows' ? 300 : '50%',
+    minWidth: 400,
     paddingVertical: 20,
   },
   content: {
     paddingVertical: 20,
     paddingHorizontal: 10,
+  },
+  field: {
+    marginVertical: 5,
   },
 });
 

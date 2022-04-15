@@ -4,10 +4,9 @@ import Tooltip from 'react-native-walkthrough-tooltip';
 import {Flyout} from 'react-native-windows';
 import {styleSheet} from '_config';
 
-const Button = props => {
+const MyButton = props => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const myRef = useRef();
-
   return (
     <Pressable
       onPressIn={() => {
@@ -74,4 +73,4 @@ const Button = props => {
   );
 };
 
-export default Button;
+export default MyButton;

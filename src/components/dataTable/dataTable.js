@@ -1,9 +1,9 @@
 import React from 'react';
 import {View, Text, FlatList} from 'react-native';
 import {styleSheet} from '_config';
-import {Button} from '_components';
+import {MyButton} from '_components';
 
-const DataTable = props => {
+const MyDataTable = props => {
   return (
     <View style={[styleSheet.flex1, {marginTop: 20}]}>
       <View style={[styleSheet.flexRow, {paddingLeft: 10, paddingBottom: 5}]}>
@@ -19,7 +19,7 @@ const DataTable = props => {
             );
           } else {
             res = (
-              <Button
+              <MyButton
                 styleView={item.style}
                 onPress={item.onPress}
                 content={item.content}
@@ -43,4 +43,4 @@ const DataTable = props => {
   );
 };
 
-export default DataTable;
+export default MyDataTable;

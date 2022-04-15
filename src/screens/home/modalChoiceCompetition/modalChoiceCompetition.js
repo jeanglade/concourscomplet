@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {styleSheet} from '_config';
-import {Modal, Button, Dropdown} from '_components';
+import {MyModal, MyButton, MyDropdown} from '_components';
 import {Image, View, Text} from 'react-native';
 import i18n from 'i18next';
 
@@ -12,7 +12,7 @@ const ModalChoiceCompetition = props => {
 
   return (
     <>
-      <Modal
+      <MyModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         buttonStyleView={styleSheet.icon}
@@ -25,7 +25,7 @@ const ModalChoiceCompetition = props => {
         buttonTooltip={i18n.t('common:choice_comp')}
         contentModal={
           <View>
-            <Dropdown
+            <MyDropdown
               styleContainer={{width: 600, marginTop: 40, marginHorizontal: 5}}
               onValueChange={(value, index) => {
                 if (index > 0)
@@ -40,7 +40,7 @@ const ModalChoiceCompetition = props => {
               })}
               selectedValue={selectedValue}
             />
-            <Button
+            <MyButton
               onPress={() => {
                 if (selectedValue != i18n.t('common:choice_comp')) {
                   props.setChoiceCompetition(selectedValue);

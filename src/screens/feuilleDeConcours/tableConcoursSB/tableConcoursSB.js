@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, View, TextInput, Image} from 'react-native';
 import i18n from 'i18next';
 import {colors} from '_config';
-import {DataTable, Button} from '_components';
+import {MyDataTable, MyButton, MyInput} from '_components';
 import moment from 'moment';
 
 const TableConcoursSb = props => {
@@ -69,7 +69,7 @@ const TableConcoursSb = props => {
               alignItems: 'center',
             }}>
             {resultat.Athlete.IsNew && (
-              <Button
+              <MyButton
                 onPress={() => {
                   props.setFieldsAddAthtlete({
                     ...props.fieldsAddAthtlete,
@@ -123,7 +123,7 @@ const TableConcoursSb = props => {
           </Text>
         </View>
         <View style={styles.flex1}>
-          <TextInput
+          <MyInput
             style={[
               styles.textinput,
               {
@@ -133,7 +133,7 @@ const TableConcoursSb = props => {
                     : colors.muted,
               },
             ]}
-            onChangeText={value => {
+            onChange={value => {
               //createEssai(resultat, 1, value);
               setAllEssais(() => {
                 allEssais[index][0] = value.toString();
@@ -253,7 +253,7 @@ const TableConcoursSb = props => {
 
   return (
     <View style={[styles.containerCenter]}>
-      <DataTable
+      <MyDataTable
         headerTable={[
           {type: 'text', flex: 1, text: i18n.t('competition:order')},
           hasDossard && {

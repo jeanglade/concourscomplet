@@ -3,13 +3,13 @@ import DeviceInfo from 'react-native-device-info';
 import {View, Text, Image} from 'react-native';
 import i18n from 'i18next';
 import {styleSheet} from '_config';
-import {Button} from '_components';
+import {MyButton} from '_components';
 
 const ButtonInfoApp = () => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <>
-      <Button
+      <MyButton
         onPress={() => setModalVisible(!modalVisible)}
         content={
           <Image
@@ -27,7 +27,7 @@ const ButtonInfoApp = () => {
               right: 40,
             },
           ]}>
-          <Button
+          <MyButton
             onPress={() => setModalVisible(!modalVisible)}
             content={
               <Text

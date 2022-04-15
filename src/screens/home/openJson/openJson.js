@@ -1,12 +1,5 @@
 import React, {useState} from 'react';
-import {
-  StyleSheet,
-  TextInput,
-  Text,
-  View,
-  Keyboard,
-  Platform,
-} from 'react-native';
+import {StyleSheet, Text, View, Keyboard} from 'react-native';
 import i18n from 'i18next';
 import {colors, styleSheet} from '_config';
 import {validateCompetitionCode} from '../../utils/webService';
@@ -14,7 +7,7 @@ import {saveEachSerie} from '../../utils/myAsyncStorage';
 import {pickOneDeviceFile} from '../../utils/localService';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {showMessage} from 'react-native-flash-message';
-import {Button} from '_components';
+import {MyButton, MyInput} from '_components';
 
 const OpenJson = props => {
   const [codeConcours, setCodeConcours] = useState(null);
@@ -44,18 +37,13 @@ const OpenJson = props => {
     <View style={[styles.container, styleSheet.backWhite]}>
       <Text style={styleSheet.textTitle}>{i18n.t('common:new_epreuve')}</Text>
       <View style={[styleSheet.flexRowCenter]}>
-        <TextInput
-          style={[
-            styleSheet.textInput,
-            Platform.OS === 'windows' && {height: 38},
-            {width: 130},
-          ]}
-          onChangeText={setCodeConcours}
+        <MyInput
+          style={{width: 130}}
+          onChange={setCodeConcours}
           value={codeConcours}
           placeholder={i18n.t('common:code')}
-          placeholderTextColor={colors.muted}
         />
-        <Button
+        <MyButton
           onPress={manageCode}
           styleView={styleSheet.button}
           content={
@@ -65,14 +53,14 @@ const OpenJson = props => {
           }
         />
         <View style={styles.dividerLeft}>
-          <Button
+          <MyButton
+            styleView={styleSheet.button}
             onPress={() => {
               pickOneDeviceFile(props.addOneSerieDataTable);
               if (props.setModalVisible) {
                 props.setModalVisible(false);
               }
             }}
-            styleView={styleSheet.button}
             content={
               <Text style={[styleSheet.text, styleSheet.textWhite]}>
                 {i18n.t('common:via_local_file')}
@@ -90,6 +78,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 20,
+    paddingBottom: 10,
   },
   dividerLeft: {
     borderColor: colors.muted,

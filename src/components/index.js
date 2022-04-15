@@ -1,8 +1,17 @@
-import Button from './button';
-import Modal from './modal';
-import DataTable from './dataTable';
-import Dropdown from './dropdown';
-import Input from './input';
+import MyButton from './button';
+import MyModal from './modal';
+import MyDataTable from './dataTable';
+import MyDropdown from './dropdown';
+import MyInput from './input';
 import MyDateTimePicker from './dateTimePicker';
+import MyCheckBox from './checkBox';
 
-export {Button, Modal, DataTable, Dropdown, Input, MyDateTimePicker};
+export {
+  MyButton,
+  MyModal,
+  MyDataTable,
+  MyDropdown,
+  MyInput,
+  MyDateTimePicker,
+  MyCheckBox,
+};

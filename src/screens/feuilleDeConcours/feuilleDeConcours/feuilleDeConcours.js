@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {Text, View} from 'react-native';
 import i18n from 'i18next';
-
 import {
   ModalAddAthlete,
   TableConcoursSB,
@@ -133,7 +132,7 @@ const FeuilleDeConcours = props => {
           {justifyContent: 'flex-start', paddingBottom: 20},
         ]}>
         <Text style={styleSheet.textTitle}>{i18n.t('common:options')} : </Text>
-        {/* <ModalAddAthlete
+        <ModalAddAthlete
           setAthletesData={setTableData}
           modalVisible={modalAddAthlete}
           setModalVisible={b => {
@@ -143,9 +142,9 @@ const FeuilleDeConcours = props => {
           athletesData={tableData}
           fieldsAddAthtlete={fieldsAddAthtlete}
           setFieldsAddAthtlete={setFieldsAddAthtlete}
-          fileContent={competitionData}
-          fileName={dataConcours.id}
-        /> */}
+          concoursData={competitionData}
+          concoursId={dataConcours.id}
+        />
         {competitionData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
           <>
             <ModalBar

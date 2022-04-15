@@ -4,7 +4,7 @@ import i18n from 'i18next';
 import {colors, styleSheet} from '_config';
 import {getFile, removeFile, removeFiles} from '../../../utils/myAsyncStorage';
 import {useOrientation} from '../../../utils/useOrientation';
-import {Button, DataTable} from '_components';
+import {MyButton, MyDataTable} from '_components';
 import {showMessage} from 'react-native-flash-message';
 
 const TableCompetition = props => {
@@ -167,7 +167,7 @@ const TableCompetition = props => {
             styleSheet.flexRowCenter,
             styleSheet.flexWrap,
           ]}>
-          <Button
+          <MyButton
             styleView={[styleSheet.icon]}
             tooltip={i18n.t('common:competition_sheet')}
             onPress={async () => {
@@ -183,7 +183,7 @@ const TableCompetition = props => {
               />
             }
           />
-          <Button
+          <MyButton
             styleView={[styleSheet.icon, styleSheet.backRed]}
             onPress={() => alertDeleteConcours(id, epreuve)}
             content={
@@ -216,7 +216,7 @@ const TableCompetition = props => {
             {props.competition?.nomCompetition?.toString()}
           </Text>
           {/* Button de suppression de tous les concours d une competition */}
-          <Button
+          <MyButton
             onPress={alertDeleteCompetition}
             styleView={[styleSheet.buttonDelete, styleSheet.backRed]}
             content={
@@ -244,7 +244,7 @@ const TableCompetition = props => {
         </Text>
       </>
       {/* Liste des concours */}
-      <DataTable
+      <MyDataTable
         headerTable={[
           {type: 'text', flex: 2, text: i18n.t('common:date')},
           {type: 'text', flex: 5, text: i18n.t('common:discipline')},

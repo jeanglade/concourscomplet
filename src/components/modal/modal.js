@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Modal, Image, StyleSheet, Platform} from 'react-native';
 import {Popup} from 'react-native-windows';
-import {Button} from '_components';
+import {MyButton} from '_components';
 import {colors} from '_config';
 
 const MyModal = props => {
@@ -12,7 +12,7 @@ const MyModal = props => {
         {maxHeight: props.maxHeight},
         Platform.OS === 'windows' && {minWidth: props.minWidth},
       ]}>
-      <Button
+      <MyButton
         onPress={() => {
           props.setModalVisible(false);
         }}
@@ -30,7 +30,7 @@ const MyModal = props => {
 
   return (
     <>
-      <Button
+      <MyButton
         onPress={() => {
           props.setModalVisible(true);
         }}
