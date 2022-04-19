@@ -2,6 +2,7 @@ export default {
   order: 'Ordre',
   number: 'Dossard',
   athlete: 'Athlète',
+  athletes: 'Athlètes',
   performance: 'Performance',
   place: 'Place',
   name: 'Nom',

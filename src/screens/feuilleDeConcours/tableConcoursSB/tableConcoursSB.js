@@ -55,11 +55,11 @@ const TableConcoursSb = props => {
   }) => (
     <>
       <View style={styles.item}>
-        <View style={styles.flex1}>
+        <View style={[styles.flex1]}>
           <Text style={[styles.text]}>{order}</Text>
         </View>
         {hasDossard && (
-          <View style={styles.flex1}>
+          <View style={[styles.flex1, {minWidth: 10}]}>
             <Text style={[styles.text]}>{dossard}</Text>
           </View>
         )}
@@ -105,7 +105,7 @@ const TableConcoursSb = props => {
                 }}
               />
             )}
-            {props.concoursParam.colFlagVisible && (
+            {props.concoursData._.colFlagVisible && (
               <View style={{paddingRight: 5, paddingTop: 3}}>
                 <Flag
                   code={resultat.Athlete.Nationalite?.toString().slice(0, -1)}
@@ -234,7 +234,10 @@ const TableConcoursSb = props => {
 
   const renderItem = ({item, index}) => {
     var result = null;
-    var athleteInfo = item.Athlete.Categorie?.toString();
+    var athleteInfo =
+      props.concoursData.EpreuveConcoursComplet.Categorie.toString() === 'TC'
+        ? item.Athlete.Categorie?.toString()
+        : '';
     athleteInfo +=
       athleteInfo !== '' && item.Athlete.Club?.toString() !== '' ? ' - ' : '';
     athleteInfo += item.Athlete.Club?.toString();

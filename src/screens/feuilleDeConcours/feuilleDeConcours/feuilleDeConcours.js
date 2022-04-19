@@ -12,15 +12,16 @@ import {
 } from '_screens';
 import {styleSheet, colors} from '_config';
 import epreuves from '../../../icons/epreuves/epreuves';
+import {getFile} from '../../../utils/myAsyncStorage';
 
 const FeuilleDeConcours = props => {
   //Initialisation des données du concours
   const concoursItem = props.route.params.item;
-  const concoursData = JSON.parse(concoursItem);
-  const listAthlete =
+  const [concoursData, setConcoursData] = useState(JSON.parse(concoursItem));
+  const [tableData, setTableData] = useState(
     concoursData.EpreuveConcoursComplet.TourConcoursComplet
-      .LstSerieConcoursComplet[0].LstResultats;
-  const [tableData, setTableData] = useState(listAthlete);
+      .LstSerieConcoursComplet[0].LstResultats,
+  );
 
   //Initialisation des variables Option Add an athlete
   const [modalAddAthlete, setModalAddAthlete] = useState(false);
@@ -43,18 +44,15 @@ const FeuilleDeConcours = props => {
 
   //Initalisatoin des variables Options Paramètres
   const [modalParam, setModalParam] = useState(false);
-  const [concoursParam, setConcoursParam] = useState({
-    nbTries: 6,
-    colPerfVisible: true,
-    colFlagVisible: false,
-    colWindVisible: true,
-    colMiddleRankVisible: true,
-  });
 
   //Initalisatoin des variables Options Montées de barre
   const [modalBar, setModalBar] = useState(false);
 
-  const refreshColumns = () => {};
+  const refreshConcoursData = async () => {
+    const id = concoursData._.id;
+    const value = await getFile(id);
+    setConcoursData(JSON.parse(value));
+  };
 
   return (
     <View
@@ -69,7 +67,7 @@ const FeuilleDeConcours = props => {
           styleSheet.flexWrap,
           {justifyContent: 'space-between'},
         ]}>
-        <View style={[styleSheet.flexRowCenter]}>
+        <View style={[styleSheet.flexRowCenter, styleSheet.flexWrap]}>
           <Image
             style={[styleSheet.icon30, {marginRight: 5}]}
             source={epreuves[concoursData._.imageEpreuve]}
@@ -79,7 +77,9 @@ const FeuilleDeConcours = props => {
               styleSheet.textTitle,
               {color: colors.black, marginEnd: 10},
             ]}>
-            {concoursData._.epreuve} - {concoursData._.dateInfo}
+            {concoursData._.epreuve} - {concoursData._.dateInfo} -{' '}
+            {concoursData._.nbAthlete}{' '}
+            {i18n.t('competition:athletes').toLocaleLowerCase()}
           </Text>
           <View
             style={{
@@ -107,17 +107,18 @@ const FeuilleDeConcours = props => {
           <ModalInfoConcours
             setModalVisible={setModalInfoConcours}
             modalVisible={modalInfoConcours}
+            concoursData={concoursData}
           />
           <ModalParam
             setModalVisible={setModalParam}
             modalVisible={modalParam}
-            concoursParam={concoursParam}
-            setConcoursParam={setConcoursParam}
-            refreshColumns={refreshColumns}
+            concoursData={concoursData}
+            setConcoursData={setConcoursData}
+            refreshConcoursData={refreshConcoursData}
           />
         </View>
       </View>
-      {concoursData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
+      {concoursData._.type === 'SB' && (
         <TableConcoursSB
           concoursData={concoursData}
           tableData={tableData}
@@ -125,10 +126,9 @@ const FeuilleDeConcours = props => {
           setModalAddAthlete={setModalAddAthlete}
           setFieldsAddAthtlete={setFieldsAddAthtlete}
           fieldsAddAthtlete={fieldsAddAthtlete}
-          concoursParam={concoursParam}
         />
       )}
-      {concoursData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SL' && (
+      {concoursData._.type === 'SL' && (
         <TableConcoursSL
           concoursData={concoursData}
           tableData={tableData}
@@ -138,7 +138,7 @@ const FeuilleDeConcours = props => {
           fieldsAddAthtlete={fieldsAddAthtlete}
         />
       )}
-      {concoursData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'LR' && (
+      {concoursData._.type === 'LR' && (
         <TableConcoursLR
           concoursData={concoursData}
           tableData={tableData}
@@ -166,7 +166,7 @@ const FeuilleDeConcours = props => {
           setFieldsAddAthtlete={setFieldsAddAthtlete}
           concoursData={concoursData}
         />
-        {concoursData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
+        {concoursData._.type === 'SB' && (
           <>
             <ModalBar
               setModalVisible={setModalBar}

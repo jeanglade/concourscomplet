@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {styleSheet} from '_config';
 import {
   MyModal,
@@ -26,6 +26,8 @@ import {ValidatorsAddAthlete} from '../../utils/validators';
 import {setFile} from '../../../utils/myAsyncStorage';
 
 const ModalAddAthlete = props => {
+  const [validateEnabled, setValidateEnabled] = useState(true);
+
   const setDateFormat = date => {
     return moment(date, moment.ISO_8601).format('DD/MM/YYYY');
   };
@@ -75,64 +77,68 @@ const ModalAddAthlete = props => {
   const saveContent = async () => {
     props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats =
       props.athletesData;
+    props.concoursData._.nbAthlete = props.athletesData.length;
     await setFile(props.concoursData._.id, JSON.stringify(props.concoursData));
   };
 
   const handleSubmitForm = actions => {
     const values = props.fieldsAddAthtlete;
-    var newAthlete = null;
-    if (values.type === 'new') {
-      const lastId = getLastIdResultat();
-      newAthlete = {
-        $id: (lastId + 1).toString(),
-        GuidResultat: '',
-        Athlete: {
-          $id: (lastId + 2).toString(),
-          GuidParticipant: '',
-          Prenom: '',
-          Nom: '',
-          Categorie: '',
-          Club: '',
-          Nationalite: '',
-          Licence: '',
-          DateNaissance: '',
-          Sexe: '',
-          Dossard: '',
-          IsNew: true,
-        },
-        NumCouloir: (getLastNumCouloir() + 1).toString(),
-      };
-      newAthlete = setNewAthlete(values, newAthlete);
-      if (!isAthleteExist(newAthlete)) {
-        props.athletesData.push(newAthlete);
-        actions.setSubmitting(false);
-        actions.resetForm({
-          values: props.fieldsAddAthtlete,
-        });
+    if (values.firstname !== '') {
+      var newAthlete = null;
+      if (values.type === 'new') {
+        const lastId = getLastIdResultat();
+        newAthlete = {
+          $id: (lastId + 1).toString(),
+          GuidResultat: '',
+          Athlete: {
+            $id: (lastId + 2).toString(),
+            GuidParticipant: '',
+            Prenom: '',
+            Nom: '',
+            Categorie: '',
+            Club: '',
+            Nationalite: '',
+            Licence: '',
+            DateNaissance: '',
+            Sexe: '',
+            Dossard: '',
+            IsNew: true,
+          },
+          NumCouloir: (getLastNumCouloir() + 1).toString(),
+        };
+        newAthlete = setNewAthlete(values, newAthlete);
+        if (!isAthleteExist(newAthlete)) {
+          props.athletesData.push(newAthlete);
+          actions.setSubmitting(false);
+          actions.resetForm({
+            values: props.fieldsAddAthtlete,
+          });
+          saveContent();
+          showMessage({
+            message: 'Athlète ajouté',
+            type: 'success',
+          });
+        } else {
+          showMessage({
+            message: 'Athlète déjà présent dans ce concours.',
+            type: 'danger',
+          });
+        }
+      } else {
+        props.athletesData[
+          props.athletesData.findIndex(
+            a => a.$id === props.fieldsAddAthtlete?.resultat.$id,
+          )
+        ] = setNewAthlete(values, props.fieldsAddAthtlete?.resultat);
         saveContent();
         showMessage({
-          message: 'Athlète ajouté',
+          message: 'Athlète modifié',
           type: 'success',
         });
-      } else {
-        showMessage({
-          message: 'Athlète déjà présent dans ce concours.',
-          type: 'danger',
-        });
       }
-    } else {
-      props.athletesData[
-        props.athletesData.findIndex(
-          a => a.$id === props.fieldsAddAthtlete?.resultat.$id,
-        )
-      ] = setNewAthlete(values, props.fieldsAddAthtlete?.resultat);
-      saveContent();
-      showMessage({
-        message: 'Athlète modifié',
-        type: 'success',
-      });
+      setValidateEnabled(true);
+      props.setModalVisible(false);
     }
-    props.setModalVisible(false);
   };
 
   const sexValues = ['M', 'F'];
@@ -418,8 +424,11 @@ const ModalAddAthlete = props => {
                         <View style={styles.field}>
                           <MyButton
                             onPress={e => {
-                              setValues(props.fieldsAddAthtlete);
-                              handleSubmit(e);
+                              if (validateEnabled) {
+                                setValidateEnabled(false);
+                                setValues(props.fieldsAddAthtlete);
+                                handleSubmit(e);
+                              }
                             }}
                             styleView={[
                               styleSheet.button,

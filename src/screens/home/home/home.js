@@ -161,6 +161,13 @@ const Home = props => {
     return res;
   };
 
+  const getStatus = concoursData => {
+    var res = i18n.t('common:ready');
+    //Vérifier s'il y a une date de fin => terminé
+    //Vérifier s'il y a des résultats => en cours
+    return res;
+  };
+
   const getInfoSerie = async (key, data) => {
     var infoConcours = JSON.parse(data);
     const dateConcours =
@@ -183,11 +190,20 @@ const Home = props => {
           i18n.language === 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY',
         ) +
         ' - ' +
-        moment(dateConcours, moment.ISO_8601).format('H:mm'),
+        moment(dateConcours, moment.ISO_8601).format('HH:mm'),
       epreuve: epreuve,
       imageEpreuve: getImageEpreuve(epreuve),
       statut: statut,
       statutColor: getStatusColor(statut),
+      type: infoConcours.EpreuveConcoursComplet.CodeFamilleEpreuve,
+      nbAthlete:
+        infoConcours.EpreuveConcoursComplet.TourConcoursComplet
+          .LstSerieConcoursComplet[0].LstResultats.length,
+      nbTries: 6,
+      colPerfVisible: true,
+      colFlagVisible: false,
+      colWindVisible: true,
+      colMiddleRankVisible: true,
     };
     await setFile(key, JSON.stringify(infoConcours));
     return JSON.stringify(infoConcours);
