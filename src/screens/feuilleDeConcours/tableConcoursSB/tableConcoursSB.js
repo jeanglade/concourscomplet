@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, View, TextInput, Image} from 'react-native';
 import i18n from 'i18next';
-import {colors} from '_config';
+import {colors, styleSheet} from '_config';
 import {MyDataTable, MyButton, MyInput} from '_components';
 import moment from 'moment';
+import Flag from 'react-native-flags';
 
 const TableConcoursSb = props => {
   const [hasDossard] = useState(() => {
@@ -19,7 +20,7 @@ const TableConcoursSb = props => {
   const [athleteEnCours, setAthleteEnCours] = useState(props.tableData[0]);
 
   const serie =
-    props.compData.EpreuveConcoursComplet.TourConcoursComplet
+    props.concoursData.EpreuveConcoursComplet.TourConcoursComplet
       .LstSerieConcoursComplet[0];
   // const NbSec_plusde3athletes = serie.NbSec_plusde3athletes?.toString();
   // const NbSec_2ou3athletes = serie.NbSec_2ou3athletes?.toString();
@@ -28,7 +29,7 @@ const TableConcoursSb = props => {
 
   const createEssai = (resultat, numEssai, value) => {
     var essai = {
-      GuidCompetition: props.compData.GuidCompetition,
+      GuidCompetition: props.concoursData.GuidCompetition,
       GuidResultat: resultat.GuidResultat,
       GuidEssai: '', //créer un guid
       NumEssai: numEssai,
@@ -62,7 +63,8 @@ const TableConcoursSb = props => {
             <Text style={[styles.text]}>{dossard}</Text>
           </View>
         )}
-        <View style={styles.flex4}>
+
+        <View style={[styles.flex4]}>
           <View
             style={{
               flexDirection: 'row',
@@ -102,6 +104,14 @@ const TableConcoursSb = props => {
                   marginEnd: 5,
                 }}
               />
+            )}
+            {props.concoursParam.colFlagVisible && (
+              <View style={{paddingRight: 5, paddingTop: 3}}>
+                <Flag
+                  code={resultat.Athlete.Nationalite?.toString().slice(0, -1)}
+                  size={16}
+                />
+              </View>
             )}
             <Text
               style={[

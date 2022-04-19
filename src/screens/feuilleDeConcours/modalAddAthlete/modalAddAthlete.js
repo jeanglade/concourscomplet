@@ -75,7 +75,7 @@ const ModalAddAthlete = props => {
   const saveContent = async () => {
     props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats =
       props.athletesData;
-    await setFile(props.concoursId, JSON.stringify(props.concoursData));
+    await setFile(props.concoursData._.id, JSON.stringify(props.concoursData));
   };
 
   const handleSubmitForm = actions => {

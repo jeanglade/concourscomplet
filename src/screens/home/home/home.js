@@ -2,14 +2,19 @@ import React, {useEffect, useState} from 'react';
 import i18n from 'i18next';
 import moment from 'moment';
 import {SafeAreaView, View} from 'react-native';
-import {getAllKeys, getFile, getFiles} from '../../utils/myAsyncStorage';
+import {
+  getAllKeys,
+  getFile,
+  getFiles,
+  setFile,
+} from '../../utils/myAsyncStorage';
 import {
   OpenJson,
   TableCompetition,
   ModalOpenJson,
   ModalChoiceCompetition,
 } from '_screens';
-import {styleSheet} from '_config';
+import {styleSheet, colors} from '_config';
 
 const Home = props => {
   //Tableau avec toutes les données concours complet
@@ -55,20 +60,20 @@ const Home = props => {
   }, []);
 
   // Ajoute plusieurs concours
-  const addSeriesDataTable = async (keys, tab) => {
-    var res = [];
+  const addSeriesDataTable = async keys => {
+    var res = null;
     if (keys.length > 0) {
       // Récupère les clés/valeurs des concours non chargés
-      const listKeyValue = await getFiles(
-        keys.filter(key => tab.find(x => x.id === key) === undefined),
-      );
-      listKeyValue.forEach(keyValue => {
-        res.push(getInfoSerie(keyValue[0], keyValue[1]));
-      });
-      return res.sort((a, b) => {
-        return a.date > b.date;
-      });
+      const listKeyValue = await getFiles(keys);
+      if (listKeyValue.length > 0) {
+        res = [];
+        listKeyValue.forEach(keyValue => res.push(keyValue[1]));
+        res.sort((a, b) =>
+          JSON.parse(a)._.date > JSON.parse(b)._.date ? 1 : -1,
+        );
+      }
     }
+    return res;
   };
 
   const getAllCompetitionsInfo = tab => {
@@ -77,58 +82,115 @@ const Home = props => {
       // Si la compétition n'est pas déjà présente dans result
       if (
         !result
-          .map(a => a.idCompetition)
-          .includes(JSON.parse(compete.data).GuidCompetition)
+          .map(a => a?._?.idCompetition)
+          .includes(JSON.parse(compete).GuidCompetition)
       ) {
-        result.push(getCompetitionInfo(compete.data));
+        result.push(getCompetitionInfo(compete));
       }
     });
     return result;
   };
 
-  // Ajoute 1 concours
+  // Ajoute 1 concours //data is stringify
   const addOneSerieDataTable = async (key, data = null) => {
     var tab = tableData;
     if (key.match(/.+\.json/g)) {
-      if (tableData.filter(row => row.id === key).length === 0) {
+      if (tableData.filter(row => JSON.parse(row)._.id === key).length === 0) {
         if (data == null) {
           data = await getFile(key);
         }
         //Met à jour les données des concours en triant par ordre croissant par date
-        const infos = getInfoSerie(key, data);
-        tab.push(infos);
-        tab.sort((a, b) => {
-          return a.date > b.date;
+        getInfoSerie(key, data).then(infos => {
+          tab.push(infos);
+          tab.sort((a, b) => {
+            return JSON.parse(a)._.date > JSON.parse(b)._.date ? 1 : -1;
+          });
+          refreshData(tab, JSON.parse(infos).GuidCompetition);
         });
-        refreshData(tab, JSON.parse(infos.data).GuidCompetition);
       }
     }
   };
 
-  const getInfoSerie = (key, data) => {
-    const infoConcours = JSON.parse(data);
+  const getImageEpreuve = epreuve => {
+    var res = '';
+    switch (true) {
+      case epreuve.includes('Hauteur'):
+        res = 'SautEnHauteur_Dark';
+        break;
+      case epreuve.includes('Perche'):
+        res = 'SautALaPerche_Dark';
+        break;
+      case epreuve.includes('Longueur'):
+        res = 'SautEnLongueur_Dark';
+        break;
+      case epreuve.includes('Triple saut'):
+        res = 'SautEnLongueur_Dark';
+        break;
+      case epreuve.includes('Poids'):
+        res = 'LancerDePoids_Dark';
+        break;
+      case epreuve.includes('Javelot'):
+        res = 'Javelot_Dark';
+        break;
+      case epreuve.includes('Marteau'):
+        res = 'LancerDeMarteau_Dark';
+        break;
+      case epreuve.includes('Disque'):
+        res = 'LancerDeDisque_Dark';
+        break;
+    }
+    return res;
+  };
+
+  const getStatusColor = statut => {
+    var res = colors.black;
+    switch (statut) {
+      case i18n.t('common:ready'):
+        res = colors.black;
+        break;
+      case i18n.t('common:in_progress'):
+        res = colors.red;
+        break;
+      case i18n.t('common:finished'):
+        res = colors.orange;
+        break;
+      case i18n.t('common:send_to_elogica'):
+        res = colors.green;
+        break;
+    }
+    return res;
+  };
+
+  const getInfoSerie = async (key, data) => {
+    var infoConcours = JSON.parse(data);
     const dateConcours =
-      infoConcours.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].DateHeureSerie.toString();
-    return {
+      infoConcours.EpreuveConcoursComplet.TourConcoursComplet
+        .LstSerieConcoursComplet[0].DateHeureSerie;
+    const epreuve =
+      infoConcours.EpreuveConcoursComplet.Nom +
+      ' ' +
+      infoConcours.EpreuveConcoursComplet.Categorie +
+      infoConcours.EpreuveConcoursComplet.Sexe +
+      ' / ' +
+      infoConcours.EpreuveConcoursComplet.TourConcoursComplet
+        .LstSerieConcoursComplet[0].Libelle;
+    const statut = i18n.t('common:in_progress');
+    infoConcours['_'] = {
       id: key,
-      data: data,
       date: dateConcours,
       dateInfo:
-        moment(dateConcours, moment.ISO_8601).format(
+        moment(dateConcours.toString(), moment.ISO_8601).format(
           i18n.language === 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY',
         ) +
         ' - ' +
         moment(dateConcours, moment.ISO_8601).format('H:mm'),
-      epreuve:
-        infoConcours.EpreuveConcoursComplet.Nom +
-        ' ' +
-        infoConcours.EpreuveConcoursComplet.Categorie +
-        infoConcours.EpreuveConcoursComplet.Sexe +
-        ' / ' +
-        infoConcours.EpreuveConcoursComplet.TourConcoursComplet
-          .LstSerieConcoursComplet[0].Libelle,
-      statut: i18n.t('common:in_progress'),
+      epreuve: epreuve,
+      imageEpreuve: getImageEpreuve(epreuve),
+      statut: statut,
+      statutColor: getStatusColor(statut),
     };
+    await setFile(key, JSON.stringify(infoConcours));
+    return JSON.stringify(infoConcours);
   };
 
   // Récupère la compétition la plus récente à partir de maintenant

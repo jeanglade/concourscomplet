@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Text, View} from 'react-native';
+import {Text, View, Image} from 'react-native';
 import i18n from 'i18next';
 import {
   ModalAddAthlete,
@@ -11,22 +11,21 @@ import {
   ModalBar,
 } from '_screens';
 import {styleSheet, colors} from '_config';
+import epreuves from '../../../icons/epreuves/epreuves';
 
 const FeuilleDeConcours = props => {
   //Initialisation des données du concours
-  const dataConcours = props.route.params.item;
-  const concoursStatus = props.route.params.status;
-  const concoursImage = props.route.params.image;
-  const competitionData = JSON.parse(dataConcours.data);
+  const concoursItem = props.route.params.item;
+  const concoursData = JSON.parse(concoursItem);
   const listAthlete =
-    competitionData.EpreuveConcoursComplet.TourConcoursComplet
+    concoursData.EpreuveConcoursComplet.TourConcoursComplet
       .LstSerieConcoursComplet[0].LstResultats;
   const [tableData, setTableData] = useState(listAthlete);
 
   //Initialisation des variables Option Add an athlete
   const [modalAddAthlete, setModalAddAthlete] = useState(false);
   const initFormAddAthlete = {
-    categories: competitionData.LstCategoriesAthlete,
+    categories: concoursData.LstCategoriesAthlete,
     type: 'new',
     firstname: '',
     name: '',
@@ -44,11 +43,13 @@ const FeuilleDeConcours = props => {
 
   //Initalisatoin des variables Options Paramètres
   const [modalParam, setModalParam] = useState(false);
-  const [nbTries, setNbTries] = useState(6);
-  const [colPerfVisible, setColPerfVisible] = useState(true);
-  const [colFlagVisible, setColFlagVisible] = useState(false);
-  const [colWindVisible, setColWindVisible] = useState(true);
-  const [colMiddleRankVisible, setColMiddleRankVisible] = useState(true);
+  const [concoursParam, setConcoursParam] = useState({
+    nbTries: 6,
+    colPerfVisible: true,
+    colFlagVisible: false,
+    colWindVisible: true,
+    colMiddleRankVisible: true,
+  });
 
   //Initalisatoin des variables Options Montées de barre
   const [modalBar, setModalBar] = useState(false);
@@ -69,15 +70,33 @@ const FeuilleDeConcours = props => {
           {justifyContent: 'space-between'},
         ]}>
         <View style={[styleSheet.flexRowCenter]}>
-          <>{concoursImage}</>
+          <Image
+            style={[styleSheet.icon30, {marginRight: 5}]}
+            source={epreuves[concoursData._.imageEpreuve]}
+          />
           <Text
             style={[
               styleSheet.textTitle,
               {color: colors.black, marginEnd: 10},
             ]}>
-            {dataConcours.epreuve} - {dataConcours.dateInfo}
+            {concoursData._.epreuve} - {concoursData._.dateInfo}
           </Text>
-          <>{concoursStatus}</>
+          <View
+            style={{
+              borderRadius: 15,
+              padding: 3,
+              paddingHorizontal: 10,
+              backgroundColor: concoursData._.statutColor,
+            }}>
+            <Text
+              style={[
+                styleSheet.text,
+                styleSheet.textCenter,
+                styleSheet.textWhite,
+              ]}>
+              {concoursData._.statut}
+            </Text>
+          </View>
         </View>
         <View
           style={[
@@ -90,49 +109,40 @@ const FeuilleDeConcours = props => {
             modalVisible={modalInfoConcours}
           />
           <ModalParam
-            colFlagVisible={colFlagVisible}
-            setColFlagVisible={setColFlagVisible}
-            colPerfVisible={colPerfVisible}
-            setColPerfVisible={setColPerfVisible}
-            colWindVisible={colWindVisible}
-            setColWindVisible={setColWindVisible}
-            colMiddleRankVisible={colMiddleRankVisible}
-            setColMiddleRankVisible={setColMiddleRankVisible}
             setModalVisible={setModalParam}
             modalVisible={modalParam}
-            nbTries={nbTries}
-            setNbTries={setNbTries}
+            concoursParam={concoursParam}
+            setConcoursParam={setConcoursParam}
+            refreshColumns={refreshColumns}
           />
         </View>
       </View>
-      {competitionData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
+      {concoursData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
         <TableConcoursSB
-          dataConcours={dataConcours}
+          concoursData={concoursData}
           tableData={tableData}
           setTableData={setTableData}
-          compData={competitionData}
           setModalAddAthlete={setModalAddAthlete}
           setFieldsAddAthtlete={setFieldsAddAthtlete}
           fieldsAddAthtlete={fieldsAddAthtlete}
+          concoursParam={concoursParam}
         />
       )}
-      {competitionData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SL' && (
+      {concoursData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SL' && (
         <TableConcoursSL
-          dataConcours={dataConcours}
+          concoursData={concoursData}
           tableData={tableData}
           setTableData={setTableData}
-          compData={competitionData}
           setModalAddAthlete={setModalAddAthlete}
           setFieldsAddAthtlete={setFieldsAddAthtlete}
           fieldsAddAthtlete={fieldsAddAthtlete}
         />
       )}
-      {competitionData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'LR' && (
+      {concoursData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'LR' && (
         <TableConcoursLR
-          dataConcours={dataConcours}
+          concoursData={concoursData}
           tableData={tableData}
           setTableData={setTableData}
-          compData={competitionData}
           setModalAddAthlete={setModalAddAthlete}
           setFieldsAddAthtlete={setFieldsAddAthtlete}
           fieldsAddAthtlete={fieldsAddAthtlete}
@@ -154,16 +164,14 @@ const FeuilleDeConcours = props => {
           athletesData={tableData}
           fieldsAddAthtlete={fieldsAddAthtlete}
           setFieldsAddAthtlete={setFieldsAddAthtlete}
-          concoursData={competitionData}
-          concoursId={dataConcours.id}
+          concoursData={concoursData}
         />
-        {competitionData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
+        {concoursData.EpreuveConcoursComplet.CodeFamilleEpreuve === 'SB' && (
           <>
             <ModalBar
               setModalVisible={setModalBar}
               modalVisible={modalBar}
-              concoursData={competitionData}
-              concoursId={dataConcours.id}
+              concoursData={concoursData}
             />
           </>
         )}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {colors, styleSheet} from '_config';
 import {MyModal, MyDropdown, MyCheckBox} from '_components';
 import {
@@ -12,10 +12,40 @@ import {
 import i18n from 'i18next';
 
 const ModalParam = props => {
+  const [nbTries, setNbTries] = useState(props.concoursParam.nbTries);
+  const [colPerfVisible, setColPerfVisible] = useState(
+    props.concoursParam.colPerfVisible,
+  );
+  const [colFlagVisible, setColFlagVisible] = useState(
+    props.concoursParam.colFlagVisible,
+  );
+  const [colWindVisible, setColWindVisible] = useState(
+    props.concoursParam.colWindVisible,
+  );
+  const [colMiddleRankVisible, setColMiddleRankVisible] = useState(
+    props.concoursParam.colMiddleRankVisible,
+  );
+
+  const saveParam = () => {
+    props.setConcoursParam(oldValues => ({
+      nbTries: nbTries !== null ? nbTries : oldValues.nbTries,
+      colPerfVisible: colPerfVisible,
+      colFlagVisible: colFlagVisible,
+      colWindVisible: colWindVisible,
+      colMiddleRankVisible: colMiddleRankVisible,
+    }));
+    props.refreshColumns();
+  };
+
   return (
     <MyModal
       modalVisible={props.modalVisible}
-      setModalVisible={props.setModalVisible}
+      setModalVisible={bool => {
+        if (!bool) {
+          saveParam();
+        }
+        props.setModalVisible(bool);
+      }}
       buttonStyleView={[styleSheet.icon, {backgroundColor: colors.muted}]}
       minWidth={Platform.OS === 'windows' ? 300 : 0}
       buttonTooltip={i18n.t('competition:param')}
@@ -48,21 +78,21 @@ const ModalParam = props => {
                 <View style={{width: 100}}>
                   <MyDropdown
                     onValueChange={v => {
-                      props.setNbTries(v);
+                      setNbTries(v);
                     }}
                     data={['3', '4', '6'].map(v => ({
                       label: v,
                       value: v,
                     }))}
-                    selectedValue={props.nbTries}
+                    selectedValue={nbTries}
                   />
                 </View>
               </View>
             </View>
             <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
               <MyCheckBox
-                isChecked={props.colFlagVisible}
-                setIsChecked={v => props.setColFlagVisible(v)}
+                isChecked={colFlagVisible}
+                setIsChecked={v => setColFlagVisible(v)}
               />
               <Text style={styleSheet.text}>
                 {i18n.t('competition:col_flag_visible')}
@@ -70,8 +100,8 @@ const ModalParam = props => {
             </View>
             <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
               <MyCheckBox
-                isChecked={props.colPerfVisible}
-                setIsChecked={v => props.setColPerfVisible(v)}
+                isChecked={colPerfVisible}
+                setIsChecked={v => setColPerfVisible(v)}
               />
               <Text style={styleSheet.text}>
                 {i18n.t('competition:col_perf_visible')}
@@ -79,8 +109,8 @@ const ModalParam = props => {
             </View>
             <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
               <MyCheckBox
-                isChecked={props.colWindVisible}
-                setIsChecked={v => props.setColWindVisible(v)}
+                isChecked={colWindVisible}
+                setIsChecked={v => setColWindVisible(v)}
               />
               <Text style={styleSheet.text}>
                 {i18n.t('competition:col_wind_visible')}
@@ -89,8 +119,8 @@ const ModalParam = props => {
             <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
               <MyCheckBox
                 disabled={false}
-                isChecked={props.colMiddleRankVisible}
-                setIsChecked={v => props.setColMiddleRankVisible(v)}
+                isChecked={colMiddleRankVisible}
+                setIsChecked={v => setColMiddleRankVisible(v)}
               />
               <Text style={styleSheet.text}>
                 {i18n.t('competition:col_middle_rank_visible')}

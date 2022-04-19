@@ -33,4 +33,5 @@ export default {
   col_middle_rank_visible:
     'Colonnes des places/performances interméidiares visibles',
   info_concours: 'Informations du concours',
+  nationalite: 'Nationalité',
 };

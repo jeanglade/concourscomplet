@@ -6,59 +6,10 @@ import {getFile, removeFile, removeFiles} from '../../../utils/myAsyncStorage';
 import {useOrientation} from '../../../utils/useOrientation';
 import {MyButton, MyDataTable} from '_components';
 import {showMessage} from 'react-native-flash-message';
+import epreuves from '../../../icons/epreuves/epreuves';
 
 const TableCompetition = props => {
   const orientation = useOrientation();
-
-  const getImageEpreuve = epreuve => {
-    var res = '';
-    switch (true) {
-      case epreuve.includes('Hauteur'):
-        res = require('../../icons/epreuves/SautEnHauteur_Dark.png');
-        break;
-      case epreuve.includes('Perche'):
-        res = require('../../icons/epreuves/SautALaPerche_Dark.png');
-        break;
-      case epreuve.includes('Longueur'):
-        res = require('../../icons/epreuves/SautEnLongueur_Dark.png');
-        break;
-      case epreuve.includes('Triple saut'):
-        res = require('../../icons/epreuves/SautEnLongueur_Dark.png');
-        break;
-      case epreuve.includes('Poids'):
-        res = require('../../icons/epreuves/LancerDePoids_Dark.png');
-        break;
-      case epreuve.includes('Javelot'):
-        res = require('../../icons/epreuves/Javelot_Dark.png');
-        break;
-      case epreuve.includes('Marteau'):
-        res = require('../../icons/epreuves/LancerDeMarteau_Dark.png');
-        break;
-      case epreuve.includes('Disque'):
-        res = require('../../icons/epreuves/LancerDeDisque_Dark.png');
-        break;
-    }
-    return res;
-  };
-
-  const getStatusColor = statut => {
-    var res = colors.black;
-    switch (statut) {
-      case i18n.t('common:ready'):
-        res = colors.black;
-        break;
-      case i18n.t('common:in_progress'):
-        res = colors.red;
-        break;
-      case i18n.t('common:finished'):
-        res = colors.orange;
-        break;
-      case i18n.t('common:send_to_elogica'):
-        res = colors.green;
-        break;
-    }
-    return res;
-  };
 
   //Suppression d un concours
   const alertDeleteConcours = (id, epreuve) => {
@@ -70,12 +21,12 @@ const TableCompetition = props => {
         text: i18n.t('toast:ok'),
         onPress: async () => {
           await removeFile(id);
-          const res = props.tableData.filter(i => i.id !== id);
+          const res = props.tableData.filter(i => JSON.parse(i)._.id !== id);
           props.refreshData(
             res,
             res.filter(i => {
               return (
-                JSON.parse(i.data).GuidCompetition ===
+                JSON.parse(i).GuidCompetition ===
                 props.competition.idCompetition
               );
             }).length > 0
@@ -106,14 +57,14 @@ const TableCompetition = props => {
             const ids = props.tableData
               .filter(x => {
                 return (
-                  JSON.parse(x.data).GuidCompetition ===
+                  JSON.parse(x).GuidCompetition ===
                   props.competition?.idCompetition?.toString()
                 );
               })
-              .map(x => x.id);
+              .map(x => JSON.parse(x)._.id);
             await removeFiles(ids);
             const res = props.tableData.filter(
-              (item, itemIndex) => !ids.includes(item.id),
+              (item, itemIndex) => !ids.includes(JSON.parse(item)._.id),
             );
             props.refreshData(res);
           },
@@ -126,19 +77,19 @@ const TableCompetition = props => {
   const tableDataFilter = () => {
     return props.tableData.filter(
       d =>
-        JSON.parse(d.data).GuidCompetition ===
+        JSON.parse(d).GuidCompetition ===
         props.competition?.idCompetition?.toString(),
     );
   };
 
-  const Item = ({id, date, epreuve, statut, item}) => {
+  const Item = ({item, index}) => {
     const status = (
       <View
         style={{
           borderRadius: 15,
           padding: 3,
           paddingHorizontal: 10,
-          backgroundColor: getStatusColor(statut),
+          backgroundColor: item._.statutColor,
         }}>
         <Text
           style={[
@@ -146,25 +97,23 @@ const TableCompetition = props => {
             styleSheet.textCenter,
             styleSheet.textWhite,
           ]}>
-          {statut}
+          {item._.statut}
         </Text>
       </View>
     );
-    const image = (
-      <Image
-        style={[styleSheet.icon30, {marginRight: 5}]}
-        source={getImageEpreuve(epreuve)}
-      />
-    );
+
     return (
       <>
         <View style={styles.item}>
           <View style={styleSheet.flex2}>
-            <Text style={styleSheet.text}>{date}</Text>
+            <Text style={styleSheet.text}>{item._.dateInfo}</Text>
           </View>
           <View style={[styles.epreuve, styleSheet.flex5]}>
-            {image}
-            <Text style={styleSheet.text}>{epreuve}</Text>
+            <Image
+              style={[styleSheet.icon30, {marginRight: 5}]}
+              source={epreuves[item._.imageEpreuve]}
+            />
+            <Text style={styleSheet.text}>{item._.epreuve}</Text>
           </View>
           <View style={styleSheet.flex1}>{status}</View>
           <View
@@ -177,11 +126,9 @@ const TableCompetition = props => {
               styleView={[styleSheet.icon]}
               tooltip={i18n.t('common:competition_sheet')}
               onPress={async () => {
-                item.data = await getFile(item.id);
+                const i = await getFile(item._.id);
                 props.navigation.navigate('FeuilleDeConcours', {
-                  item: item,
-                  image: image,
-                  status: status,
+                  item: i,
                 });
               }}
               content={
@@ -193,7 +140,7 @@ const TableCompetition = props => {
             />
             <MyButton
               styleView={[styleSheet.icon, styleSheet.backRed]}
-              onPress={() => alertDeleteConcours(id, epreuve)}
+              onPress={() => alertDeleteConcours(item._.id, item._.epreuve)}
               content={
                 <Image
                   style={styleSheet.icon20}
@@ -261,16 +208,10 @@ const TableCompetition = props => {
           {type: 'text', flex: 2, text: i18n.t('common:actions')},
         ]}
         tableData={tableDataFilter()}
-        renderItem={({item, index}) => (
-          <Item
-            key={index}
-            id={item.id}
-            date={item.dateInfo}
-            epreuve={item.epreuve}
-            statut={item.statut}
-            item={item}
-          />
-        )}
+        renderItem={({item, index}) => {
+          const i = JSON.parse(item);
+          return <Item item={i} index={index} />;
+        }}
       />
     </View>
   );

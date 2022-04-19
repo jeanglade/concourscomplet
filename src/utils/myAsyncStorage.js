@@ -13,6 +13,14 @@ export const getAllKeys = async () => {
   }
 };
 
+export const clear = async () => {
+  try {
+    await AsyncStorage.clear();
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 export const getFile = async key => {
   try {
     const item = await AsyncStorage.getItem(key);

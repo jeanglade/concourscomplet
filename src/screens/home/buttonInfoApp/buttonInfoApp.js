@@ -4,13 +4,17 @@ import {View, Text, Image} from 'react-native';
 import i18n from 'i18next';
 import {styleSheet} from '_config';
 import {MyButton} from '_components';
+import {clear} from '../../../utils/myAsyncStorage';
 
 const ButtonInfoApp = () => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <>
       <MyButton
-        onPress={() => setModalVisible(!modalVisible)}
+        onPress={() => {
+          clear();
+          setModalVisible(!modalVisible);
+        }}
         content={
           <Image
             style={styleSheet.icon30}

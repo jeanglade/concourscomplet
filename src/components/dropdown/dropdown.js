@@ -6,7 +6,7 @@ import {colors, styleSheet} from '_config';
 const MyDropdown = props => {
   return (
     <>
-      <View style={[styles.view]}>
+      <View style={[styles.view, props.styleContainer]}>
         {Platform.OS === 'ios' ? (
           <PickerIOS
             style={[styles.dropdownIOS, props.stylePickerIOS]}

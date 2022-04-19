@@ -82,7 +82,7 @@ const ModalBar = props => {
       });
       props.concoursData.EpreuveConcoursComplet.MonteesBarre = res;
       await setFile(
-        props.concoursId.toString(),
+        props.concoursData._.id.toString(),
         JSON.stringify(props.concoursData),
       );
     }

@@ -1,0 +1,16 @@
+export default {
+  Javelot: require('./Javelot.png'),
+  Javelot_Dark: require('./Javelot_Dark.png'),
+  LancerDeDisque_Dark: require('./LancerDeDisque_Dark.png'),
+  LancerDeDisque: require('./LancerDeDisque.png'),
+  LancerDeMarteau_Dark: require('./LancerDeMarteau_Dark.png'),
+  LancerDeMarteau: require('./LancerDeMarteau.png'),
+  LancerDePoids_Dark: require('./LancerDePoids_Dark.png'),
+  LancerDePoids: require('./LancerDePoids.png'),
+  SautALaPerche_Dark: require('./SautALaPerche_Dark.png'),
+  SautALaPerche: require('./SautALaPerche.png'),
+  SautEnHauteur_Dark: require('./SautEnHauteur_Dark.png'),
+  SautEnHauteur: require('./SautEnHauteur.png'),
+  SautEnLongueur_Dark: require('./SautEnLongueur_Dark.png'),
+  SautEnLongueur: require('./SautEnLongueur.png'),
+};
