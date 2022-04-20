@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {styleSheet} from '_config';
+import React from 'react';
+import {styleSheet, colors} from '_config';
 import {
   MyModal,
   MyButton,
@@ -26,8 +26,6 @@ import {ValidatorsAddAthlete} from '../../utils/validators';
 import {setFile} from '../../../utils/myAsyncStorage';
 
 const ModalAddAthlete = props => {
-  const [validateEnabled, setValidateEnabled] = useState(true);
-
   const setDateFormat = date => {
     return moment(date, moment.ISO_8601).format('DD/MM/YYYY');
   };
@@ -78,7 +76,15 @@ const ModalAddAthlete = props => {
     props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats =
       props.athletesData;
     props.concoursData._.nbAthlete = props.athletesData.length;
-    await setFile(props.concoursData._.id, JSON.stringify(props.concoursData));
+    //Changement du statut du concours
+    if (props.concoursData._.statut === i18n.t('common:ready')) {
+      props.concoursData._.statut = i18n.t('common:in_progress');
+      props.concoursData._.statutColor = colors.red;
+    }
+    await setFile(
+      props.concoursData?._?.id,
+      JSON.stringify(props.concoursData),
+    );
   };
 
   const handleSubmitForm = actions => {
@@ -136,7 +142,6 @@ const ModalAddAthlete = props => {
           type: 'success',
         });
       }
-      setValidateEnabled(true);
       props.setModalVisible(false);
     }
   };
@@ -341,6 +346,7 @@ const ModalAddAthlete = props => {
                               stylePickerIOS={{width: 200}}
                               placeholder={i18n.t('competition:sex') + '*'}
                               onValueChange={value => {
+                                console.log('coucou', value);
                                 onChangeField('sex', value);
                                 setValues(props.fieldsAddAthtlete);
                               }}
@@ -423,12 +429,9 @@ const ModalAddAthlete = props => {
 
                         <View style={styles.field}>
                           <MyButton
-                            onPress={e => {
-                              if (validateEnabled) {
-                                setValidateEnabled(false);
-                                setValues(props.fieldsAddAthtlete);
-                                handleSubmit(e);
-                              }
+                            onPress={async e => {
+                              await setValues(props.fieldsAddAthtlete);
+                              handleSubmit(e);
                             }}
                             styleView={[
                               styleSheet.button,

@@ -7,6 +7,7 @@ import {Home} from '_screens';
 import {FeuilleDeConcours} from '_screens';
 import {ButtonInfoApp} from '_screens';
 import {colors, styleSheet} from '_config';
+import {MyButton} from '_components';
 
 const Stack = createStackNavigator();
 
@@ -49,9 +50,15 @@ function AppNavigator() {
       <Stack.Screen
         name="FeuilleDeConcours"
         component={FeuilleDeConcours}
-        options={{
-          title: t('common:competition_sheet'),
-        }}
+        options={() => ({
+          header: ({route}) => {
+            return (
+              <View style={{backgroundColor: colors.ffa_blue_light}}>
+                {route.params.header}
+              </View>
+            );
+          },
+        })}
       />
     </Stack.Navigator>
   );

@@ -42,6 +42,7 @@ const OpenJson = props => {
           onChange={setCodeConcours}
           value={codeConcours}
           placeholder={i18n.t('common:code')}
+          onSubmitEditing={manageCode}
         />
         <MyButton
           onPress={manageCode}

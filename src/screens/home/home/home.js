@@ -41,7 +41,7 @@ const Home = props => {
     setCompetition(
       idComp == null
         ? getLastCompetition(competitions)
-        : competitions.find(c => c.idCompetition === idComp),
+        : competitions.find(c => c?.idCompetition === idComp),
     );
   }
 
@@ -69,7 +69,7 @@ const Home = props => {
         res = [];
         listKeyValue.forEach(keyValue => res.push(keyValue[1]));
         res.sort((a, b) =>
-          JSON.parse(a)._.date > JSON.parse(b)._.date ? 1 : -1,
+          JSON.parse(a)._?.date > JSON.parse(b)._?.date ? 1 : -1,
         );
       }
     }
@@ -83,7 +83,7 @@ const Home = props => {
       if (
         !result
           .map(a => a?._?.idCompetition)
-          .includes(JSON.parse(compete).GuidCompetition)
+          .includes(JSON.parse(compete)?.GuidCompetition)
       ) {
         result.push(getCompetitionInfo(compete));
       }
@@ -95,19 +95,23 @@ const Home = props => {
   const addOneSerieDataTable = async (key, data = null) => {
     var tab = tableData;
     if (key.match(/.+\.json/g)) {
-      if (tableData.filter(row => JSON.parse(row)._.id === key).length === 0) {
-        if (data == null) {
-          data = await getFile(key);
-        }
-        //Met à jour les données des concours en triant par ordre croissant par date
-        getInfoSerie(key, data).then(infos => {
-          tab.push(infos);
-          tab.sort((a, b) => {
-            return JSON.parse(a)._.date > JSON.parse(b)._.date ? 1 : -1;
-          });
-          refreshData(tab, JSON.parse(infos).GuidCompetition);
-        });
+      if (data == null) {
+        data = await getFile(key);
       }
+
+      //Met à jour les données des concours en triant par ordre croissant par date
+      getInfoSerie(key, data).then(infos => {
+        var element = tab.find(row => JSON.parse(row)._.id === key);
+        if (element !== undefined) {
+          element = infos;
+        } else {
+          tab.push(infos);
+        }
+        tab.sort((a, b) => {
+          return JSON.parse(a)._?.date > JSON.parse(b)._?.date ? 1 : -1;
+        });
+        refreshData(tab, JSON.parse(infos)?.GuidCompetition);
+      });
     }
   };
 
@@ -168,45 +172,58 @@ const Home = props => {
     return res;
   };
 
+  const getJsonValue = (jsonKey, jsonDefaultValue = '') => {
+    return jsonKey ? jsonKey : jsonDefaultValue;
+  };
+
   const getInfoSerie = async (key, data) => {
-    var infoConcours = JSON.parse(data);
-    const dateConcours =
-      infoConcours.EpreuveConcoursComplet.TourConcoursComplet
-        .LstSerieConcoursComplet[0].DateHeureSerie;
-    const epreuve =
-      infoConcours.EpreuveConcoursComplet.Nom +
-      ' ' +
-      infoConcours.EpreuveConcoursComplet.Categorie +
-      infoConcours.EpreuveConcoursComplet.Sexe +
-      ' / ' +
-      infoConcours.EpreuveConcoursComplet.TourConcoursComplet
-        .LstSerieConcoursComplet[0].Libelle;
-    const statut = i18n.t('common:in_progress');
-    infoConcours['_'] = {
-      id: key,
-      date: dateConcours,
-      dateInfo:
-        moment(dateConcours.toString(), moment.ISO_8601).format(
-          i18n.language === 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY',
-        ) +
-        ' - ' +
-        moment(dateConcours, moment.ISO_8601).format('HH:mm'),
-      epreuve: epreuve,
-      imageEpreuve: getImageEpreuve(epreuve),
-      statut: statut,
-      statutColor: getStatusColor(statut),
-      type: infoConcours.EpreuveConcoursComplet.CodeFamilleEpreuve,
-      nbAthlete:
-        infoConcours.EpreuveConcoursComplet.TourConcoursComplet
-          .LstSerieConcoursComplet[0].LstResultats.length,
-      nbTries: 6,
-      colPerfVisible: true,
-      colFlagVisible: false,
-      colWindVisible: true,
-      colMiddleRankVisible: true,
-    };
-    await setFile(key, JSON.stringify(infoConcours));
-    return JSON.stringify(infoConcours);
+    try {
+      var infoConcours = JSON.parse(data);
+      const dateConcours = getJsonValue(
+        infoConcours?.EpreuveConcoursComplet?.TourConcoursComplet
+          ?.LstSerieConcoursComplet[0]?.DateHeureSerie,
+        infoConcours?.DateDebutCompetition,
+      );
+      const epreuve =
+        getJsonValue(infoConcours?.EpreuveConcoursComplet?.Nom) +
+        ' ' +
+        getJsonValue(infoConcours?.EpreuveConcoursComplet?.Categorie) +
+        getJsonValue(infoConcours?.EpreuveConcoursComplet?.Sexe) +
+        ' / ' +
+        getJsonValue(
+          infoConcours?.EpreuveConcoursComplet?.TourConcoursComplet
+            ?.LstSerieConcoursComplet[0]?.Libelle,
+        );
+      const statut = getStatus(infoConcours);
+      infoConcours._ = {
+        id: key,
+        date: dateConcours,
+        dateInfo: moment(dateConcours?.toString(), moment.ISO_8601).format(
+          i18n.language === 'fr' ? 'DD/MM/YYYY - HH:mm' : 'MM/DD/YYYY - HH:mm',
+        ),
+        epreuve: epreuve,
+        imageEpreuve: getImageEpreuve(epreuve),
+        statut: statut,
+        statutColor: getStatusColor(statut),
+        type: getJsonValue(
+          infoConcours?.EpreuveConcoursComplet?.CodeFamilleEpreuve,
+        ),
+        nbAthlete: getJsonValue(
+          infoConcours?.EpreuveConcoursComplet?.TourConcoursComplet
+            ?.LstSerieConcoursComplet[0]?.LstResultats,
+        ).length,
+        nbTries: 6,
+        colPerfVisible: true,
+        colFlagVisible: false,
+        colWindVisible: true,
+        colMiddleRankVisible: true,
+      };
+      console.log('coucou', key, infoConcours._);
+      await setFile(key, JSON.stringify(infoConcours));
+      return JSON.stringify(infoConcours);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   // Récupère la compétition la plus récente à partir de maintenant
@@ -214,11 +231,11 @@ const Home = props => {
     var result = null;
     if (competitions.length > 0) {
       competitions.sort((a, b) => {
-        a.dateCompetition > b.dateCompetition;
+        a?.dateCompetition > b?.dateCompetition;
       });
       result = competitions[0];
       const recentC = competitions.filter(a => {
-        a.dateCompetition > moment();
+        a?.dateCompetition > moment();
       });
       if (recentC.length > 0) {
         result = recentC[0];
@@ -230,33 +247,33 @@ const Home = props => {
   const getCompetitionInfo = compete => {
     compete = JSON.parse(compete);
     return {
-      idCompetition: compete.GuidCompetition,
+      idCompetition: getJsonValue(compete?.GuidCompetition),
       /*idEpreuve:
         compete.EpreuveConcoursComplet.TourConcoursComplet
           .LstSerieConcoursComplet[0].GuidSerie,*/
-      dateCompetition: compete.DateDebutCompetition,
+      dateCompetition: getJsonValue(compete?.DateDebutCompetition),
       /*dateEpreuve:
         compete.EpreuveConcoursComplet.TourConcoursComplet
           .LstSerieConcoursComplet[0].DateHeureSerie,*/
-      nomCompetition: compete.NomCompetition?.toString(),
-      lieuCompetition:
-        compete.Stade?.toString() != null
-          ? compete.Stade?.toString()
-          : compete.Lieu?.toString(),
+      nomCompetition: getJsonValue(compete?.NomCompetition),
+      lieuCompetition: getJsonValue(
+        compete?.Stade?.toString(),
+        compete?.Lieu?.toString(),
+      ),
       competitionInfo:
         moment(
-          compete.DateDebutCompetition?.toString(),
+          getJsonValue(compete?.DateDebutCompetition?.toString()),
           moment.ISO_8601,
         ).format(i18n.language === 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY') +
         ' - ' +
-        compete.NomCompetition,
+        compete?.NomCompetition,
     };
   };
 
   const setChoiceCompetition = comp => {
     if (comp !== null && JSON.stringify(comp) !== JSON.stringify({})) {
-      if (comp.idCompetition !== undefined) {
-        if (comp.idCompetition !== competition?.idCompetition?.toString()) {
+      if (comp?.idCompetition !== undefined) {
+        if (comp?.idCompetition !== competition?.idCompetition?.toString()) {
           refreshData(tableData, comp.idCompetition);
         }
       }

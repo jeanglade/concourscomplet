@@ -28,6 +28,7 @@ export default {
   new_bar_rise_barrage: 'Nouvelle en cm',
   hauteur: 'Hauteur',
   nb_tries: "Nombre d'essais",
+  nb_athletes: "Nombre d'athlètes",
   col_wind_visible: 'Colonnes du vent visible',
   col_perf_visible: 'Colonnes des performances visible',
   col_flag_visible: 'Drapeaux des nationalités visibles',
@@ -35,4 +36,9 @@ export default {
     'Colonnes des places/performances interméidiares visibles',
   info_concours: 'Informations du concours',
   nationalite: 'Nationalité',
+  date: 'Date',
+  time_start: 'Heure de début',
+  nb_athlete_qualif: "Nombre d'athlètes qualifiés (Q)",
+  status: 'Statut',
+  perf_minima: 'Performance minimale de qualification',
 };

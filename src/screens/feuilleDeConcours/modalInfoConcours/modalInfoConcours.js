@@ -71,49 +71,57 @@ const ModalInfoConcours = props => {
             </Text>
             <View>
               <Text style={styleSheet.text}>
-                Nom : {props.concoursData._.epreuve}
+                {i18n.t('competition:name')} : {props.concoursData?._?.epreuve}
               </Text>
               <Text style={styleSheet.text}>
-                Date : {props.concoursData._.dateInfo.split(' - ')[0]}
+                {i18n.t('competition:date')} :{' '}
+                {props.concoursData?._?.dateInfo.split(' - ')[0]}
               </Text>
               <Text style={styleSheet.text}>
-                Heure de début : {props.concoursData._.dateInfo.split(' - ')[1]}
+                {i18n.t('competition:time_start')} :{' '}
+                {props.concoursData?._?.dateInfo.split(' - ')[1]}
               </Text>
-              {(props.concoursData._.statut === i18n.t('common:finished') ||
-                props.concoursData._.statut ===
+              {(props.concoursData?._?.statut === i18n.t('common:finished') ||
+                props.concoursData?._?.statut ===
                   i18n.t('common:send_to_elogica')) && (
-                <Text style={styleSheet.text}>Heure de fin :</Text>
-              )}
-              <Text style={styleSheet.text}>
-                Statut : {props.concoursData._.statut}
-              </Text>
-              <Text style={styleSheet.text}>
-                Nombre d'athlète : {props.concoursData._.nbAthlete}
-              </Text>
-              {props.concoursData._.type !== 'SB' && (
                 <Text style={styleSheet.text}>
-                  Nombre d'essai : {props.concoursData._.nbTries}
+                  {i18n.t('competition:time_end')} :
                 </Text>
               )}
-              {props.concoursData.EpreuveConcoursComplet.TourConcoursComplet
-                .NumTour != 7 && (
+              <Text style={styleSheet.text}>
+                {i18n.t('competition:status')} : {props.concoursData?._?.statut}
+              </Text>
+              <Text style={styleSheet.text}>
+                {i18n.t('competition:nb_athletes')} :{' '}
+                {props.concoursData?._?.nbAthlete}
+              </Text>
+              {props.concoursData?._?.type !== 'SB' && (
+                <Text style={styleSheet.text}>
+                  {i18n.t('competition:nb_tries')} :{' '}
+                  {props.concoursData?._?.nbTries}
+                </Text>
+              )}
+              {props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet
+                ?.NumTour != 7 && (
                 <>
                   <Text style={styleSheet.text}>
-                    Standard de qualification : {props.concoursData._.epreuve}
+                    {i18n.t('competition:nb_athlete_qualif')} :{' '}
+                    {props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.NbQualifiePlace?.toString()}
                   </Text>
-                  {props.concoursData.EpreuveConcoursComplet.TourConcoursComplet
-                    .StandardQualificationPlace && (
+                  {!props.concoursData?.EpreuveConcoursComplet
+                    ?.TourConcoursComplet?.StandardQualificationPlace && (
                     <Text style={styleSheet.text}>
-                      Nombre d'athlète qualifié (Q) :{' '}
-                      {props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.NbQualifiePlace.toString()}
-                      {props.concoursData._.epreuve}
+                      {i18n.t('competition:perf_minima')} :{' '}
+                      {getBarRiseTextValue(
+                        props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.PerfMinima?.toString(),
+                      )}
                     </Text>
                   )}
                 </>
               )}
-              {props.concoursData._.type === 'SB' && (
+              {props.concoursData?._?.type === 'SB' && (
                 <Text style={[styleSheet.text, {width: 300}]}>
-                  Liste des barres : {getListBarre()}
+                  {i18n.t('competition:bar_rise')} : {getListBarre()}
                 </Text>
               )}
             </View>

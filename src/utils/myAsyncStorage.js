@@ -66,25 +66,30 @@ export const removeFiles = async keys => {
 export const saveEachSerie = async (content, addOneSerieDataTable) => {
   try {
     const contentObject = JSON.parse(content);
-    contentObject.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet.forEach(
+    contentObject?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet?.forEach(
       serie => {
         const newContentObject = JSON.parse(content);
         //Suppression des séries
         newContentObject.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet =
           [];
         //Ajout de la série
-        newContentObject.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet.push(
+        newContentObject?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet?.push(
           serie,
         );
         const codeConcours =
-          newContentObject.EpreuveConcoursComplet.TourConcoursComplet
-            .LstSerieConcoursComplet[0].CodeConcours + '.json';
-        const result = saveJsonFile(
-          codeConcours,
-          JSON.stringify(newContentObject),
-        );
-        if (result) {
-          addOneSerieDataTable(codeConcours, JSON.stringify(newContentObject));
+          newContentObject?.EpreuveConcoursComplet?.TourConcoursComplet
+            ?.LstSerieConcoursComplet[0]?.CodeConcours + '.json';
+        if (codeConcours != '.json') {
+          const result = saveJsonFile(
+            codeConcours,
+            JSON.stringify(newContentObject),
+          );
+          if (result) {
+            addOneSerieDataTable(
+              codeConcours,
+              JSON.stringify(newContentObject),
+            );
+          }
         }
       },
     );

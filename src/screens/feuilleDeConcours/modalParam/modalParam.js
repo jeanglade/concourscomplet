@@ -13,18 +13,18 @@ import i18n from 'i18next';
 import {setFile} from '../../../utils/myAsyncStorage';
 
 const ModalParam = props => {
-  const [nbTries, setNbTries] = useState(props.concoursData._.nbTries);
+  const [nbTries, setNbTries] = useState(props.concoursData?._?.nbTries);
   const [colPerfVisible, setColPerfVisible] = useState(
-    props.concoursData._.colPerfVisible,
+    props.concoursData?._?.colPerfVisible,
   );
   const [colFlagVisible, setColFlagVisible] = useState(
-    props.concoursData._.colFlagVisible,
+    props.concoursData?._?.colFlagVisible,
   );
   const [colWindVisible, setColWindVisible] = useState(
-    props.concoursData._.colWindVisible,
+    props.concoursData?._?.colWindVisible,
   );
   const [colMiddleRankVisible, setColMiddleRankVisible] = useState(
-    props.concoursData._.colMiddleRankVisible,
+    props.concoursData?._?.colMiddleRankVisible,
   );
 
   const saveParam = async () => {
@@ -38,7 +38,7 @@ const ModalParam = props => {
       colMiddleRankVisible: colMiddleRankVisible,
     };
     data._ = Object.assign(data._, newValues);
-    await setFile(data._.id, JSON.stringify(data)).then(() =>
+    await setFile(data?._?.id, JSON.stringify(data)).then(() =>
       props.refreshConcoursData(),
     );
   };
@@ -76,7 +76,7 @@ const ModalParam = props => {
             <Text style={styleSheet.textTitle}>
               {i18n.t('competition:param')}
             </Text>
-            {props.concoursData._.type !== 'SB' && (
+            {props.concoursData?._?.type !== 'SB' && (
               <View>
                 <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
                   <Text style={styleSheet.text}>
@@ -115,7 +115,7 @@ const ModalParam = props => {
                 {i18n.t('competition:col_perf_visible')}
               </Text>
             </View>
-            {props.concoursData._.type === 'SL' && (
+            {props.concoursData?._?.type === 'SL' && (
               <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
                 <MyCheckBox
                   isChecked={colWindVisible}
@@ -126,7 +126,7 @@ const ModalParam = props => {
                 </Text>
               </View>
             )}
-            {props.concoursData._.type !== 'SB' && (
+            {props.concoursData?._?.type !== 'SB' && (
               <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
                 <MyCheckBox
                   disabled={false}

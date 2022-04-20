@@ -21,16 +21,16 @@ const TableCompetition = props => {
         text: i18n.t('toast:ok'),
         onPress: async () => {
           await removeFile(id);
-          const res = props.tableData.filter(i => JSON.parse(i)._.id !== id);
+          const res = props.tableData.filter(i => JSON.parse(i)?._?.id !== id);
           props.refreshData(
             res,
             res.filter(i => {
               return (
-                JSON.parse(i).GuidCompetition ===
-                props.competition.idCompetition
+                JSON.parse(i)?.GuidCompetition ===
+                props.competition?.idCompetition
               );
             }).length > 0
-              ? props.competition.idCompetition
+              ? props.competition?.idCompetition
               : null,
           );
           showMessage({
@@ -57,14 +57,14 @@ const TableCompetition = props => {
             const ids = props.tableData
               .filter(x => {
                 return (
-                  JSON.parse(x).GuidCompetition ===
+                  JSON.parse(x)?.GuidCompetition ===
                   props.competition?.idCompetition?.toString()
                 );
               })
-              .map(x => JSON.parse(x)._.id);
+              .map(x => JSON.parse(x)?._?.id);
             await removeFiles(ids);
             const res = props.tableData.filter(
-              (item, itemIndex) => !ids.includes(JSON.parse(item)._.id),
+              (item, itemIndex) => !ids.includes(JSON.parse(item)?._?.id),
             );
             props.refreshData(res);
           },
@@ -77,7 +77,7 @@ const TableCompetition = props => {
   const tableDataFilter = () => {
     return props.tableData.filter(
       d =>
-        JSON.parse(d).GuidCompetition ===
+        JSON.parse(d)?.GuidCompetition ===
         props.competition?.idCompetition?.toString(),
     );
   };
@@ -89,7 +89,7 @@ const TableCompetition = props => {
           borderRadius: 15,
           padding: 3,
           paddingHorizontal: 10,
-          backgroundColor: item._.statutColor,
+          backgroundColor: item?._?.statutColor,
         }}>
         <Text
           style={[
@@ -97,8 +97,54 @@ const TableCompetition = props => {
             styleSheet.textCenter,
             styleSheet.textWhite,
           ]}>
-          {item._.statut}
+          {item._?.statut}
         </Text>
+      </View>
+    );
+
+    const title = (
+      <View
+        style={[
+          styleSheet.flexRow,
+          styleSheet.flexWrap,
+          {marginStart: 10, alignItems: 'center'},
+        ]}>
+        <MyButton
+          onPress={props.navigation.goBack}
+          styleView={[{marginHorizontal: 5}]}
+          content={
+            <Image
+              style={styleSheet.icon20}
+              source={require('../icons/back.png')}
+            />
+          }
+        />
+        <Image
+          style={[styleSheet.icon30, {marginHorizontal: 5}]}
+          source={epreuves[item._?.imageEpreuve.slice(0, -5)]}
+        />
+        <Text
+          style={[styleSheet.textTitle, styleSheet.textWhite, {marginEnd: 10}]}>
+          {item._?.epreuve} - {item._?.dateInfo} - {item._?.nbAthlete}{' '}
+          {i18n.t('competition:athletes').toLocaleLowerCase()}
+        </Text>
+        <View
+          style={{
+            borderRadius: 15,
+            padding: 3,
+            paddingHorizontal: 10,
+            backgroundColor:
+              item._ !== undefined ? item._?.statutColor : colors.white,
+          }}>
+          <Text
+            style={[
+              styleSheet.text,
+              styleSheet.textCenter,
+              styleSheet.textWhite,
+            ]}>
+            {item._?.statut}
+          </Text>
+        </View>
       </View>
     );
 
@@ -106,14 +152,14 @@ const TableCompetition = props => {
       <>
         <View style={styles.item}>
           <View style={styleSheet.flex2}>
-            <Text style={styleSheet.text}>{item._.dateInfo}</Text>
+            <Text style={styleSheet.text}>{item?._?.dateInfo}</Text>
           </View>
           <View style={[styles.epreuve, styleSheet.flex5]}>
             <Image
               style={[styleSheet.icon30, {marginRight: 5}]}
-              source={epreuves[item._.imageEpreuve]}
+              source={epreuves[item?._?.imageEpreuve]}
             />
-            <Text style={styleSheet.text}>{item._.epreuve}</Text>
+            <Text style={styleSheet.text}>{item?._?.epreuve}</Text>
           </View>
           <View style={styleSheet.flex1}>{status}</View>
           <View
@@ -126,9 +172,10 @@ const TableCompetition = props => {
               styleView={[styleSheet.icon]}
               tooltip={i18n.t('common:competition_sheet')}
               onPress={async () => {
-                const i = await getFile(item._.id);
+                const i = await getFile(item?._?.id);
                 props.navigation.navigate('FeuilleDeConcours', {
                   item: i,
+                  header: title,
                 });
               }}
               content={
@@ -140,7 +187,7 @@ const TableCompetition = props => {
             />
             <MyButton
               styleView={[styleSheet.icon, styleSheet.backRed]}
-              onPress={() => alertDeleteConcours(item._.id, item._.epreuve)}
+              onPress={() => alertDeleteConcours(item?._?.id, item?._?.epreuve)}
               content={
                 <Image
                   style={styleSheet.icon20}

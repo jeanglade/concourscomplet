@@ -16,7 +16,7 @@ export const pickOneDeviceFile = async addOneSerieDataTable => {
     });
     // READ ONE FILE
     if (newFile !== null) {
-      if (newFile.type === 'application/json') {
+      if (newFile?.type?.toString() === 'application/json') {
         switch (Platform.OS) {
           default:
             await ReactNativeBlobUtil.fs

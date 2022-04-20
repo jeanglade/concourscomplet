@@ -46,7 +46,7 @@ const MyModal = props => {
           <View style={styles.centeredView}>{contentModal}</View>
         </Modal>
       ) : (
-        <Popup isOpen={props.modalVisible}>
+        <Popup isOpen={props.modalVisible} isLightDismissEnabled={false}>
           <View style={[styles.centeredView, {maxHeight: props.maxHeight}]}>
             {contentModal}
           </View>

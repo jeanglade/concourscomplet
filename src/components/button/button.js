@@ -7,7 +7,8 @@ import {styleSheet} from '_config';
 const MyButton = props => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const myRef = useRef();
-
+  var backCount = 0,
+    backTimer = null;
   return (
     <Pressable
       onPressIn={() => {
@@ -22,7 +23,15 @@ const MyButton = props => {
       }}
       onPress={() => {
         setTooltipVisible(false);
-        props.onPress();
+        backCount++;
+        if (backCount == 2) {
+          clearTimeout(backTimer);
+        } else {
+          backTimer = setTimeout(() => {
+            backCount = 0;
+          }, 3000);
+          props.onPress();
+        }
       }}>
       <View
         style={props.styleView}

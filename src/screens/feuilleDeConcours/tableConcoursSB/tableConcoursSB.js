@@ -105,14 +105,15 @@ const TableConcoursSb = props => {
                 }}
               />
             )}
-            {props.concoursData._.colFlagVisible && (
-              <View style={{paddingRight: 5, paddingTop: 3}}>
-                <Flag
-                  code={resultat.Athlete.Nationalite?.toString().slice(0, -1)}
-                  size={16}
-                />
-              </View>
-            )}
+            {props.concoursData?._?.colFlagVisible &&
+              resultat.Athlete.Nationalite && (
+                <View style={{paddingRight: 5, paddingTop: 3}}>
+                  <Flag
+                    code={resultat.Athlete.Nationalite?.toString().slice(0, -1)}
+                    size={16}
+                  />
+                </View>
+              )}
             <Text
               style={[
                 styles.text,
@@ -132,7 +133,7 @@ const TableConcoursSb = props => {
             {athleteInfo}
           </Text>
         </View>
-        <View style={styles.flex1}>
+        {/* <View style={styles.flex1}>
           <MyInput
             style={[
               styles.textinput,
@@ -221,7 +222,7 @@ const TableConcoursSb = props => {
             value={''}
             keyboardType="numeric"
           />
-        </View>
+        </View> */}
         <View style={styles.flex2}>
           <Text style={styles.text}></Text>
         </View>
@@ -255,7 +256,9 @@ const TableConcoursSb = props => {
         athleteInfo={
           item.Athlete.Nationalite?.toString() === 'FRA'
             ? athleteInfo
-            : '(' + item.Athlete.Nationalite?.toString() + ')'
+            : item.Athlete.Nationalite?.toString()
+            ? '(' + item.Athlete.Nationalite?.toString() + ')'
+            : null
         }
         resultat={item}
         index={index}
@@ -275,18 +278,18 @@ const TableConcoursSb = props => {
             text: i18n.t('competition:number'),
           },
           {type: 'text', flex: 4, text: i18n.t('competition:athlete')},
-          {type: 'text', flex: 1, text: i18n.t('competition:first')},
-          {type: 'text', flex: 1, text: i18n.t('competition:second')},
-          {type: 'text', flex: 1, text: i18n.t('competition:third')},
-          {
-            type: 'text',
-            flex: 1,
-            text: i18n.t('competition:performance').substring(0, 4) + '.',
-          },
-          {type: 'text', flex: 1, text: i18n.t('competition:place')},
-          {type: 'text', flex: 1, text: i18n.t('competition:fourth')},
-          {type: 'text', flex: 1, text: i18n.t('competition:fifth')},
-          {type: 'text', flex: 1, text: i18n.t('competition:sixth')},
+          // {type: 'text', flex: 1, text: i18n.t('competition:first')},
+          // {type: 'text', flex: 1, text: i18n.t('competition:second')},
+          // {type: 'text', flex: 1, text: i18n.t('competition:third')},
+          // {
+          //   type: 'text',
+          //   flex: 1,
+          //   text: i18n.t('competition:performance').substring(0, 4) + '.',
+          // },
+          // {type: 'text', flex: 1, text: i18n.t('competition:place')},
+          // {type: 'text', flex: 1, text: i18n.t('competition:fourth')},
+          // {type: 'text', flex: 1, text: i18n.t('competition:fifth')},
+          // {type: 'text', flex: 1, text: i18n.t('competition:sixth')},
           {type: 'text', flex: 2, text: i18n.t('competition:performance')},
           {type: 'text', flex: 1, text: i18n.t('competition:place')},
         ]}
