@@ -88,5 +88,19 @@ Il est préférable de faire les messages de commit en anglais (ou en français)
 ### Compilation en production
 
 ```
-    # TODO
+# Prerequis
+npm install
+
+
+# Generate .APK (Android) on Windows
+cd android && ./gradlew assembleRelease && cd ./app/build/outputs/apk/release && explorer .
+
+# Generate App Packages (Windows) on Windows
+# Visual Studio > Release & x86 & concourscomplet (UWP) > Run to verify the build
+# Projet > Publier > Créer des packages d'application : Chargement indépendant > Certificat à partir d'un fichier > Version & x86 > Créer
+# Change in Add-AppDevPackage.ps1 : $NeedDeveloperLicense = true
+# To install right click on .ps1 > Execute with PowerShell (if already install, double click on the new .appxbundle file to reinstall)
+
+// Generate .IPA (IOS)
+
 ```

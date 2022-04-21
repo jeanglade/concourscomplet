@@ -168,7 +168,7 @@ const TableCompetition = props => {
               styleSheet.flexRowCenter,
               styleSheet.flexWrap,
             ]}>
-            <MyButton
+            {/* <MyButton
               styleView={[styleSheet.icon]}
               tooltip={i18n.t('common:competition_sheet')}
               onPress={async () => {
@@ -184,7 +184,7 @@ const TableCompetition = props => {
                   source={require('../icons/list.png')}
                 />
               }
-            />
+            /> */}
             <MyButton
               styleView={[styleSheet.icon, styleSheet.backRed]}
               onPress={() => alertDeleteConcours(item?._?.id, item?._?.epreuve)}
