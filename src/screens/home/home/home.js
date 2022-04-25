@@ -14,7 +14,8 @@ import {
   ModalOpenJson,
   ModalChoiceCompetition,
 } from '_screens';
-import {styleSheet, colors} from '_config';
+import {styleSheet} from '_config';
+import {getStatusColor, getStatus} from '../../../utils/convertor';
 
 const Home = props => {
   //Tableau avec toutes les données concours complet
@@ -143,32 +144,6 @@ const Home = props => {
         res = 'LancerDeDisque_Dark';
         break;
     }
-    return res;
-  };
-
-  const getStatusColor = statut => {
-    var res = colors.black;
-    switch (statut) {
-      case i18n.t('common:ready'):
-        res = colors.black;
-        break;
-      case i18n.t('common:in_progress'):
-        res = colors.red;
-        break;
-      case i18n.t('common:finished'):
-        res = colors.orange;
-        break;
-      case i18n.t('common:send_to_elogica'):
-        res = colors.green;
-        break;
-    }
-    return res;
-  };
-
-  const getStatus = concoursData => {
-    var res = i18n.t('common:ready');
-    //Vérifier s'il y a une date de fin => terminé
-    //Vérifier s'il y a des résultats => en cours
     return res;
   };
 

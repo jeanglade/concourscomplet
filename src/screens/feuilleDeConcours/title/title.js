@@ -14,7 +14,7 @@ const Title = props => (
         {marginStart: 10, alignItems: 'center'},
       ]}>
       <MyButton
-        onPress={props.navigation.goBack}
+        onPress={() => props.refreshAndGoBack(props.concoursData)}
         styleView={[{marginHorizontal: 5}]}
         content={
           <Image

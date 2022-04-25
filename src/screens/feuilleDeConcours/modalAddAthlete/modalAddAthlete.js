@@ -24,6 +24,7 @@ import {Formik} from 'formik';
 import {showMessage} from 'react-native-flash-message';
 import {ValidatorsAddAthlete} from '../../utils/validators';
 import {setFile} from '../../../utils/myAsyncStorage';
+import {getStatusColor} from '../../../utils/convertor';
 
 const ModalAddAthlete = props => {
   const setDateFormat = date => {
@@ -84,7 +85,9 @@ const ModalAddAthlete = props => {
     //Changement du statut du concours
     if (props.concoursData._.statut === i18n.t('common:ready')) {
       props.concoursData._.statut = i18n.t('common:in_progress');
-      props.concoursData._.statutColor = colors.red;
+      props.concoursData._.statutColor = getStatusColor(
+        props.concoursData._.statut,
+      );
     }
     await setFile(
       props.concoursData?._?.id,

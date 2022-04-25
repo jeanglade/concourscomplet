@@ -55,7 +55,11 @@ const FeuilleDeConcours = props => {
   props.navigation.setOptions({
     header: ({}) => {
       return (
-        <Title concoursData={concoursData} navigation={props.navigation} />
+        <Title
+          concoursData={concoursData}
+          navigation={props.navigation}
+          refreshAndGoBack={props.route.params.refreshAndGoBack}
+        />
       );
     },
   });

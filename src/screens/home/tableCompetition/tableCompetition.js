@@ -1,12 +1,14 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, Text, View, Image, Alert} from 'react-native';
 import i18n from 'i18next';
 import {colors, styleSheet} from '_config';
 import {getFile, removeFile, removeFiles} from '../../../utils/myAsyncStorage';
 import {useOrientation} from '../../../utils/useOrientation';
 import {MyButton, MyDataTable} from '_components';
+import {Title} from '_screens';
 import {showMessage} from 'react-native-flash-message';
 import epreuves from '../../../icons/epreuves/epreuves';
+import {getStatusColor} from '../../../utils/convertor';
 
 const TableCompetition = props => {
   const orientation = useOrientation();
@@ -82,6 +84,14 @@ const TableCompetition = props => {
     );
   };
 
+  const refreshAndGoBack = newValue => {
+    props.setTableData(oldValues => [
+      ...oldValues.filter(x => JSON.parse(x)._.id !== newValue._.id),
+      JSON.stringify(newValue),
+    ]);
+    props.navigation.goBack();
+  };
+
   const Item = ({item, index}) => {
     return (
       <>
@@ -124,9 +134,10 @@ const TableCompetition = props => {
               styleView={[styleSheet.icon]}
               tooltip={i18n.t('common:competition_sheet')}
               onPress={async () => {
-                item = await getFile(item?._?.id);
+                const i = await getFile(item?._?.id);
                 props.navigation.navigate('FeuilleDeConcours', {
-                  item: item,
+                  item: i,
+                  refreshAndGoBack: refreshAndGoBack,
                 });
               }}
               content={
