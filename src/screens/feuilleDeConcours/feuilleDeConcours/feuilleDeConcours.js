@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, View, Image} from 'react-native';
 import i18n from 'i18next';
 import {
@@ -24,7 +24,7 @@ const FeuilleDeConcours = props => {
   //Initialisation des variables Option Add an athlete
   const [modalAddAthlete, setModalAddAthlete] = useState(false);
   const initFormAddAthlete = {
-    categories: concoursData.LstCategoriesAthlete,
+    categories: concoursData?.LstCategoriesAthlete,
     type: 'new',
     firstname: '',
     name: '',
@@ -52,17 +52,19 @@ const FeuilleDeConcours = props => {
     setConcoursData(JSON.parse(value));
   };
 
-  props.navigation.setOptions({
-    header: ({}) => {
-      return (
-        <Title
-          concoursData={concoursData}
-          navigation={props.navigation}
-          refreshAndGoBack={props.route.params.refreshAndGoBack}
-        />
-      );
-    },
-  });
+  useEffect(() => {
+    props.navigation.setOptions({
+      header: ({}) => {
+        return (
+          <Title
+            concoursData={concoursData}
+            navigation={props.navigation}
+            refreshAndGoBack={props.route.params.refreshAndGoBack}
+          />
+        );
+      },
+    });
+  }, []);
 
   return (
     <View
@@ -121,6 +123,7 @@ const FeuilleDeConcours = props => {
       {concoursData?._?.type === 'SB' && (
         <TableConcoursSB
           concoursData={concoursData}
+          setConcoursData={setConcoursData}
           setModalAddAthlete={setModalAddAthlete}
           setFieldsAddAthtlete={setFieldsAddAthtlete}
           fieldsAddAthtlete={fieldsAddAthtlete}
@@ -129,6 +132,7 @@ const FeuilleDeConcours = props => {
       {concoursData?._?.type === 'SL' && (
         <TableConcoursSB
           concoursData={concoursData}
+          setConcoursData={setConcoursData}
           setModalAddAthlete={setModalAddAthlete}
           setFieldsAddAthtlete={setFieldsAddAthtlete}
           fieldsAddAthtlete={fieldsAddAthtlete}
@@ -137,6 +141,7 @@ const FeuilleDeConcours = props => {
       {concoursData?._?.type === 'LT' && (
         <TableConcoursSB
           concoursData={concoursData}
+          setConcoursData={setConcoursData}
           setModalAddAthlete={setModalAddAthlete}
           setFieldsAddAthtlete={setFieldsAddAthtlete}
           fieldsAddAthtlete={fieldsAddAthtlete}

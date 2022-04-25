@@ -10,7 +10,7 @@ export default {
   athlete_added: 'Athlète ajouté',
   wrong_code: 'Aucun concours ne correspond à ce code',
   confirm_delete_comp:
-    'Voulez-vous supprimer tous les concours de la compétition ?',
+    'Voulez-vous supprimer tous les concours de la compétition',
   confirm_delete_concours:
     'Voulez-vous supprimer ce concours de la plateforme ?',
   confirm_delete_athlete: 'Voulez-vous supprimer cet athlète de ce concours ?',
@@ -18,4 +18,6 @@ export default {
   ok: 'OK',
   no_internet_connexion: 'Pas de connexion internet',
   required_field: 'Ce champ est obligatoire.',
+  delete_concours_info:
+    'Tous les concours n\'étant pas "En cours" ou "Terminé" depuis plus de 3 jours seront supprimés.',
 };

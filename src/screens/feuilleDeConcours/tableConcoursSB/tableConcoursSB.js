@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, TextInput, Image} from 'react-native';
+import {StyleSheet, Text, View, Image} from 'react-native';
 import i18n from 'i18next';
 import {colors, styleSheet} from '_config';
 import {MyDataTable, MyButton, MyInput} from '_components';
 import moment from 'moment';
 import Flag from 'react-native-flags';
-import {getBarRiseTextValue} from '../../../utils/convertor';
+import {getHauteurToTextValue} from '../../../utils/convertor';
+import {setFile} from '../../../utils/myAsyncStorage';
 
 const TableConcoursSb = props => {
   const [hasDossard] = useState(() => {
@@ -16,19 +17,7 @@ const TableConcoursSb = props => {
     );
   });
 
-  const [allEssais, setAllEssais] = useState(
-    //Init avec les valeurs du JSON
-    [
-      ...Array(
-        props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet
-          ?.LstSerieConcoursComplet[0]?.LstResultats.length,
-      ),
-    ].map(row => [...Array(6)].map(x => '')),
-  );
-  const [athleteEnCours, setAthleteEnCours] = useState(
-    props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet
-      ?.LstSerieConcoursComplet[0]?.LstResultats[0],
-  );
+  const [athleteEnCours, setAthleteEnCours] = useState(0);
 
   const serie =
     props.concoursData.EpreuveConcoursComplet.TourConcoursComplet
@@ -38,21 +27,21 @@ const TableConcoursSb = props => {
   // const NbSec_1athlete = serie.NbSec_1athlete?.toString();
   // const NbSec_EssaiConsecutif = serie.NbSec_EssaiConsecutif?.toString();
 
-  const createEssai = (resultat, numEssai, value) => {
-    var essai = {
-      GuidCompetition: props.concoursData.GuidCompetition,
-      GuidResultat: resultat.GuidResultat,
-      GuidEssai: '', //créer un guid
-      NumEssai: numEssai,
-      ValeurPerformance: value,
-      SatutPerformance: 'O', //(X, O, -, r (retiré compétition))
-      //GUID_BARRE (nullable)
-      //Vent (10, -10), règle saisie (nullable)
-    };
-    if (resultat['LstEssais'] == null) {
-      resultat['LstEssais'] = [];
-    }
-    resultat['LstEssais'][numEssai - 1] = essai;
+  const saveEssai = async (resultat, numEssai, index) => {
+    console.log('saveEssai', resultat, numEssai);
+    var newResultat = props.concoursData;
+    newResultat.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats[
+      index
+    ] = resultat;
+    props.setConcoursData(newResultat);
+    await setFile(props.concoursData?._?.id, JSON.stringify(newResultat));
+  };
+
+  const onChangeTextValue = (resultat, numEssai, value) => {
+    resultat.LstEssais[numEssai - 1].TextValeurPerformance =
+      getHauteurToTextValue(value);
+    resultat.LstEssais[numEssai - 1].ValeurPerformance = value;
+    resultat.LstEssais[numEssai - 1].SatutPerformance = value;
   };
 
   const Item = ({
@@ -63,124 +52,144 @@ const TableConcoursSb = props => {
     athleteInfo,
     resultat,
     index,
-  }) => (
-    <>
-      <View style={styles.item}>
-        <View style={[styleSheet.flex1]}>
-          <Text style={[styleSheet.text]}>{order}</Text>
-        </View>
-        {hasDossard && (
-          <View style={[styleSheet.flex1, {minWidth: 10}]}>
-            <Text style={[styleSheet.text]}>{dossard}</Text>
+  }) => {
+    if (resultat.LstEssais === undefined) {
+      resultat.LstEssais = [];
+      for (var i = 0; i < 6; i++) {
+        resultat.LstEssais.push({
+          GuidCompetition: props.concoursData.GuidCompetition,
+          GuidResultat: resultat.GuidResultat,
+          GuidEssai: '',
+          NumEssai: i + 1,
+          ValeurPerformance: null,
+          TextValeurPerformance: null,
+          SatutPerformance: null,
+        });
+      }
+    }
+    return (
+      <>
+        <View style={styles.item}>
+          <View style={{width: 40}}>
+            <Text style={[styleSheet.text]}>{order}</Text>
           </View>
-        )}
+          {hasDossard && (
+            <View style={{width: 60}}>
+              <Text style={[styleSheet.text]}>{dossard}</Text>
+            </View>
+          )}
 
-        <View style={[styleSheet.flex4]}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            {resultat.Athlete.IsNew && (
-              <MyButton
-                onPress={() => {
-                  props.setFieldsAddAthtlete({
-                    ...props.fieldsAddAthtlete,
-                    resultat: resultat,
-                    type: 'modify',
-                    firstname: resultat.Athlete.Prenom?.toString(),
-                    name: resultat.Athlete.Nom?.toString(),
-                    sex: resultat.Athlete.Sexe?.toString(),
-                    birthDate: moment(
-                      resultat.Athlete.DateNaissance?.toString(),
-                      'DD/MM/YYYY',
-                    ).toDate(),
-                    licence_number: resultat.Athlete.Licence?.toString(),
-                    club: resultat.Athlete.Club?.toString(),
-                    category: resultat.Athlete.Categorie?.toString(),
-                    dossard: resultat.Athlete.Dossard?.toString(),
-                  });
-                  props.setModalAddAthlete(true);
-                }}
-                content={
-                  <Image
-                    style={{width: 15, height: 15}}
-                    source={require('../../../icons/pencil.png')}
-                  />
-                }
-                styleView={{
-                  backgroundColor: colors.black,
-                  borderRadius: 5,
-                  padding: 1,
-                  marginEnd: 5,
-                }}
-              />
-            )}
-            {props.concoursData?._?.colFlagVisible &&
-              resultat.Athlete.Nationalite && (
-                <View style={{paddingRight: 5, paddingTop: 3}}>
-                  <Flag
-                    code={resultat.Athlete.Nationalite?.toString().slice(0, -1)}
-                    size={16}
-                  />
-                </View>
+          <View style={[styleSheet.flex4]}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              {resultat.Athlete.IsNew && (
+                <MyButton
+                  onPress={() => {
+                    props.setFieldsAddAthtlete({
+                      ...props.fieldsAddAthtlete,
+                      resultat: resultat,
+                      type: 'modify',
+                      firstname: resultat.Athlete.Prenom?.toString(),
+                      name: resultat.Athlete.Nom?.toString(),
+                      sex: resultat.Athlete.Sexe?.toString(),
+                      birthDate: moment(
+                        resultat.Athlete.DateNaissance?.toString(),
+                        'DD/MM/YYYY',
+                      ).toDate(),
+                      licence_number: resultat.Athlete.Licence?.toString(),
+                      club: resultat.Athlete.Club?.toString(),
+                      category: resultat.Athlete.Categorie?.toString(),
+                      dossard: resultat.Athlete.Dossard?.toString(),
+                    });
+                    props.setModalAddAthlete(true);
+                  }}
+                  content={
+                    <Image
+                      style={{width: 15, height: 15}}
+                      source={require('../../../icons/pencil.png')}
+                    />
+                  }
+                  styleView={{
+                    backgroundColor: colors.black,
+                    borderRadius: 5,
+                    padding: 1,
+                    marginEnd: 5,
+                  }}
+                />
               )}
-            <Text
-              style={[
-                styleSheet.text,
-                styleSheet.textBold,
-                {
-                  color:
-                    athleteEnCours === resultat
-                      ? colors.ffa_blue_light
-                      : colors.black,
-                },
-              ]}
-              numberOfLines={1}>
-              {athleteName}
-            </Text>
-          </View>
-          <View style={styleSheet.flexRow}>
-            {props.concoursData._.type === 'SB' && (
+              {props.concoursData?._?.colFlagVisible &&
+                resultat.Athlete.Nationalite && (
+                  <View style={{paddingRight: 5, paddingTop: 3}}>
+                    <Flag
+                      code={resultat.Athlete.Nationalite?.toString().slice(
+                        0,
+                        -1,
+                      )}
+                      size={16}
+                    />
+                  </View>
+                )}
               <Text
                 style={[
                   styleSheet.text,
+                  styleSheet.textBold,
                   {
-                    marginEnd:
-                      resultat?.Athlete?.firstBar !== undefined ? 5 : 0,
-                    fontStyle: 'italic',
-                    color: colors.ffa_blue_dark,
+                    color:
+                      athleteEnCours === index
+                        ? colors.ffa_blue_light
+                        : colors.black,
                   },
                 ]}
                 numberOfLines={1}>
-                {getBarRiseTextValue(resultat?.Athlete?.firstBar)}
+                {athleteName}
               </Text>
-            )}
-            <Text style={[styleSheet.text]} numberOfLines={1}>
-              {athleteInfo}
-            </Text>
+            </View>
+            <View style={styleSheet.flexRow}>
+              {props.concoursData._.type === 'SB' && (
+                <Text
+                  style={[
+                    styleSheet.text,
+                    {
+                      marginEnd:
+                        resultat?.Athlete?.firstBar !== undefined ? 5 : 0,
+                      fontStyle: 'italic',
+                      color: colors.ffa_blue_dark,
+                    },
+                  ]}
+                  numberOfLines={1}>
+                  {getHauteurToTextValue(resultat?.Athlete?.firstBar)}
+                </Text>
+              )}
+              <Text style={[styleSheet.text]} numberOfLines={1}>
+                {athleteInfo}
+              </Text>
+            </View>
           </View>
-        </View>
-        {/* <View style={styleSheet.flex1}>
-          <MyInput
-            style={[
-              styles.textinput,
-              {
-                borderColor:
-                  athleteEnCours === resultat
-                    ? colors.ffa_blue_light
-                    : colors.muted,
-              },
-            ]}
-            onChange={value => {
-              //createEssai(resultat, 1, value);
-              setAllEssais(() => {
-                allEssais[index][0] = value.toString();
-                return allEssais;
-              });
-            }}
-          />
-        </View>
+          <View style={styleSheet.flex1}>
+            <MyInput
+              style={[
+                {
+                  backgroundColor:
+                    resultat.LstEssais[0].ValeurPerformance !== null
+                      ? colors.gray_light
+                      : colors.white,
+                  borderColor:
+                    athleteEnCours === index ? colors.red : colors.muted,
+                },
+              ]}
+              onChange={value => {
+                onChangeTextValue(resultat, 1, value);
+              }}
+              value={resultat.LstEssais[0].TextValeurPerformance}
+              onBlur={() => {
+                saveEssai(resultat, 1, index);
+              }}
+            />
+          </View>
+          {/*
         <View style={styles.flex1}>
           <TextInput
             style={styles.textinput}
@@ -251,15 +260,16 @@ const TableConcoursSb = props => {
             keyboardType="numeric"
           />
         </View> */}
-        <View style={styleSheet.flex2}>
-          <Text style={styleSheet.text}></Text>
+          <View style={{width: 100}}>
+            <Text style={styleSheet.text}></Text>
+          </View>
+          <View style={{width: 40}}>
+            <Text style={styleSheet.text}></Text>
+          </View>
         </View>
-        <View style={styleSheet.flex1}>
-          <Text style={styleSheet.text}></Text>
-        </View>
-      </View>
-    </>
-  );
+      </>
+    );
+  };
 
   const renderItem = ({item, index}) => {
     var result = null;
@@ -295,32 +305,101 @@ const TableConcoursSb = props => {
     return result;
   };
 
+  const getHeaderTable = () => {
+    const countDossard = hasDossard ? 1 : 0;
+    // Init table header
+    var res = [
+      {type: 'text', width: 40, text: i18n.t('competition:order')},
+      {type: 'text', flex: 4, text: i18n.t('competition:athlete')},
+      {type: 'text', width: 100, text: i18n.t('competition:performance')},
+      {type: 'text', width: 40, text: i18n.t('competition:place')},
+    ];
+    if (hasDossard) {
+      res.splice(1, 0, {
+        type: 'text',
+        width: 60,
+        text: i18n.t('competition:number'),
+      });
+    }
+    if (props.concoursData._?.colPerfVisible) {
+      //Si concours de saut horizontaux
+      if (props.concoursData._.type !== 'SB') {
+        res.splice(
+          2 + countDossard,
+          0,
+          {type: 'text', flex: 1, text: i18n.t('competition:first')},
+          {type: 'text', flex: 1, text: i18n.t('competition:second')},
+          {type: 'text', flex: 1, text: i18n.t('competition:third')},
+        );
+        switch (parseInt(props.concoursData._?.nbTries)) {
+          case 4:
+            res.splice(5 + countDossard, 0, {
+              type: 'text',
+              flex: 1,
+              text: i18n.t('competition:fourth'),
+            });
+            break;
+          case 6:
+            res.splice(
+              5 + countDossard,
+              0,
+              {
+                type: 'text',
+                flex: 1,
+                text: i18n.t('competition:fourth'),
+              },
+              {
+                type: 'text',
+                flex: 1,
+                text: i18n.t('competition:fifth'),
+              },
+              {
+                type: 'text',
+                flex: 1,
+                text: i18n.t('competition:sixth'),
+              },
+            );
+            break;
+          default:
+            break;
+        }
+      }
+
+      // if (
+      //   props.concoursData._.type === 'SL' &&
+      //   props.concoursData._?.colWindVisible
+      // ) {
+      //   res.splice(7 + countDossard, 0, {
+      //     type: 'text',
+      //     flex: 1,
+      //     text: i18n.t('competition:wind'),
+      //   });
+      // }
+
+      if (
+        props.concoursData._?.nbTries === 6 &&
+        props.concoursData._?.colMiddleRankVisible
+      ) {
+        res.splice(
+          5 + countDossard,
+          0,
+          {
+            type: 'text',
+            flex: 1,
+            text: i18n.t('competition:performance').substring(0, 4) + '.',
+          },
+          {type: 'text', flex: 1, text: i18n.t('competition:place')},
+        );
+      }
+    }
+    console.log(res);
+    return res;
+  };
+
   return (
     <View style={[styles.containerCenter]}>
       <MyDataTable
-        headerTable={[
-          {type: 'text', flex: 1, text: i18n.t('competition:order')},
-          hasDossard && {
-            type: 'text',
-            flex: 1,
-            text: i18n.t('competition:number'),
-          },
-          {type: 'text', flex: 4, text: i18n.t('competition:athlete')},
-          // {type: 'text', flex: 1, text: i18n.t('competition:first')},
-          // {type: 'text', flex: 1, text: i18n.t('competition:second')},
-          // {type: 'text', flex: 1, text: i18n.t('competition:third')},
-          // {
-          //   type: 'text',
-          //   flex: 1,
-          //   text: i18n.t('competition:performance').substring(0, 4) + '.',
-          // },
-          // {type: 'text', flex: 1, text: i18n.t('competition:place')},
-          // {type: 'text', flex: 1, text: i18n.t('competition:fourth')},
-          // {type: 'text', flex: 1, text: i18n.t('competition:fifth')},
-          // {type: 'text', flex: 1, text: i18n.t('competition:sixth')},
-          {type: 'text', flex: 2, text: i18n.t('competition:performance')},
-          {type: 'text', flex: 1, text: i18n.t('competition:place')},
-        ]}
+        headerTable={getHeaderTable()}
         tableData={
           props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet
             ?.LstSerieConcoursComplet[0]?.LstResultats

@@ -2,7 +2,7 @@ import React from 'react';
 import {styleSheet} from '_config';
 import {View, Text} from 'react-native';
 import i18n from 'i18next';
-import {getBarRiseTextValue} from '../../../utils/convertor';
+import {getHauteurToTextValue} from '../../../utils/convertor';
 
 const InfoConcours = props => {
   return (
@@ -23,7 +23,7 @@ const InfoConcours = props => {
             ?.StandardQualificationPlace && (
             <Text style={[styleSheet.text, {marginHorizontal: 5}]}>
               {i18n.t('competition:perf_minima')} :{' '}
-              {getBarRiseTextValue(
+              {getHauteurToTextValue(
                 props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.PerfMinima?.toString(),
               )}
             </Text>

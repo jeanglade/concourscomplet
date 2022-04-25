@@ -1,14 +1,13 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {StyleSheet, Text, View, Image, Alert} from 'react-native';
 import i18n from 'i18next';
 import {colors, styleSheet} from '_config';
 import {getFile, removeFile, removeFiles} from '../../../utils/myAsyncStorage';
 import {useOrientation} from '../../../utils/useOrientation';
 import {MyButton, MyDataTable} from '_components';
-import {Title} from '_screens';
 import {showMessage} from 'react-native-flash-message';
 import epreuves from '../../../icons/epreuves/epreuves';
-import {getStatusColor} from '../../../utils/convertor';
+import moment from 'moment';
 
 const TableCompetition = props => {
   const orientation = useOrientation();
@@ -47,8 +46,12 @@ const TableCompetition = props => {
   //Suppression de tous les concours d une competition
   const alertDeleteCompetition = () => {
     Alert.alert(
-      i18n.t('toast:confirm_delete_comp'),
-      props.competition?.nomCompetition?.toString(),
+      i18n.t('toast:confirm_delete_comp') +
+        ' ' +
+        props.competition?.nomCompetition +
+        ' ?',
+      i18n.t('toast:delete_concours_info'),
+
       [
         {
           text: i18n.t('toast:cancel'),
@@ -56,19 +59,24 @@ const TableCompetition = props => {
         {
           text: i18n.t('toast:ok'),
           onPress: async () => {
-            const ids = props.tableData
-              .filter(x => {
-                return (
-                  JSON.parse(x)?.GuidCompetition ===
-                  props.competition?.idCompetition?.toString()
-                );
-              })
-              .map(x => JSON.parse(x)?._?.id);
-            await removeFiles(ids);
-            const res = props.tableData.filter(
-              (item, itemIndex) => !ids.includes(JSON.parse(item)?._?.id),
-            );
-            props.refreshData(res);
+            const concours = props.tableData.filter(x => {
+              return (
+                JSON.parse(x)?.GuidCompetition ===
+                  props.competition?.idCompetition?.toString() &&
+                ((JSON.parse(x)._?.statut !== i18n.t('common:in_progress') &&
+                  JSON.parse(x)._?.statut !== i18n.t('common:finished')) ||
+                  moment().diff(moment(JSON.parse(x)?._?.date), 'days') > 3)
+              );
+            });
+            if (concours !== []) {
+              const ids = concours.map(x => JSON.parse(x)?._?.id);
+              await removeFiles(ids);
+              props.refreshData(
+                props.tableData.filter(
+                  (item, itemIndex) => !ids.includes(JSON.parse(item)?._?.id),
+                ),
+              );
+            }
           },
         },
       ],
@@ -85,10 +93,14 @@ const TableCompetition = props => {
   };
 
   const refreshAndGoBack = newValue => {
-    props.setTableData(oldValues => [
-      ...oldValues.filter(x => JSON.parse(x)._.id !== newValue._.id),
-      JSON.stringify(newValue),
-    ]);
+    props.setTableData(oldValues =>
+      [
+        ...oldValues.filter(x => JSON.parse(x)._.id !== newValue._.id),
+        JSON.stringify(newValue),
+      ].sort((a, b) => {
+        return JSON.parse(a)._?.date > JSON.parse(b)._?.date ? 1 : -1;
+      }),
+    );
     props.navigation.goBack();
   };
 
@@ -147,16 +159,22 @@ const TableCompetition = props => {
                 />
               }
             />
-            <MyButton
-              styleView={[styleSheet.icon, styleSheet.backRed]}
-              onPress={() => alertDeleteConcours(item?._?.id, item?._?.epreuve)}
-              content={
-                <Image
-                  style={styleSheet.icon20}
-                  source={require('../icons/delete.png')}
-                />
-              }
-            />
+            {((item._?.statut !== i18n.t('common:in_progress') &&
+              item._?.statut !== i18n.t('common:finished')) ||
+              moment().diff(moment(item?._?.date), 'days') > 3) && (
+              <MyButton
+                styleView={[styleSheet.icon, styleSheet.backRed]}
+                onPress={() =>
+                  alertDeleteConcours(item?._?.id, item?._?.epreuve)
+                }
+                content={
+                  <Image
+                    style={styleSheet.icon20}
+                    source={require('../icons/delete.png')}
+                  />
+                }
+              />
+            )}
           </View>
         </View>
       </>

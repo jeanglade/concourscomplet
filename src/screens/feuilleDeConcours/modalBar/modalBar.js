@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {setFile} from '../../../utils/myAsyncStorage';
 import i18n from 'i18next';
-import {getBarRiseTextValue} from '../../../utils/convertor';
+import {getHauteurToTextValue} from '../../../utils/convertor';
 
 const ModalBar = props => {
   // Input state
@@ -135,7 +135,7 @@ const ModalBar = props => {
               styleSheet.text,
               index >= barRises?.length && {color: colors.ffa_blue_light},
             ]}>
-            {getBarRiseTextValue(item)}
+            {getHauteurToTextValue(item)}
           </Text>
         </View>
         <View style={[styleSheet.flexRow, styleSheet.flex1]}>
@@ -210,7 +210,7 @@ const ModalBar = props => {
             <View style={[styleSheet.flexRow, {marginTop: 20}]}>
               <MyInput
                 style={{width: 150}}
-                onChange={setNewBarRise}
+                onChange={value => setNewBarRise(value)}
                 value={newBarRise}
                 placeholder={i18n.t('competition:new_bar_rise_barrage')}
                 keyboardType="numeric"

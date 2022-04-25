@@ -11,7 +11,11 @@ const MyDataTable = props => {
           var res = null;
           if (item.type === 'text') {
             res = (
-              <View style={{flex: item.flex}}>
+              <View
+                style={[
+                  item.flex && {flex: item.flex},
+                  item.width && {width: item.width},
+                ]}>
                 <Text style={[styleSheet.text, {fontSize: 13}]}>
                   {item.text}
                 </Text>

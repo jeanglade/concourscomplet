@@ -39,7 +39,7 @@ const OpenJson = props => {
       <View style={[styleSheet.flexRowCenter]}>
         <MyInput
           style={{width: 130}}
-          onChange={setCodeConcours}
+          onChange={value => setCodeConcours(value)}
           value={codeConcours}
           placeholder={i18n.t('common:code')}
           onSubmitEditing={manageCode}

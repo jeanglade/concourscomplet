@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 import i18n from 'i18next';
-import {getBarRiseTextValue} from '../../../utils/convertor';
+import {getHauteurToTextValue} from '../../../utils/convertor';
 import {setFile} from '../../../utils/myAsyncStorage';
 
 const ModalFirstBar = props => {
@@ -69,7 +69,7 @@ const ModalFirstBar = props => {
               item.Athlete.firstBar = parseInt(value.toString());
             }}
             data={barRises.map(v => ({
-              label: getBarRiseTextValue(v),
+              label: getHauteurToTextValue(v),
               value: v,
             }))}
             selectedValue={item.Athlete?.firstBar}

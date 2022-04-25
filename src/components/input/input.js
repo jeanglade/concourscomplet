@@ -21,7 +21,7 @@ const MyInput = props => {
           },
         ]}
         value={props.value}
-        onChangeText={t => props.onChange(t)}
+        onChangeText={props.onChange}
         onEndEditing={props.onBlur}
         keyboardType={props.keyboardType}
         multiline={false}

@@ -35,7 +35,8 @@ const ModalParam = props => {
       colPerfVisible: colPerfVisible,
       colFlagVisible: colFlagVisible,
       colWindVisible: colWindVisible,
-      colMiddleRankVisible: colMiddleRankVisible,
+      colMiddleRankVisible:
+        nbTries !== null ? (nbTries > 3 ? colMiddleRankVisible : false) : false,
     };
     data._ = Object.assign(data._, newValues);
     await setFile(data?._?.id, JSON.stringify(data)).then(() =>
@@ -138,18 +139,20 @@ const ModalParam = props => {
                 </Text>
               </View>
             )}
-            {props.concoursData?._?.type !== 'SB' && (
-              <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
-                <MyCheckBox
-                  disabled={false}
-                  isChecked={colMiddleRankVisible}
-                  setIsChecked={v => setColMiddleRankVisible(v)}
-                />
-                <Text style={styleSheet.text}>
-                  {i18n.t('competition:col_middle_rank_visible')}
-                </Text>
-              </View>
-            )}
+            {props.concoursData?._?.type !== 'SB' &&
+              nbTries > 4 &&
+              colPerfVisible && (
+                <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
+                  <MyCheckBox
+                    disabled={false}
+                    isChecked={colMiddleRankVisible}
+                    setIsChecked={v => setColMiddleRankVisible(v)}
+                  />
+                  <Text style={styleSheet.text}>
+                    {i18n.t('competition:col_middle_rank_visible')}
+                  </Text>
+                </View>
+              )}
           </KeyboardAvoidingView>
         </View>
       }

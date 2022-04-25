@@ -1,9 +1,9 @@
 import {colors} from '_config';
 import i18n from 'i18next';
 
-export const getBarRiseTextValue = value => {
+export const getHauteurToTextValue = value => {
   var res = value;
-  if (res !== undefined) {
+  if (res !== undefined && res !== null) {
     if (value.toString().length === 2) {
       res = '0' + value.toString();
     }
