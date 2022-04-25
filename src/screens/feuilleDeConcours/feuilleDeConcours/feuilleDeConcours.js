@@ -7,21 +7,19 @@ import {
   TableConcoursSL,
   TableConcoursLR,
   ModalParam,
-  ModalInfoConcours,
+  InfoConcours,
   ModalBar,
+  ModalFirstBar,
+  ModalAthletePerAthlete,
+  Title,
 } from '_screens';
-import {styleSheet, colors} from '_config';
-import epreuves from '../../../icons/epreuves/epreuves';
+import {styleSheet} from '_config';
 import {getFile} from '../../../utils/myAsyncStorage';
 
 const FeuilleDeConcours = props => {
   //Initialisation des données du concours
   const concoursItem = props.route.params.item;
   const [concoursData, setConcoursData] = useState(JSON.parse(concoursItem));
-  const [tableData, setTableData] = useState(
-    concoursData.EpreuveConcoursComplet.TourConcoursComplet
-      .LstSerieConcoursComplet[0].LstResultats,
-  );
 
   //Initialisation des variables Option Add an athlete
   const [modalAddAthlete, setModalAddAthlete] = useState(false);
@@ -40,19 +38,27 @@ const FeuilleDeConcours = props => {
   const [fieldsAddAthtlete, setFieldsAddAthtlete] =
     useState(initFormAddAthlete);
 
-  const [modalInfoConcours, setModalInfoConcours] = useState(false);
-
   //Initalisatoin des variables Options Paramètres
   const [modalParam, setModalParam] = useState(false);
 
   //Initalisatoin des variables Options Montées de barre
   const [modalBar, setModalBar] = useState(false);
+  const [modalFirstBar, setModalFirstBar] = useState(false);
+  const [modalAthletePerAthlete, setModalAthletePerAthlete] = useState(false);
 
   const refreshConcoursData = async () => {
     const id = concoursData?._?.id;
     const value = await getFile(id);
     setConcoursData(JSON.parse(value));
   };
+
+  props.navigation.setOptions({
+    header: ({}) => {
+      return (
+        <Title concoursData={concoursData} navigation={props.navigation} />
+      );
+    },
+  });
 
   return (
     <View
@@ -68,48 +74,35 @@ const FeuilleDeConcours = props => {
           {justifyContent: 'space-between'},
         ]}>
         <View style={[styleSheet.flexRowCenter, styleSheet.flexWrap]}>
-          <Image
-            style={[styleSheet.icon30, {marginRight: 5}]}
-            source={epreuves[concoursData?._?.imageEpreuve]}
-          />
-          <Text
-            style={[
-              styleSheet.textTitle,
-              {color: colors.black, marginEnd: 10},
-            ]}>
-            {concoursData?._?.epreuve} - {concoursData?._?.dateInfo} -{' '}
-            {concoursData?._?.nbAthlete}{' '}
-            {i18n.t('competition:athletes').toLocaleLowerCase()}
-          </Text>
-          <View
-            style={{
-              borderRadius: 15,
-              padding: 3,
-              paddingHorizontal: 10,
-              backgroundColor:
-                concoursData._ !== undefined
-                  ? concoursData?._?.statutColor
-                  : colors.white,
-            }}>
-            <Text
-              style={[
-                styleSheet.text,
-                styleSheet.textCenter,
-                styleSheet.textWhite,
-              ]}>
-              {concoursData?._?.statut}
-            </Text>
-          </View>
+          {concoursData?._?.type === 'SB' && (
+            <>
+              <ModalBar
+                setModalVisible={setModalBar}
+                modalVisible={modalBar}
+                concoursData={concoursData}
+              />
+              <ModalFirstBar
+                setModalVisible={setModalFirstBar}
+                modalVisible={modalFirstBar}
+                concoursData={concoursData}
+              />
+            </>
+          )}
+          <InfoConcours concoursData={concoursData} />
         </View>
-        <View
-          style={[
-            styleSheet.flexRowCenter,
-            styleSheet.flexWrap,
-            {justifyContent: 'space-between'},
-          ]}>
-          <ModalInfoConcours
-            setModalVisible={setModalInfoConcours}
-            modalVisible={modalInfoConcours}
+        <View style={styleSheet.flexRowCenter}>
+          <ModalAthletePerAthlete
+            setModalVisible={setModalAthletePerAthlete}
+            modalVisible={modalAthletePerAthlete}
+          />
+          <ModalAddAthlete
+            modalVisible={modalAddAthlete}
+            setModalVisible={b => {
+              setFieldsAddAthtlete(initFormAddAthlete);
+              setModalAddAthlete(b);
+            }}
+            fieldsAddAthtlete={fieldsAddAthtlete}
+            setFieldsAddAthtlete={setFieldsAddAthtlete}
             concoursData={concoursData}
           />
           <ModalParam
@@ -124,8 +117,6 @@ const FeuilleDeConcours = props => {
       {concoursData?._?.type === 'SB' && (
         <TableConcoursSB
           concoursData={concoursData}
-          tableData={tableData}
-          setTableData={setTableData}
           setModalAddAthlete={setModalAddAthlete}
           setFieldsAddAthtlete={setFieldsAddAthtlete}
           fieldsAddAthtlete={fieldsAddAthtlete}
@@ -134,8 +125,6 @@ const FeuilleDeConcours = props => {
       {concoursData?._?.type === 'SL' && (
         <TableConcoursSB
           concoursData={concoursData}
-          tableData={tableData}
-          setTableData={setTableData}
           setModalAddAthlete={setModalAddAthlete}
           setFieldsAddAthtlete={setFieldsAddAthtlete}
           fieldsAddAthtlete={fieldsAddAthtlete}
@@ -144,41 +133,11 @@ const FeuilleDeConcours = props => {
       {concoursData?._?.type === 'LT' && (
         <TableConcoursSB
           concoursData={concoursData}
-          tableData={tableData}
-          setTableData={setTableData}
           setModalAddAthlete={setModalAddAthlete}
           setFieldsAddAthtlete={setFieldsAddAthtlete}
           fieldsAddAthtlete={fieldsAddAthtlete}
         />
       )}
-      <View
-        style={[
-          styleSheet.flexRowCenter,
-          {justifyContent: 'flex-start', paddingBottom: 20},
-        ]}>
-        <Text style={styleSheet.textTitle}>{i18n.t('common:options')}</Text>
-        <ModalAddAthlete
-          setAthletesData={setTableData}
-          modalVisible={modalAddAthlete}
-          setModalVisible={b => {
-            setFieldsAddAthtlete(initFormAddAthlete);
-            setModalAddAthlete(b);
-          }}
-          athletesData={tableData}
-          fieldsAddAthtlete={fieldsAddAthtlete}
-          setFieldsAddAthtlete={setFieldsAddAthtlete}
-          concoursData={concoursData}
-        />
-        {concoursData?._?.type === 'SB' && (
-          <>
-            <ModalBar
-              setModalVisible={setModalBar}
-              modalVisible={modalBar}
-              concoursData={concoursData}
-            />
-          </>
-        )}
-      </View>
     </View>
   );
 };

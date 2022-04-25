@@ -41,4 +41,9 @@ export default {
   nb_athlete_qualif: "Nombre d'athlètes qualifiés (Q)",
   status: 'Statut',
   perf_minima: 'Performance minimale de qualification',
+  tries: 'essais',
+  general: 'Général',
+  visibility: 'Visibilité',
+  first_bar_rise: 'Première barre',
+  athlete_per_athlete: 'Athlète par athlète',
 };

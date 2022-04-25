@@ -3,8 +3,11 @@ import TableConcoursSB from './tableConcoursSB';
 // import TableConcoursSL from './tableConcoursSL';
 // import TableConcoursLR from './tableConcoursLR';
 import ModalParam from './modalParam';
-import ModalInfoConcours from './modalInfoConcours';
+import InfoConcours from './infoConcours';
 import ModalBar from './modalBar';
+import ModalFirstBar from './modalFirstBar';
+import Title from './title';
+import ModalAthletePerAthlete from './modalAthletePerAthlete';
 
 export {
   TableConcoursSB,
@@ -12,6 +15,9 @@ export {
   // TableConcoursLR,
   ModalAddAthlete,
   ModalBar,
-  ModalInfoConcours,
+  InfoConcours,
+  Title,
+  ModalFirstBar,
   ModalParam,
+  ModalAthletePerAthlete,
 };

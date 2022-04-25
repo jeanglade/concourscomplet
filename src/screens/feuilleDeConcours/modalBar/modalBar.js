@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {setFile} from '../../../utils/myAsyncStorage';
 import i18n from 'i18next';
+import {getBarRiseTextValue} from '../../../utils/convertor';
 
 const ModalBar = props => {
   // Input state
@@ -123,13 +124,6 @@ const ModalBar = props => {
       setBarRises(oldBar => oldBar.filter((_, i) => i !== index));
     }
     setHasChanged(true);
-  };
-
-  const getBarRiseTextValue = value => {
-    if (value.toString().length === 2) {
-      value = '0' + value.toString();
-    }
-    return value.toString()[0] + 'm' + value.toString().slice(1);
   };
 
   const Item = ({item, index}) => (

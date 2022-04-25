@@ -5,19 +5,30 @@ import {colors, styleSheet} from '_config';
 import {MyDataTable, MyButton, MyInput} from '_components';
 import moment from 'moment';
 import Flag from 'react-native-flags';
+import {getBarRiseTextValue} from '../../../utils/convertor';
 
 const TableConcoursSb = props => {
   const [hasDossard] = useState(() => {
     return (
-      props.tableData.filter(row => row.Athlete.Dossard?.toString()).length > 0
+      props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.filter(
+        row => row.Athlete.Dossard?.toString(),
+      ).length > 0
     );
   });
 
   const [allEssais, setAllEssais] = useState(
     //Init avec les valeurs du JSON
-    [...Array(props.tableData.length)].map(row => [...Array(6)].map(x => '')),
+    [
+      ...Array(
+        props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet
+          ?.LstSerieConcoursComplet[0]?.LstResultats.length,
+      ),
+    ].map(row => [...Array(6)].map(x => '')),
   );
-  const [athleteEnCours, setAthleteEnCours] = useState(props.tableData[0]);
+  const [athleteEnCours, setAthleteEnCours] = useState(
+    props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet
+      ?.LstSerieConcoursComplet[0]?.LstResultats[0],
+  );
 
   const serie =
     props.concoursData.EpreuveConcoursComplet.TourConcoursComplet
@@ -55,16 +66,16 @@ const TableConcoursSb = props => {
   }) => (
     <>
       <View style={styles.item}>
-        <View style={[styles.flex1]}>
-          <Text style={[styles.text]}>{order}</Text>
+        <View style={[styleSheet.flex1]}>
+          <Text style={[styleSheet.text]}>{order}</Text>
         </View>
         {hasDossard && (
-          <View style={[styles.flex1, {minWidth: 10}]}>
-            <Text style={[styles.text]}>{dossard}</Text>
+          <View style={[styleSheet.flex1, {minWidth: 10}]}>
+            <Text style={[styleSheet.text]}>{dossard}</Text>
           </View>
         )}
 
-        <View style={[styles.flex4]}>
+        <View style={[styleSheet.flex4]}>
           <View
             style={{
               flexDirection: 'row',
@@ -116,8 +127,8 @@ const TableConcoursSb = props => {
               )}
             <Text
               style={[
-                styles.text,
-                styles.textBold,
+                styleSheet.text,
+                styleSheet.textBold,
                 {
                   color:
                     athleteEnCours === resultat
@@ -129,11 +140,28 @@ const TableConcoursSb = props => {
               {athleteName}
             </Text>
           </View>
-          <Text style={[styles.text]} numberOfLines={1}>
-            {athleteInfo}
-          </Text>
+          <View style={styleSheet.flexRow}>
+            {props.concoursData._.type === 'SB' && (
+              <Text
+                style={[
+                  styleSheet.text,
+                  {
+                    marginEnd:
+                      resultat?.Athlete?.firstBar !== undefined ? 5 : 0,
+                    fontStyle: 'italic',
+                    color: colors.ffa_blue_dark,
+                  },
+                ]}
+                numberOfLines={1}>
+                {getBarRiseTextValue(resultat?.Athlete?.firstBar)}
+              </Text>
+            )}
+            <Text style={[styleSheet.text]} numberOfLines={1}>
+              {athleteInfo}
+            </Text>
+          </View>
         </View>
-        {/* <View style={styles.flex1}>
+        {/* <View style={styleSheet.flex1}>
           <MyInput
             style={[
               styles.textinput,
@@ -223,11 +251,11 @@ const TableConcoursSb = props => {
             keyboardType="numeric"
           />
         </View> */}
-        <View style={styles.flex2}>
-          <Text style={styles.text}></Text>
+        <View style={styleSheet.flex2}>
+          <Text style={styleSheet.text}></Text>
         </View>
-        <View style={styles.flex1}>
-          <Text style={styles.text}></Text>
+        <View style={styleSheet.flex1}>
+          <Text style={styleSheet.text}></Text>
         </View>
       </View>
     </>
@@ -293,7 +321,10 @@ const TableConcoursSb = props => {
           {type: 'text', flex: 2, text: i18n.t('competition:performance')},
           {type: 'text', flex: 1, text: i18n.t('competition:place')},
         ]}
-        tableData={props.tableData}
+        tableData={
+          props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet
+            ?.LstSerieConcoursComplet[0]?.LstResultats
+        }
         renderItem={renderItem}
       />
     </View>
@@ -315,32 +346,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 5,
   },
-  text: {
-    color: colors.black,
-    fontSize: 16,
-  },
-  textBold: {fontWeight: 'bold'},
   textinput: {
     height: 35,
     marginRight: 5,
     color: colors.black,
     borderColor: colors.muted,
     borderWidth: 1,
-  },
-  flex1: {
-    flex: 1,
-  },
-  flex2: {
-    flex: 2,
-  },
-  flex3: {
-    flex: 3,
-  },
-  flex4: {
-    flex: 4,
-  },
-  flex5: {
-    flex: 5,
   },
 });
 

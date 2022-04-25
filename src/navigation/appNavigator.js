@@ -50,15 +50,15 @@ function AppNavigator() {
       <Stack.Screen
         name="FeuilleDeConcours"
         component={FeuilleDeConcours}
-        options={() => ({
-          header: ({route}) => {
-            return (
-              <View style={{backgroundColor: colors.ffa_blue_light}}>
-                {route.params.header}
-              </View>
-            );
-          },
-        })}
+        // options={() => ({
+        //   header: ({route}) => {
+        //     return (
+        //       <View style={{backgroundColor: colors.ffa_blue_light}}>
+        //         {route.params.header}
+        //       </View>
+        //     );
+        //   },
+        // })}
       />
     </Stack.Navigator>
   );

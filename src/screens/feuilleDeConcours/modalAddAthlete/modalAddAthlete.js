@@ -32,25 +32,31 @@ const ModalAddAthlete = props => {
 
   const getLastIdResultat = () => {
     return Math.max(
-      ...props.athletesData.map(athlete => parseInt(athlete.$id)),
+      ...props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.map(
+        athlete => parseInt(athlete.$id),
+      ),
     );
   };
 
   const getLastNumCouloir = () => {
     return Math.max(
-      ...props.athletesData.map(athlete => parseInt(athlete.NumCouloir)),
+      ...props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.map(
+        athlete => parseInt(athlete.NumCouloir),
+      ),
     );
   };
 
   const isAthleteExist = athlete => {
     return (
-      props.athletesData.filter(athleteData => {
-        athleteData.Athlete.Prenom === athlete.Athlete.Prenom &&
-          athleteData.Athlete.Nom === athlete.Athlete.Nom &&
-          athleteData.Athlete.Sexe === athlete.Athlete.Sexe &&
-          athleteData.Athlete.Categorie === athlete.Athlete.Categorie &&
-          athleteData.Athlete.Club === athlete.Athlete.Club;
-      }).lenght > 0
+      props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.filter(
+        athleteData => {
+          athleteData.Athlete.Prenom === athlete.Athlete.Prenom &&
+            athleteData.Athlete.Nom === athlete.Athlete.Nom &&
+            athleteData.Athlete.Sexe === athlete.Athlete.Sexe &&
+            athleteData.Athlete.Categorie === athlete.Athlete.Categorie &&
+            athleteData.Athlete.Club === athlete.Athlete.Club;
+        },
+      ).lenght > 0
     );
   };
 
@@ -73,9 +79,8 @@ const ModalAddAthlete = props => {
   };
 
   const saveContent = async () => {
-    props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats =
-      props.athletesData;
-    props.concoursData._.nbAthlete = props.athletesData.length;
+    props.concoursData._.nbAthlete =
+      props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats?.length;
     //Changement du statut du concours
     if (props.concoursData._.statut === i18n.t('common:ready')) {
       props.concoursData._.statut = i18n.t('common:in_progress');
@@ -114,7 +119,9 @@ const ModalAddAthlete = props => {
         };
         newAthlete = setNewAthlete(values, newAthlete);
         if (!isAthleteExist(newAthlete)) {
-          props.athletesData.push(newAthlete);
+          props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.push(
+            newAthlete,
+          );
           actions.setSubmitting(false);
           actions.resetForm({
             values: props.fieldsAddAthtlete,
@@ -131,8 +138,8 @@ const ModalAddAthlete = props => {
           });
         }
       } else {
-        props.athletesData[
-          props.athletesData.findIndex(
+        props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats[
+          props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.findIndex(
             a => a.$id === props.fieldsAddAthtlete?.resultat.$id,
           )
         ] = setNewAthlete(values, props.fieldsAddAthtlete?.resultat);
@@ -180,8 +187,8 @@ const ModalAddAthlete = props => {
         {
           text: i18n.t('toast:ok'),
           onPress: async () => {
-            props.athletesData.splice(
-              props.athletesData.findIndex(
+            props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.splice(
+              props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.findIndex(
                 a => a.$id === props.fieldsAddAthtlete?.resultat.$id,
               ),
               1,
@@ -207,7 +214,7 @@ const ModalAddAthlete = props => {
     <MyModal
       modalVisible={props.modalVisible}
       setModalVisible={props.setModalVisible}
-      buttonStyleView={styleSheet.icon}
+      buttonStyleView={[styleSheet.icon, {backgroundColor: colors.muted}]}
       minWidth={Platform.OS === 'windows' ? 300 : 0}
       buttonTooltip={i18n.t('competition:add_an_athlete')}
       buttonContent={
@@ -346,7 +353,6 @@ const ModalAddAthlete = props => {
                               stylePickerIOS={{width: 200}}
                               placeholder={i18n.t('competition:sex') + '*'}
                               onValueChange={value => {
-                                console.log('coucou', value);
                                 onChangeField('sex', value);
                                 setValues(props.fieldsAddAthtlete);
                               }}

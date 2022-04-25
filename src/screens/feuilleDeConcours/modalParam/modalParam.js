@@ -77,7 +77,16 @@ const ModalParam = props => {
               {i18n.t('competition:param')}
             </Text>
             {props.concoursData?._?.type !== 'SB' && (
-              <View>
+              <View
+                style={{
+                  borderWidth: 0,
+                  borderBottomWidth: 1,
+                  borderColor: colors.muted,
+                  paddingBottom: 15,
+                }}>
+                <Text style={[styleSheet.textTitle, {color: colors.black}]}>
+                  {i18n.t('competition:general')}
+                </Text>
                 <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
                   <Text style={styleSheet.text}>
                     {i18n.t('competition:nb_tries')}
@@ -97,6 +106,9 @@ const ModalParam = props => {
                 </View>
               </View>
             )}
+            <Text style={[styleSheet.textTitle, {color: colors.black}]}>
+              {i18n.t('competition:visibility')}
+            </Text>
             <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
               <MyCheckBox
                 isChecked={colFlagVisible}

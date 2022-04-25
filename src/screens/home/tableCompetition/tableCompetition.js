@@ -83,71 +83,6 @@ const TableCompetition = props => {
   };
 
   const Item = ({item, index}) => {
-    const status = (
-      <View
-        style={{
-          borderRadius: 15,
-          padding: 3,
-          paddingHorizontal: 10,
-          backgroundColor: item?._?.statutColor,
-        }}>
-        <Text
-          style={[
-            styleSheet.text,
-            styleSheet.textCenter,
-            styleSheet.textWhite,
-          ]}>
-          {item._?.statut}
-        </Text>
-      </View>
-    );
-
-    const title = (
-      <View
-        style={[
-          styleSheet.flexRow,
-          styleSheet.flexWrap,
-          {marginStart: 10, alignItems: 'center'},
-        ]}>
-        <MyButton
-          onPress={props.navigation.goBack}
-          styleView={[{marginHorizontal: 5}]}
-          content={
-            <Image
-              style={styleSheet.icon20}
-              source={require('../icons/back.png')}
-            />
-          }
-        />
-        <Image
-          style={[styleSheet.icon30, {marginHorizontal: 5}]}
-          source={epreuves[item._?.imageEpreuve.slice(0, -5)]}
-        />
-        <Text
-          style={[styleSheet.textTitle, styleSheet.textWhite, {marginEnd: 10}]}>
-          {item._?.epreuve} - {item._?.dateInfo} - {item._?.nbAthlete}{' '}
-          {i18n.t('competition:athletes').toLocaleLowerCase()}
-        </Text>
-        <View
-          style={{
-            borderRadius: 15,
-            padding: 3,
-            paddingHorizontal: 10,
-            backgroundColor:
-              item._ !== undefined ? item._?.statutColor : colors.white,
-          }}>
-          <Text
-            style={[
-              styleSheet.text,
-              styleSheet.textCenter,
-              styleSheet.textWhite,
-            ]}>
-            {item._?.statut}
-          </Text>
-        </View>
-      </View>
-    );
-
     return (
       <>
         <View style={styles.item}>
@@ -161,21 +96,37 @@ const TableCompetition = props => {
             />
             <Text style={styleSheet.text}>{item?._?.epreuve}</Text>
           </View>
-          <View style={styleSheet.flex1}>{status}</View>
+          <View style={styleSheet.flex1}>
+            <View
+              style={{
+                borderRadius: 15,
+                padding: 3,
+                paddingHorizontal: 10,
+                backgroundColor: item?._?.statutColor,
+              }}>
+              <Text
+                style={[
+                  styleSheet.text,
+                  styleSheet.textCenter,
+                  styleSheet.textWhite,
+                ]}>
+                {item._?.statut}
+              </Text>
+            </View>
+          </View>
           <View
             style={[
               styleSheet.flex2,
               styleSheet.flexRowCenter,
               styleSheet.flexWrap,
             ]}>
-            {/* <MyButton
+            <MyButton
               styleView={[styleSheet.icon]}
               tooltip={i18n.t('common:competition_sheet')}
               onPress={async () => {
-                const i = await getFile(item?._?.id);
+                item = await getFile(item?._?.id);
                 props.navigation.navigate('FeuilleDeConcours', {
-                  item: i,
-                  header: title,
+                  item: item,
                 });
               }}
               content={
@@ -184,7 +135,7 @@ const TableCompetition = props => {
                   source={require('../icons/list.png')}
                 />
               }
-            /> */}
+            />
             <MyButton
               styleView={[styleSheet.icon, styleSheet.backRed]}
               onPress={() => alertDeleteConcours(item?._?.id, item?._?.epreuve)}

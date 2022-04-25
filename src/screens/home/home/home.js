@@ -82,7 +82,7 @@ const Home = props => {
       // Si la compétition n'est pas déjà présente dans result
       if (
         !result
-          .map(a => a?._?.idCompetition)
+          .map(x => x.idCompetition)
           .includes(JSON.parse(compete)?.GuidCompetition)
       ) {
         result.push(getCompetitionInfo(compete));
@@ -218,7 +218,6 @@ const Home = props => {
         colWindVisible: true,
         colMiddleRankVisible: true,
       };
-      console.log('coucou', key, infoConcours._);
       await setFile(key, JSON.stringify(infoConcours));
       return JSON.stringify(infoConcours);
     } catch (e) {

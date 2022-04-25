@@ -14,7 +14,10 @@ import {
   ModalAddAthlete,
   ModalParam,
   ModalBar,
-  ModalInfoConcours,
+  ModalFirstBar,
+  InfoConcours,
+  Title,
+  ModalAthletePerAthlete,
 } from './feuilleDeConcours';
 
 export {
@@ -31,5 +34,8 @@ export {
   ModalAddAthlete,
   ModalParam,
   ModalBar,
-  ModalInfoConcours,
+  InfoConcours,
+  Title,
+  ModalFirstBar,
+  ModalAthletePerAthlete,
 };
