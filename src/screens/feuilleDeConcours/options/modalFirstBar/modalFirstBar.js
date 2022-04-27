@@ -22,7 +22,13 @@ const ModalFirstBar = props => {
     if (
       props.concoursData.EpreuveConcoursComplet.hasOwnProperty('MonteesBarre')
     ) {
-      for (var i = 1; i < 20; i++) {
+      for (
+        var i = 1;
+        i <
+        Object.keys(props.concoursData.EpreuveConcoursComplet.MonteesBarre)
+          .length;
+        i++
+      ) {
         const nameBarre = 'Barre' + (i < 10 ? '0' : '') + i.toString();
         if (
           props.concoursData.EpreuveConcoursComplet.MonteesBarre.hasOwnProperty(
@@ -53,32 +59,36 @@ const ModalFirstBar = props => {
     }
   };
 
-  const Item = ({item, index}) => (
-    <>
-      <View style={styles.item}>
-        <View style={styleSheet.flex2}>
-          <Text style={[styleSheet.text]}>
-            {item.Athlete?.Prenom} {item.Athlete?.Nom}
-          </Text>
+  const Item = ({item, index}) => {
+    const [firstB, setFirstB] = useState(parseInt(item.Athlete?.firstBar));
+    return (
+      <>
+        <View style={styles.item}>
+          <View style={styleSheet.flex2}>
+            <Text style={[styleSheet.text]}>
+              {item.Athlete?.Prenom} {item.Athlete?.Nom}
+            </Text>
+          </View>
+          <View style={{width: 130}}>
+            <MyDropdown
+              styleContainer={{}}
+              stylePickerIOS={{width: 200}}
+              onValueChange={value => {
+                setHasChanged(true);
+                item.Athlete.firstBar = value;
+                setFirstB(parseInt(value.toString()));
+              }}
+              data={barRises.map(v => ({
+                label: getHauteurToTextValue(v),
+                value: v,
+              }))}
+              selectedValue={firstB}
+            />
+          </View>
         </View>
-        <View style={{width: 130}}>
-          <MyDropdown
-            styleContainer={{}}
-            stylePickerIOS={{width: 200}}
-            onValueChange={value => {
-              setHasChanged(true);
-              item.Athlete.firstBar = parseInt(value.toString());
-            }}
-            data={barRises.map(v => ({
-              label: getHauteurToTextValue(v),
-              value: v,
-            }))}
-            selectedValue={item.Athlete?.firstBar}
-          />
-        </View>
-      </View>
-    </>
-  );
+      </>
+    );
+  };
 
   return (
     <MyModal

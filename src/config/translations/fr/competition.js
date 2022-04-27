@@ -48,4 +48,6 @@ export default {
   athlete_per_athlete: 'Athlète par athlète',
   poteaux: 'Poteaux',
   wind: 'vent',
+  calcul_place: 'Calcul des places intermédiares',
+  reset_calcul_place: 'Réinitialiser le calcul des places intermédiaires',
 };

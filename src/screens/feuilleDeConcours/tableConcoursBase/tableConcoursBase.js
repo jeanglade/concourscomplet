@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
 import i18n from 'i18next';
 import {colors, styleSheet} from '_config';
-import {MyDataTable, MyButton} from '_components';
+import {MyDataTable, MyButton, MyDropdown} from '_components';
 import moment from 'moment';
 import {TableConcoursLT, TableConcoursSL, TableConcoursSB} from '_screens';
 import Flag from 'react-native-flags';
@@ -29,7 +29,8 @@ const TableConcoursBase = props => {
   );
 
   //Tailles des minimums des colonnes de base (ordre, dossard, athlète, perf et place)
-  const maxWidthBase = 40 + 60 + 200 + 100 + 40;
+  const maxWidthBase =
+    40 + 60 + 200 + 100 + 40 + (props.concoursData?._?.type === 'SB' ? 50 : 0);
   const getNumberOfColumns = () => {
     var res = 1;
     const sizeAvailable = Dimensions.get('window').width - maxWidthBase;
@@ -112,8 +113,7 @@ const TableConcoursBase = props => {
         var i = 1;
         i <
         Object.keys(props.concoursData.EpreuveConcoursComplet.MonteesBarre)
-          .length -
-          1;
+          .length;
         i++
       ) {
         const nameBarre = 'Barre' + (i < 10 ? '0' : '') + i.toString();
@@ -143,7 +143,9 @@ const TableConcoursBase = props => {
       res = getColumnsVisibleSL(props.concoursData?._);
     }
     if (props.concoursData?._?.type === 'SB') {
-      res = getColumnsVisibleSB(barRises);
+      const bars = getMonteeDeBarre();
+      setBarRises(bars);
+      res = getColumnsVisibleSB(bars);
     }
     return res;
   };
@@ -152,8 +154,7 @@ const TableConcoursBase = props => {
     refreshColumnsVisible(),
   );
 
-  const [columnBase, setColumnBase] = useState(() => setColumnFixed());
-  const [columnPerf, setColumnPerf] = useState(() => {
+  const refreshColumnsPerf = () => {
     var res = [];
     if (props.concoursData?._?.type === 'LT') {
       res = getHeaderTableLT();
@@ -162,10 +163,15 @@ const TableConcoursBase = props => {
       res = getHeaderTableSL();
     }
     if (props.concoursData?._?.type === 'SB') {
-      res = getHeaderTableSB(barRises);
+      const bars = getMonteeDeBarre();
+      setBarRises(bars);
+      res = getHeaderTableSB(bars);
     }
     return res;
-  });
+  };
+
+  const [columnBase, setColumnBase] = useState(() => setColumnFixed());
+  const [columnPerf, setColumnPerf] = useState(() => refreshColumnsPerf());
 
   const getHeaders = (index = 0) => {
     const indexFirstColumPerf = 5;
@@ -182,7 +188,9 @@ const TableConcoursBase = props => {
         ? listColumnVisible.slice(index, index + numberOfColumnVisible)
         : listColumnVisible;
 
-    const countPoteaux = props.concoursData?._?.type === 'SB' ? 1 : 0;
+    const countPoteaux = props.concoursData?._?.epreuve.includes('Perche')
+      ? 1
+      : 0;
     return columnBase
       .slice(0, 1 + countDossard)
       .concat(columnBase.slice(2, 3 + countPoteaux))
@@ -199,6 +207,7 @@ const TableConcoursBase = props => {
   //Lors d'un changement de paramètres de la feuille de concours
   useEffect(() => {
     setListColumnVisible(refreshColumnsVisible());
+    setColumnPerf(refreshColumnsPerf());
     setIndexFirstColumnVisible(0);
   }, [props.haveToRefresh]);
 
@@ -243,6 +252,13 @@ const TableConcoursBase = props => {
     resultat.LstEssais[numEssai - 1].SatutPerformance = value;
   };
 
+  const saveData = async () => {
+    await setFile(
+      props.concoursData?._?.id,
+      JSON.stringify(props.concoursData),
+    );
+  };
+
   const Item = ({
     id,
     order,
@@ -271,6 +287,12 @@ const TableConcoursBase = props => {
         });
       }
     }
+    const [poteaux, setPoteaux] = useState(
+      resultat.Athlete?.poteaux !== undefined ? resultat.Athlete.poteaux : '0',
+    );
+    const [bestPerf, setBestPerf] = useState(
+      resultat.Performance !== undefined ? resultat.Performance : '',
+    );
 
     return (
       <>
@@ -283,7 +305,6 @@ const TableConcoursBase = props => {
               <Text style={[styleSheet.text]}>{dossard}</Text>
             </View>
           )}
-
           <View style={[styleSheet.flex3]}>
             <View
               style={{
@@ -348,34 +369,65 @@ const TableConcoursBase = props => {
                         : colors.black,
                   },
                 ]}
-                numberOfLines={1}>
+                numberOfLines={1}
+                ellipsizeMode="tail">
                 {athleteName}
               </Text>
             </View>
             <View style={styleSheet.flexRow}>
-              {props.concoursData?._?.type === 'SB' && (
-                <Text
-                  style={[
-                    styleSheet.text,
-                    {
-                      marginEnd:
-                        resultat?.Athlete?.firstBar !== undefined ? 5 : 0,
-                      fontStyle: 'italic',
-                      color: colors.ffa_blue_dark,
-                    },
-                  ]}
-                  numberOfLines={1}>
-                  {getHauteurToTextValue(resultat?.Athlete?.firstBar)}
-                </Text>
-              )}
-              <Text style={[styleSheet.text]} numberOfLines={1}>
+              <Text
+                style={[styleSheet.text]}
+                numberOfLines={1}
+                ellipsizeMode="tail">
+                {props.concoursData?._?.type === 'SB' && (
+                  <Text
+                    style={[
+                      styleSheet.text,
+                      {
+                        marginEnd:
+                          resultat?.Athlete?.firstBar !== undefined ? 5 : 0,
+                        fontStyle: 'italic',
+                        color: colors.ffa_blue_dark,
+                      },
+                    ]}
+                    numberOfLines={1}>
+                    {getHauteurToTextValue(resultat?.Athlete?.firstBar)}{' '}
+                  </Text>
+                )}
                 {athleteInfo}
               </Text>
             </View>
           </View>
           <>
-            {props.concoursData?._?.type === 'SB' && (
-              <View style={{flex: 1}}></View>
+            {props.concoursData?._?.epreuve.includes('Perche') && (
+              <View style={{flex: 1}}>
+                <MyDropdown
+                  styleContainer={{}}
+                  stylePickerIOS={{width: 200}}
+                  onValueChange={value => {
+                    setPoteaux(value);
+                    props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats[
+                      index
+                    ].Athlete.poteaux = value;
+                    saveData();
+                  }}
+                  data={[
+                    '0',
+                    '10',
+                    '20',
+                    '30',
+                    '40',
+                    '50',
+                    '60',
+                    '70',
+                    '80',
+                  ].map(v => ({
+                    label: v,
+                    value: v,
+                  }))}
+                  selectedValue={poteaux}
+                />
+              </View>
             )}
             {indexFirstColumnVisible !== 0 &&
               columnPerf.length > numberOfColumnVisible && (
@@ -432,9 +484,22 @@ const TableConcoursBase = props => {
           </>
 
           <View style={{width: 100}}>
-            <Text style={styleSheet.text}>
-              {resultat.Perfomance?.toString()}
-            </Text>
+            <MyDropdown
+              styleContainer={{}}
+              stylePickerIOS={{width: 200}}
+              onValueChange={value => {
+                setBestPerf(value);
+                props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats[
+                  index
+                ].Performance = value;
+                saveData();
+              }}
+              data={['DNS', 'DNF', 'NM', 'DQ', bestPerf.toString()].map(v => ({
+                label: v,
+                value: v,
+              }))}
+              selectedValue={bestPerf}
+            />
           </View>
           <View style={{width: 40}}>
             <Text style={styleSheet.text}>{resultat.Place?.toString()}</Text>

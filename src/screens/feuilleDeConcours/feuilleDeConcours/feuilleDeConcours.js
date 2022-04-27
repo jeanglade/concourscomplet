@@ -113,6 +113,8 @@ const FeuilleDeConcours = props => {
     });
   }, [haveToRefresh]);
 
+  const [resetOrder, setResetOrder] = useState(false);
+
   return (
     <View
       style={[
@@ -127,6 +129,30 @@ const FeuilleDeConcours = props => {
           {justifyContent: 'space-between'},
         ]}>
         <View style={[styleSheet.flexRowCenter, styleSheet.flexWrap]}>
+          {concoursData?._?.type !== 'SB' && (
+            <MyButton
+              onPress={() => setResetOrder(oldValue => !oldValue)}
+              styleView={[
+                styleSheet.icon,
+                {
+                  backgroundColor: resetOrder
+                    ? colors.red
+                    : colors.ffa_blue_light,
+                },
+              ]}
+              tooltip={
+                resetOrder
+                  ? i18n.t('competition:reset_calcul_place')
+                  : i18n.t('competition:calcul_place')
+              }
+              content={
+                <Image
+                  style={styleSheet.icon20}
+                  source={require('../../icons/calcul_place.png')}
+                />
+              }
+            />
+          )}
           {concoursData?._?.type === 'SB' && (
             <>
               <ModalBar

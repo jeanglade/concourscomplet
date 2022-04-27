@@ -152,6 +152,7 @@ const ModalAddAthlete = props => {
           type: 'success',
         });
       }
+      props.setHaveToRefresh(oldValue => !oldValue);
       props.setModalVisible(false);
     }
   };
@@ -197,6 +198,7 @@ const ModalAddAthlete = props => {
               1,
             );
             saveContent();
+            props.setHaveToRefresh(oldValue => !oldValue);
             props.setModalVisible(false);
             showMessage({
               message: 'Athlète supprimé',

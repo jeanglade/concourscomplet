@@ -32,8 +32,7 @@ const ModalBar = props => {
         var i = 1;
         i <
         Object.keys(props.concoursData.EpreuveConcoursComplet.MonteesBarre)
-          .length -
-          1;
+          .length;
         i++
       ) {
         const nameBarre = 'Barre' + (i < 10 ? '0' : '') + i.toString();
@@ -244,9 +243,15 @@ const ModalBar = props => {
                   {alignItems: 'center', marginStart: 5},
                 ]}>
                 <MyCheckBox isChecked={isBarrage} setIsChecked={setIsBarrage} />
-                <Text style={[styleSheet.text, {color: colors.ffa_blue_light}]}>
-                  {i18n.t('competition:bar_rise_barrage')}
-                </Text>
+                <MyButton
+                  onPress={() => setIsBarrage(oldValue => !oldValue)}
+                  content={
+                    <Text
+                      style={[styleSheet.text, {color: colors.ffa_blue_light}]}>
+                      {i18n.t('competition:bar_rise_barrage')}
+                    </Text>
+                  }
+                />
               </View>
             )}
           </KeyboardAvoidingView>
