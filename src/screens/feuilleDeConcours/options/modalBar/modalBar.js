@@ -9,9 +9,9 @@ import {
   KeyboardAvoidingView,
   Image,
 } from 'react-native';
-import {setFile} from '../../../utils/myAsyncStorage';
+import {setFile} from '../../../../utils/myAsyncStorage';
 import i18n from 'i18next';
-import {getHauteurToTextValue} from '../../../utils/convertor';
+import {getHauteurToTextValue} from '../../../../utils/convertor';
 
 const ModalBar = props => {
   // Input state
@@ -28,7 +28,14 @@ const ModalBar = props => {
     if (
       props.concoursData.EpreuveConcoursComplet.hasOwnProperty('MonteesBarre')
     ) {
-      for (var i = 1; i < 20; i++) {
+      for (
+        var i = 1;
+        i <
+        Object.keys(props.concoursData.EpreuveConcoursComplet.MonteesBarre)
+          .length -
+          1;
+        i++
+      ) {
         const nameBarre = 'Barre' + (i < 10 ? '0' : '') + i.toString();
         //Si barre existe
         if (
@@ -161,6 +168,7 @@ const ModalBar = props => {
         if (!bool) {
           saveMonteeDeBarre();
           setHasChanged(false);
+          props.refreshConcoursData();
         }
         props.setModalVisible(bool);
       }}

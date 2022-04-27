@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {colors, styleSheet} from '_config';
-import {MyModal, MyDropdown, MyCheckBox} from '_components';
+import {MyModal, MyDropdown, MyCheckBox, MyButton} from '_components';
 import {
   View,
   StyleSheet,
@@ -10,7 +10,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import i18n from 'i18next';
-import {setFile} from '../../../utils/myAsyncStorage';
+import {setFile} from '../../../../utils/myAsyncStorage';
 
 const ModalParam = props => {
   const [nbTries, setNbTries] = useState(props.concoursData?._?.nbTries);
@@ -36,7 +36,7 @@ const ModalParam = props => {
       colFlagVisible: colFlagVisible,
       colWindVisible: colWindVisible,
       colMiddleRankVisible:
-        nbTries !== null ? (nbTries > 3 ? colMiddleRankVisible : false) : false,
+        nbTries !== null ? (nbTries > 4 ? colMiddleRankVisible : false) : false,
     };
     data._ = Object.assign(data._, newValues);
     await setFile(data?._?.id, JSON.stringify(data)).then(() =>
@@ -115,18 +115,28 @@ const ModalParam = props => {
                 isChecked={colFlagVisible}
                 setIsChecked={v => setColFlagVisible(v)}
               />
-              <Text style={styleSheet.text}>
-                {i18n.t('competition:col_flag_visible')}
-              </Text>
+              <MyButton
+                onPress={() => setColFlagVisible(!colFlagVisible)}
+                content={
+                  <Text style={styleSheet.text}>
+                    {i18n.t('competition:col_flag_visible')}
+                  </Text>
+                }
+              />
             </View>
             <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
               <MyCheckBox
                 isChecked={colPerfVisible}
                 setIsChecked={v => setColPerfVisible(v)}
               />
-              <Text style={styleSheet.text}>
-                {i18n.t('competition:col_perf_visible')}
-              </Text>
+              <MyButton
+                onPress={() => setColPerfVisible(!colPerfVisible)}
+                content={
+                  <Text style={styleSheet.text}>
+                    {i18n.t('competition:col_perf_visible')}
+                  </Text>
+                }
+              />
             </View>
             {props.concoursData?._?.type === 'SL' && (
               <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
@@ -134,9 +144,14 @@ const ModalParam = props => {
                   isChecked={colWindVisible}
                   setIsChecked={v => setColWindVisible(v)}
                 />
-                <Text style={styleSheet.text}>
-                  {i18n.t('competition:col_wind_visible')}
-                </Text>
+                <MyButton
+                  onPress={() => setColWindVisible(!colWindVisible)}
+                  content={
+                    <Text style={styleSheet.text}>
+                      {i18n.t('competition:col_wind_visible')}
+                    </Text>
+                  }
+                />
               </View>
             )}
             {props.concoursData?._?.type !== 'SB' &&
@@ -148,9 +163,16 @@ const ModalParam = props => {
                     isChecked={colMiddleRankVisible}
                     setIsChecked={v => setColMiddleRankVisible(v)}
                   />
-                  <Text style={styleSheet.text}>
-                    {i18n.t('competition:col_middle_rank_visible')}
-                  </Text>
+                  <MyButton
+                    onPress={() =>
+                      setColMiddleRankVisible(!colMiddleRankVisible)
+                    }
+                    content={
+                      <Text style={styleSheet.text}>
+                        {i18n.t('competition:col_middle_rank_visible')}
+                      </Text>
+                    }
+                  />
                 </View>
               )}
           </KeyboardAvoidingView>

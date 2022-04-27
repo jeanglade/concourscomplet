@@ -7,7 +7,6 @@ import {Home} from '_screens';
 import {FeuilleDeConcours} from '_screens';
 import {ButtonInfoApp} from '_screens';
 import {colors, styleSheet} from '_config';
-import {MyButton} from '_components';
 
 const Stack = createStackNavigator();
 

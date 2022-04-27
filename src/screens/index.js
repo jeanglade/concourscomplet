@@ -1,24 +1,21 @@
 import Home from './home/home';
 import FeuilleDeConcours from './feuilleDeConcours/feuilleDeConcours';
+import {ButtonInfoApp, OpenJson, TableCompetition} from './home';
+import {ModalOpenJson, ModalChoiceCompetition} from './home/options';
 import {
-  ButtonInfoApp,
-  OpenJson,
-  TableCompetition,
-  ModalOpenJson,
-  ModalChoiceCompetition,
-} from './home';
-import {
+  InfoConcours,
+  TableConcoursBase,
   TableConcoursSB,
-  // TableConcoursSL,
-  // TableConcoursLR,
+  TableConcoursLT,
+  TableConcoursSL,
+} from './feuilleDeConcours';
+import {
   ModalAddAthlete,
   ModalParam,
   ModalBar,
   ModalFirstBar,
-  InfoConcours,
-  Title,
   ModalAthletePerAthlete,
-} from './feuilleDeConcours';
+} from './feuilleDeConcours/options';
 
 export {
   Home,
@@ -28,14 +25,14 @@ export {
   TableCompetition,
   ModalOpenJson,
   ModalChoiceCompetition,
+  TableConcoursBase,
   TableConcoursSB,
-  // TableConcoursSL,
-  // TableConcoursLR,
+  TableConcoursLT,
+  TableConcoursSL,
+  InfoConcours,
   ModalAddAthlete,
   ModalParam,
   ModalBar,
-  InfoConcours,
-  Title,
   ModalFirstBar,
   ModalAthletePerAthlete,
 };

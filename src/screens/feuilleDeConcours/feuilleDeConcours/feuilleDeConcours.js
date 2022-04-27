@@ -1,20 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, Image} from 'react-native';
+import {View, Image, Text} from 'react-native';
 import i18n from 'i18next';
+import {MyButton} from '_components';
 import {
   ModalAddAthlete,
-  TableConcoursSB,
-  TableConcoursSL,
-  TableConcoursLR,
+  TableConcoursBase,
   ModalParam,
   InfoConcours,
   ModalBar,
   ModalFirstBar,
   ModalAthletePerAthlete,
-  Title,
 } from '_screens';
-import {styleSheet} from '_config';
+import {styleSheet, colors} from '_config';
 import {getFile} from '../../../utils/myAsyncStorage';
+import epreuves from '../../../icons/epreuves/epreuves';
 
 const FeuilleDeConcours = props => {
   //Initialisation des données du concours
@@ -45,26 +44,74 @@ const FeuilleDeConcours = props => {
   const [modalBar, setModalBar] = useState(false);
   const [modalFirstBar, setModalFirstBar] = useState(false);
   const [modalAthletePerAthlete, setModalAthletePerAthlete] = useState(false);
+  const [haveToRefresh, setHaveToRefresh] = useState(false);
 
   const refreshConcoursData = async () => {
     const id = concoursData?._?.id;
     const value = await getFile(id);
     setConcoursData(JSON.parse(value));
+    setHaveToRefresh(!haveToRefresh);
   };
 
   useEffect(() => {
     props.navigation.setOptions({
       header: ({}) => {
         return (
-          <Title
-            concoursData={concoursData}
-            navigation={props.navigation}
-            refreshAndGoBack={props.route.params.refreshAndGoBack}
-          />
+          <View style={{backgroundColor: colors.ffa_blue_light}}>
+            <View
+              style={[
+                styleSheet.flexRow,
+                styleSheet.flexWrap,
+                {marginStart: 10, alignItems: 'center'},
+              ]}>
+              <MyButton
+                onPress={() =>
+                  props.route.params.refreshAndGoBack(concoursData)
+                }
+                styleView={[{marginHorizontal: 5}]}
+                content={
+                  <Image
+                    style={styleSheet.icon20}
+                    source={require('../icons/back.png')}
+                  />
+                }
+              />
+              <Image
+                style={[styleSheet.icon30, {marginHorizontal: 5}]}
+                source={epreuves[concoursData._?.imageEpreuve.slice(0, -5)]}
+              />
+              <Text
+                style={[
+                  styleSheet.textTitle,
+                  styleSheet.textWhite,
+                  {marginEnd: 10},
+                ]}>
+                {concoursData._?.epreuve} - {concoursData._?.dateInfo} -{' '}
+                {concoursData._?.nbAthlete}{' '}
+                {i18n.t('competition:athletes').toLocaleLowerCase()}
+              </Text>
+              <View
+                style={{
+                  borderRadius: 15,
+                  padding: 3,
+                  paddingHorizontal: 10,
+                  backgroundColor: concoursData._?.statutColor,
+                }}>
+                <Text
+                  style={[
+                    styleSheet.text,
+                    styleSheet.textCenter,
+                    styleSheet.textWhite,
+                  ]}>
+                  {concoursData._?.statut}
+                </Text>
+              </View>
+            </View>
+          </View>
         );
       },
     });
-  }, []);
+  }, [haveToRefresh]);
 
   return (
     <View
@@ -86,11 +133,13 @@ const FeuilleDeConcours = props => {
                 setModalVisible={setModalBar}
                 modalVisible={modalBar}
                 concoursData={concoursData}
+                refreshConcoursData={refreshConcoursData}
               />
               <ModalFirstBar
                 setModalVisible={setModalFirstBar}
                 modalVisible={modalFirstBar}
                 concoursData={concoursData}
+                refreshConcoursData={refreshConcoursData}
               />
             </>
           )}
@@ -110,6 +159,7 @@ const FeuilleDeConcours = props => {
             fieldsAddAthtlete={fieldsAddAthtlete}
             setFieldsAddAthtlete={setFieldsAddAthtlete}
             concoursData={concoursData}
+            setHaveToRefresh={setHaveToRefresh}
           />
           <ModalParam
             setModalVisible={setModalParam}
@@ -120,33 +170,14 @@ const FeuilleDeConcours = props => {
           />
         </View>
       </View>
-      {concoursData?._?.type === 'SB' && (
-        <TableConcoursSB
-          concoursData={concoursData}
-          setConcoursData={setConcoursData}
-          setModalAddAthlete={setModalAddAthlete}
-          setFieldsAddAthtlete={setFieldsAddAthtlete}
-          fieldsAddAthtlete={fieldsAddAthtlete}
-        />
-      )}
-      {concoursData?._?.type === 'SL' && (
-        <TableConcoursSB
-          concoursData={concoursData}
-          setConcoursData={setConcoursData}
-          setModalAddAthlete={setModalAddAthlete}
-          setFieldsAddAthtlete={setFieldsAddAthtlete}
-          fieldsAddAthtlete={fieldsAddAthtlete}
-        />
-      )}
-      {concoursData?._?.type === 'LT' && (
-        <TableConcoursSB
-          concoursData={concoursData}
-          setConcoursData={setConcoursData}
-          setModalAddAthlete={setModalAddAthlete}
-          setFieldsAddAthtlete={setFieldsAddAthtlete}
-          fieldsAddAthtlete={fieldsAddAthtlete}
-        />
-      )}
+      <TableConcoursBase
+        concoursData={concoursData}
+        setConcoursData={setConcoursData}
+        setModalAddAthlete={setModalAddAthlete}
+        setFieldsAddAthtlete={setFieldsAddAthtlete}
+        fieldsAddAthtlete={fieldsAddAthtlete}
+        haveToRefresh={haveToRefresh}
+      />
     </View>
   );
 };

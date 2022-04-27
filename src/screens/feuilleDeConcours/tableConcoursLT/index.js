@@ -1,1 +1,1 @@
-// export {default} from './tableConcoursLR';
+export {default} from './tableConcoursLT';

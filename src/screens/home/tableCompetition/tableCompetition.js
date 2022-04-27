@@ -159,22 +159,24 @@ const TableCompetition = props => {
                 />
               }
             />
-            {((item._?.statut !== i18n.t('common:in_progress') &&
+            {
+              /*((item._?.statut !== i18n.t('common:in_progress') &&
               item._?.statut !== i18n.t('common:finished')) ||
-              moment().diff(moment(item?._?.date), 'days') > 3) && (
-              <MyButton
-                styleView={[styleSheet.icon, styleSheet.backRed]}
-                onPress={() =>
-                  alertDeleteConcours(item?._?.id, item?._?.epreuve)
-                }
-                content={
-                  <Image
-                    style={styleSheet.icon20}
-                    source={require('../icons/delete.png')}
-                  />
-                }
-              />
-            )}
+              moment().diff(moment(item?._?.date), 'days') > 3)*/ true && (
+                <MyButton
+                  styleView={[styleSheet.icon, styleSheet.backRed]}
+                  onPress={() =>
+                    alertDeleteConcours(item?._?.id, item?._?.epreuve)
+                  }
+                  content={
+                    <Image
+                      style={styleSheet.icon20}
+                      source={require('../icons/delete.png')}
+                    />
+                  }
+                />
+              )
+            }
           </View>
         </View>
       </>

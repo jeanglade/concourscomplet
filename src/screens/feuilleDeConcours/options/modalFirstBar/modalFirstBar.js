@@ -10,8 +10,8 @@ import {
   Image,
 } from 'react-native';
 import i18n from 'i18next';
-import {getHauteurToTextValue} from '../../../utils/convertor';
-import {setFile} from '../../../utils/myAsyncStorage';
+import {getHauteurToTextValue} from '../../../../utils/convertor';
+import {setFile} from '../../../../utils/myAsyncStorage';
 
 const ModalFirstBar = props => {
   // If barres changed or not (to avoid unless saves)
@@ -49,6 +49,7 @@ const ModalFirstBar = props => {
         props.concoursData?._?.id.toString(),
         JSON.stringify(props.concoursData),
       );
+      props.refreshConcoursData();
     }
   };
 

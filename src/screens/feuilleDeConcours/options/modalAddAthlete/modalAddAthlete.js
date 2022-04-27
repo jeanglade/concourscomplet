@@ -22,9 +22,9 @@ import moment from 'moment';
 import i18n from 'i18next';
 import {Formik} from 'formik';
 import {showMessage} from 'react-native-flash-message';
-import {ValidatorsAddAthlete} from '../../utils/validators';
-import {setFile} from '../../../utils/myAsyncStorage';
-import {getStatusColor} from '../../../utils/convertor';
+import {ValidatorsAddAthlete} from '../../../utils/validators';
+import {setFile} from '../../../../utils/myAsyncStorage';
+import {getStatusColor} from '../../../../utils/convertor';
 
 const ModalAddAthlete = props => {
   const setDateFormat = date => {
@@ -216,7 +216,12 @@ const ModalAddAthlete = props => {
   return (
     <MyModal
       modalVisible={props.modalVisible}
-      setModalVisible={props.setModalVisible}
+      setModalVisible={bool => {
+        if (!bool) {
+          props.setHaveToRefresh(oldValue => !oldValue);
+        }
+        props.setModalVisible(bool);
+      }}
       buttonStyleView={[styleSheet.icon, {backgroundColor: colors.muted}]}
       minWidth={Platform.OS === 'windows' ? 300 : 0}
       buttonTooltip={i18n.t('competition:add_an_athlete')}

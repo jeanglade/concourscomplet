@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import i18n from 'i18next';
 import moment from 'moment';
-import {SafeAreaView, View} from 'react-native';
+import {SafeAreaView, View, Text} from 'react-native';
 import {
   getAllKeys,
   getFile,

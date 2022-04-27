@@ -46,4 +46,6 @@ export default {
   visibility: 'Visibilité',
   first_bar_rise: 'Première barre',
   athlete_per_athlete: 'Athlète par athlète',
+  poteaux: 'Poteaux',
+  wind: 'vent',
 };

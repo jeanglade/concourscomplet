@@ -4,10 +4,12 @@ import i18n from 'i18next';
 export const getHauteurToTextValue = value => {
   var res = value;
   if (res !== undefined && res !== null) {
-    if (value.toString().length === 2) {
-      res = '0' + value.toString();
+    if (parseInt(value)) {
+      if (value.toString().length === 2) {
+        res = '0' + value.toString();
+      }
+      res = value.toString()[0] + 'm' + value.toString().slice(1);
     }
-    res = value.toString()[0] + 'm' + value.toString().slice(1);
   }
   return res;
 };
