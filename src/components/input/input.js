@@ -27,6 +27,7 @@ const MyInput = props => {
         multiline={false}
         maxLength={props.maxLength}
         onSubmitEditing={props.onSubmitEditing}
+        textAlign={props.textAlign}
       />
 
       {props.touched && props.error && (

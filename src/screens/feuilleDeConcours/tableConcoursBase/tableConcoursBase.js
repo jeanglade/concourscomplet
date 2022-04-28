@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  Platform,
+} from 'react-native';
 import i18n from 'i18next';
 import {colors, styleSheet} from '_config';
 import {MyDataTable, MyButton, MyDropdown} from '_components';
@@ -7,10 +14,11 @@ import moment from 'moment';
 import {TableConcoursLT, TableConcoursSL, TableConcoursSB} from '_screens';
 import Flag from 'react-native-flags';
 import {getHauteurToTextValue} from '../../../utils/convertor';
-import {setFile} from '../../../utils/myAsyncStorage';
+import {setFile, getFile} from '../../../utils/myAsyncStorage';
 import {
   getHeaderTableLT,
   getColumnsVisibleLT,
+  calculBestPlaceLT,
 } from '../tableConcoursLT/tableConcoursLT';
 import {
   getHeaderTableSL,
@@ -19,6 +27,7 @@ import {
 import {
   getHeaderTableSB,
   getColumnsVisibleSB,
+  calculBestPlaceSB,
 } from '../tableConcoursSB/tableConcoursSB';
 
 const TableConcoursBase = props => {
@@ -30,12 +39,12 @@ const TableConcoursBase = props => {
 
   //Tailles des minimums des colonnes de base (ordre, dossard, athlète, perf et place)
   const maxWidthBase =
-    40 + 60 + 200 + 100 + 40 + (props.concoursData?._?.type === 'SB' ? 50 : 0);
+    40 + 60 + 200 + 100 + 40 + (props.concoursData?._?.type === 'SB' ? 80 : 0);
   const getNumberOfColumns = () => {
     var res = 1;
     const sizeAvailable = Dimensions.get('window').width - maxWidthBase;
     if (sizeAvailable > 0) {
-      res = Math.floor(sizeAvailable / 100); //100 avg size of cell in table
+      res = Math.floor(sizeAvailable / 75); //75 size of cell in table
     }
     return res;
   };
@@ -54,12 +63,12 @@ const TableConcoursBase = props => {
       },
       {
         type: 'text',
-        flex: 3,
+        width: 250,
         text: i18n.t('competition:athlete'),
       },
       {
         type: 'text',
-        flex: 1,
+        width: Platform.OS === 'windows' ? 80 : 100,
         text: i18n.t('competition:poteaux'),
       },
       {
@@ -145,7 +154,7 @@ const TableConcoursBase = props => {
     if (props.concoursData?._?.type === 'SB') {
       const bars = getMonteeDeBarre();
       setBarRises(bars);
-      res = getColumnsVisibleSB(bars);
+      res = getColumnsVisibleSB(bars, props.concoursData?._?.colPerfVisible);
     }
     return res;
   };
@@ -170,8 +179,28 @@ const TableConcoursBase = props => {
     return res;
   };
 
+  const refreshPlace = (nbTries = 6) => {
+    var res = [];
+    if (
+      props.concoursData?._?.type === 'LT' ||
+      props.concoursData?._?.type === 'SL'
+    ) {
+      res = calculBestPlaceLT(
+        props.concoursData.EpreuveConcoursComplet?.TourConcoursComplet
+          ?.LstSerieConcoursComplet[0]?.LstResultats,
+        nbTries,
+      );
+    }
+    if (props.concoursData?._?.type === 'SB') {
+      res = calculBestPlaceSB();
+    }
+    return res;
+  };
+
   const [columnBase, setColumnBase] = useState(() => setColumnFixed());
   const [columnPerf, setColumnPerf] = useState(() => refreshColumnsPerf());
+  const [middlePlace, setMiddlePlace] = useState(() => refreshPlace(3));
+  const [haveToCalculPlace, setHaveToCalculPlace] = useState(false);
 
   const getHeaders = (index = 0) => {
     const indexFirstColumPerf = 5;
@@ -218,8 +247,13 @@ const TableConcoursBase = props => {
   useEffect(() => {
     setHeadersTable(getHeaders(indexFirstColumnVisible));
   }, [indexFirstColumnVisible]);
+
+  useEffect(() => {
+    setMiddlePlace(refreshPlace(3));
+  }, [haveToCalculPlace]);
+
   const [athleteEnCours, setAthleteEnCours] = useState(0);
-  const [essaiEnCours, setEssaiEnCours] = useState(1);
+  const [essaiEnCours, setEssaiEnCours] = useState(0);
   /*const serie =
     props.concoursData.EpreuveConcoursComplet.TourConcoursComplet
       .LstSerieConcoursComplet[0];
@@ -246,8 +280,6 @@ const TableConcoursBase = props => {
   };
 
   const onChangeTextValue = (resultat, numEssai, value) => {
-    resultat.LstEssais[numEssai - 1].TextValeurPerformance =
-      getHauteurToTextValue(value);
     resultat.LstEssais[numEssai - 1].ValeurPerformance = value;
     resultat.LstEssais[numEssai - 1].SatutPerformance = value;
   };
@@ -282,7 +314,6 @@ const TableConcoursBase = props => {
           GuidEssai: '',
           NumEssai: i + 1,
           ValeurPerformance: null,
-          TextValeurPerformance: null,
           SatutPerformance: null,
         });
       }
@@ -291,7 +322,7 @@ const TableConcoursBase = props => {
       resultat.Athlete?.poteaux !== undefined ? resultat.Athlete.poteaux : '0',
     );
     const [bestPerf, setBestPerf] = useState(
-      resultat.Performance !== undefined ? resultat.Performance : '',
+      resultat.Performance !== undefined ? resultat.Performance : 'DNS',
     );
 
     return (
@@ -305,7 +336,7 @@ const TableConcoursBase = props => {
               <Text style={[styleSheet.text]}>{dossard}</Text>
             </View>
           )}
-          <View style={[styleSheet.flex3]}>
+          <View style={[{width: 250}]}>
             <View
               style={{
                 flexDirection: 'row',
@@ -374,33 +405,37 @@ const TableConcoursBase = props => {
                 {athleteName}
               </Text>
             </View>
-            <View style={styleSheet.flexRow}>
+            <View
+              style={[
+                styleSheet.flexRowCenter,
+                {justifyContent: 'space-between'},
+              ]}>
               <Text
                 style={[styleSheet.text]}
                 numberOfLines={1}
                 ellipsizeMode="tail">
-                {props.concoursData?._?.type === 'SB' && (
-                  <Text
-                    style={[
-                      styleSheet.text,
-                      {
-                        marginEnd:
-                          resultat?.Athlete?.firstBar !== undefined ? 5 : 0,
-                        fontStyle: 'italic',
-                        color: colors.ffa_blue_dark,
-                      },
-                    ]}
-                    numberOfLines={1}>
-                    {getHauteurToTextValue(resultat?.Athlete?.firstBar)}{' '}
-                  </Text>
-                )}
                 {athleteInfo}
               </Text>
+              {props.concoursData?._?.type === 'SB' && (
+                <Text
+                  numberOfLines={1}
+                  style={[
+                    styleSheet.text,
+                    {
+                      paddingEnd:
+                        resultat?.Athlete?.firstBar !== undefined ? 10 : 0,
+                      fontStyle: 'italic',
+                      color: colors.ffa_blue_dark,
+                    },
+                  ]}>
+                  {getHauteurToTextValue(resultat?.Athlete?.firstBar)}{' '}
+                </Text>
+              )}
             </View>
           </View>
           <>
             {props.concoursData?._?.epreuve.includes('Perche') && (
-              <View style={{flex: 1}}>
+              <View style={{width: Platform.OS === 'windows' ? 80 : 100}}>
                 <MyDropdown
                   styleContainer={{}}
                   stylePickerIOS={{width: 200}}
@@ -445,11 +480,14 @@ const TableConcoursBase = props => {
                 athleteEnCours={athleteEnCours}
                 onChangeTextValue={onChangeTextValue}
                 saveEssai={saveEssai}
+                setConcoursData={props.setConcoursData}
+                setBestPerf={setBestPerf}
+                bestPerf={bestPerf}
               />
             )}
             {props.concoursData?._?.type === 'SL' && (
               <TableConcoursSL
-                index={index}
+                ndex={index}
                 resultat={resultat}
                 athleteEnCours={athleteEnCours}
                 onChangeTextValue={onChangeTextValue}
@@ -459,6 +497,12 @@ const TableConcoursBase = props => {
                 indexFirstColumnVisible={indexFirstColumnVisible}
                 numberOfColumnVisible={numberOfColumnVisible}
                 listColumnVisible={listColumnVisible}
+                setConcoursData={props.setConcoursData}
+                setEssaiEnCours={setEssaiEnCours}
+                setBestPerf={setBestPerf}
+                bestPerf={bestPerf}
+                middlePlace={middlePlace}
+                setHaveToCalculPlace={setHaveToCalculPlace}
               />
             )}
             {props.concoursData?._?.type === 'LT' && (
@@ -473,6 +517,12 @@ const TableConcoursBase = props => {
                 indexFirstColumnVisible={indexFirstColumnVisible}
                 numberOfColumnVisible={numberOfColumnVisible}
                 listColumnVisible={listColumnVisible}
+                setConcoursData={props.setConcoursData}
+                setEssaiEnCours={setEssaiEnCours}
+                setBestPerf={setBestPerf}
+                bestPerf={bestPerf}
+                middlePlace={middlePlace}
+                setHaveToCalculPlace={setHaveToCalculPlace}
               />
             )}
 
@@ -483,7 +533,7 @@ const TableConcoursBase = props => {
               )}
           </>
 
-          <View style={{width: 100}}>
+          <View style={{width: 105}}>
             <MyDropdown
               styleContainer={{}}
               stylePickerIOS={{width: 200}}
@@ -494,7 +544,7 @@ const TableConcoursBase = props => {
                 ].Performance = value;
                 saveData();
               }}
-              data={['DNS', 'DNF', 'NM', 'DQ', bestPerf.toString()].map(v => ({
+              data={['DNS', 'NM', 'DQ', '', bestPerf?.toString()].map(v => ({
                 label: v,
                 value: v,
               }))}
@@ -566,18 +616,12 @@ const styles = StyleSheet.create({
   },
   item: {
     flexDirection: 'row',
+    justifyContent: 'flex-start',
     backgroundColor: colors.gray_light,
     margin: 1,
     paddingHorizontal: 10,
     alignItems: 'center',
     paddingVertical: 5,
-  },
-  textinput: {
-    height: 35,
-    marginRight: 5,
-    color: colors.black,
-    borderColor: colors.muted,
-    borderWidth: 1,
   },
 });
 

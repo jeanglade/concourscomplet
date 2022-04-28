@@ -86,9 +86,7 @@ const FeuilleDeConcours = props => {
                   styleSheet.textWhite,
                   {marginEnd: 10},
                 ]}>
-                {concoursData._?.epreuve} - {concoursData._?.dateInfo} -{' '}
-                {concoursData._?.nbAthlete}{' '}
-                {i18n.t('competition:athletes').toLocaleLowerCase()}
+                {concoursData._?.epreuve} - {concoursData._?.dateInfo}
               </Text>
               <View
                 style={{
@@ -120,7 +118,12 @@ const FeuilleDeConcours = props => {
       style={[
         styleSheet.backWhite,
         styleSheet.flex1,
-        {padding: 10, paddingHorizontal: 20},
+        {
+          padding: 10,
+          paddingHorizontal: 20,
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+        },
       ]}>
       <View
         style={[
@@ -204,6 +207,14 @@ const FeuilleDeConcours = props => {
         fieldsAddAthtlete={fieldsAddAthtlete}
         haveToRefresh={haveToRefresh}
       />
+      <View style={[{paddingTop: 5, marginHorizontal: 5}]}>
+        <Text style={[styleSheet.text]} numberOfLines={1} ellipsizeMode="tail">
+          {concoursData?._?.type === 'SB'
+            ? '« O » réussi'
+            : '« 123 » perf. en cm'}
+          {'  « X » échec  « - » impasse  « r » retiré'}
+        </Text>
+      </View>
     </View>
   );
 };

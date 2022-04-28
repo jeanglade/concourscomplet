@@ -61,10 +61,13 @@ const ModalFirstBar = props => {
 
   const Item = ({item, index}) => {
     const [firstB, setFirstB] = useState(parseInt(item.Athlete?.firstBar));
+    const [poteaux, setPoteaux] = useState(
+      item.Athlete?.poteaux !== undefined ? item.Athlete.poteaux : '0',
+    );
     return (
       <>
         <View style={styles.item}>
-          <View style={styleSheet.flex2}>
+          <View style={styleSheet.flex1}>
             <Text style={[styleSheet.text]}>
               {item.Athlete?.Prenom} {item.Athlete?.Nom}
             </Text>
@@ -85,6 +88,27 @@ const ModalFirstBar = props => {
               selectedValue={firstB}
             />
           </View>
+          {props.concoursData?._?.epreuve.includes('Perche') && (
+            <View style={{width: Platform.OS === 'windows' ? 80 : 100}}>
+              <MyDropdown
+                styleContainer={{}}
+                stylePickerIOS={{width: 200}}
+                onValueChange={value => {
+                  setPoteaux(value);
+                  props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats[
+                    index
+                  ].Athlete.poteaux = value;
+                }}
+                data={['0', '10', '20', '30', '40', '50', '60', '70', '80'].map(
+                  v => ({
+                    label: v,
+                    value: v,
+                  }),
+                )}
+                selectedValue={poteaux}
+              />
+            </View>
+          )}
         </View>
       </>
     );
@@ -130,11 +154,27 @@ const ModalFirstBar = props => {
                 headerTable={[
                   {
                     type: 'text',
-                    flex: 2,
+                    flex: 1,
                     text: '',
                   },
-                  {type: 'text', flex: 1, text: ''},
-                ]}
+                  {
+                    type: 'text',
+                    width: 130,
+                    text: props.concoursData?._?.epreuve.includes('Perche')
+                      ? i18n.t('competition:first_bar_rise')
+                      : '',
+                  },
+                ].concat(
+                  props.concoursData?._?.epreuve.includes('Perche')
+                    ? [
+                        {
+                          type: 'text',
+                          width: Platform.OS === 'windows' ? 65 : 100,
+                          text: i18n.t('competition:poteaux'),
+                        },
+                      ]
+                    : [],
+                )}
                 tableData={
                   props.concoursData?.EpreuveConcoursComplet
                     ?.TourConcoursComplet?.LstSerieConcoursComplet[0]

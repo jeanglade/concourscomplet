@@ -1,9 +1,33 @@
 import React from 'react';
-import {View, StyleSheet, Platform, Text} from 'react-native';
+import {View, StyleSheet, Platform, Text, useColorScheme} from 'react-native';
 import {Picker, PickerIOS} from '@react-native-picker/picker';
 import {colors, styleSheet} from '_config';
 
 const MyDropdown = props => {
+  const colorScheme = useColorScheme();
+
+  const styles = StyleSheet.create({
+    view: {
+      borderWidth: 1,
+      borderColor: colors.muted,
+      marginHorizontal: 5,
+      borderRadius: Platform.OS === 'ios' ? 50 : 3,
+      backgroundColor: Platform.OS === 'windows' ? colors.muted : colors.white,
+    },
+    dropdown: {
+      backgroundColor: Platform.OS === 'windows' ? colors.muted : colors.white,
+    },
+    dropdownItem: {
+      color:
+        Platform.OS === 'windows' && colorScheme === 'dark'
+          ? colors.white
+          : colors.black,
+    },
+    dropdownIOS: {},
+    item: {
+      fontSize: 14,
+    },
+  });
   return (
     <>
       <View style={[styles.view, props.styleContainer]}>
@@ -57,25 +81,5 @@ const MyDropdown = props => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  view: {
-    borderWidth: 1,
-    borderColor: colors.muted,
-    marginHorizontal: 5,
-    borderRadius: Platform.OS === 'ios' ? 50 : 3,
-    backgroundColor: Platform.OS === 'windows' ? colors.muted : colors.white,
-  },
-  dropdown: {
-    backgroundColor: Platform.OS === 'windows' ? colors.muted : colors.white,
-  },
-  dropdownItem: {
-    color: Platform.OS === 'windows' ? colors.white : colors.black,
-  },
-  dropdownIOS: {},
-  item: {
-    fontSize: 14,
-  },
-});
 
 export default MyDropdown;

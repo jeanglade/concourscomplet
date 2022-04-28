@@ -12,7 +12,7 @@ const ButtonInfoApp = () => {
     <>
       <MyButton
         onPress={() => {
-          clear();
+          //clear();
           setModalVisible(!modalVisible);
         }}
         content={

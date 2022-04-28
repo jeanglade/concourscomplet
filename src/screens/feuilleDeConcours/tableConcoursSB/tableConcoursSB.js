@@ -9,15 +9,19 @@ export const getHeaderTableSB = bars => {
   bars.forEach(bar => {
     res.push({
       type: 'text',
-      flex: 1,
+      width: 75,
       text: getHauteurToTextValue(bar.toString()),
     });
   });
   return res;
 };
 
-export const getColumnsVisibleSB = bars => {
-  return bars?.map((bar, index) => index);
+export const getColumnsVisibleSB = (bars, columnPerfVisible) => {
+  return columnPerfVisible ? bars?.map((bar, index) => index) : [];
+};
+
+export const calculBestPlaceSB = (resultats, nbTries) => {
+  return null;
 };
 
 const TableConcoursSB = props => {
@@ -36,19 +40,20 @@ const TableConcoursSB = props => {
   const count = props.bars.length;
   for (var i = 0; i < count; i++) {
     lstTextInput.push(
-      <View style={[styleSheet.flex1]}>
+      <View style={{width: 70, marginEnd: 5}}>
         <MyInput
           style={[
             {
               backgroundColor:
-                props.resultat.LstEssais[i]?.ValeurPerformance !== null ||
-                i + 1 !== props.essaiEnCours
-                  ? colors.gray_light
-                  : colors.white,
+                props.resultat.Athlete?.firstBar !== undefined &&
+                parseInt(props.resultat.Athlete?.firstBar) === props.bars[i]
+                  ? colors.white
+                  : colors.gray_light,
               borderColor:
                 props.athleteEnCours === props.index
                   ? colors.red
                   : colors.muted,
+              width: 70,
             },
           ]}
           onChange={value => {
@@ -65,7 +70,19 @@ const TableConcoursSB = props => {
   return (
     <>
       {props.bars?.map((bar, index) => {
-        return <>{verifyVisibility(lstTextInput[index], index)}</>;
+        return (
+          <>
+            {verifyVisibility(
+              props.resultat.Athlete?.firstBar === undefined ||
+                bar >= props.resultat.Athlete?.firstBar ? (
+                lstTextInput[index]
+              ) : (
+                <View style={{width: 75}}></View>
+              ),
+              index,
+            )}
+          </>
+        );
       })}
     </>
   );
