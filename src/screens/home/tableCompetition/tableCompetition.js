@@ -161,7 +161,7 @@ const TableCompetition = props => {
             />
             {((item._?.statut !== i18n.t('common:in_progress') &&
               item._?.statut !== i18n.t('common:finished')) ||
-              moment().diff(moment(item?._?.date), 'days') > 3) /* true*/ && (
+              moment().diff(moment(item?._?.date), 'days') > 3) && (
               <MyButton
                 styleView={[styleSheet.icon, styleSheet.backRed]}
                 onPress={() =>

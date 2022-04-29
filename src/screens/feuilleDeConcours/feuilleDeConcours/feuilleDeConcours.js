@@ -21,6 +21,7 @@ const FeuilleDeConcours = props => {
   const [concoursData, setConcoursData] = useState(JSON.parse(concoursItem));
 
   //Initialisation des variables Option Add an athlete
+  //Variables nécessaires pour <ModalAddAthlete> (ET <TableConcoursBase> pour reouvrir la modal)
   const [modalAddAthlete, setModalAddAthlete] = useState(false);
   const initFormAddAthlete = {
     categories: concoursData?.LstCategoriesAthlete,
@@ -37,22 +38,17 @@ const FeuilleDeConcours = props => {
   const [fieldsAddAthtlete, setFieldsAddAthtlete] =
     useState(initFormAddAthlete);
 
-  //Initalisatoin des variables Options Paramètres
-  const [modalParam, setModalParam] = useState(false);
-
-  //Initalisatoin des variables Options Montées de barre
-  const [modalBar, setModalBar] = useState(false);
-  const [modalFirstBar, setModalFirstBar] = useState(false);
-  const [modalAthletePerAthlete, setModalAthletePerAthlete] = useState(false);
-  const [haveToRefresh, setHaveToRefresh] = useState(false);
-
+  //concoursData = données du concours
+  //Toutes les saisies utilisateur changent cette variable et la sauvegarde avec asyncStorage
+  //Met à jour concoursData depuis la sauvegarde
   const refreshConcoursData = async () => {
-    const id = concoursData?._?.id;
-    const value = await getFile(id);
+    const value = await getFile(concoursData?._?.id);
     setConcoursData(JSON.parse(value));
-    setHaveToRefresh(!haveToRefresh);
+    setHaveToRefreshTable(oldValue => !oldValue);
   };
 
+  //Avec le useEffect permet de mettre à jour le titre pour le status du concours et le tableau <TableConcoursBase>
+  const [haveToRefreshTable, setHaveToRefreshTable] = useState(false);
   useEffect(() => {
     props.navigation.setOptions({
       header: ({}) => {
@@ -109,8 +105,9 @@ const FeuilleDeConcours = props => {
         );
       },
     });
-  }, [haveToRefresh]);
+  }, [haveToRefreshTable]);
 
+  //TODO gestion des calculs de place intermidiaire (sauvegarde de l'ordre initiale)
   const [resetOrder, setResetOrder] = useState(false);
 
   return (
@@ -159,14 +156,10 @@ const FeuilleDeConcours = props => {
           {concoursData?._?.type === 'SB' && (
             <>
               <ModalBar
-                setModalVisible={setModalBar}
-                modalVisible={modalBar}
                 concoursData={concoursData}
                 refreshConcoursData={refreshConcoursData}
               />
               <ModalFirstBar
-                setModalVisible={setModalFirstBar}
-                modalVisible={modalFirstBar}
                 concoursData={concoursData}
                 refreshConcoursData={refreshConcoursData}
               />
@@ -175,24 +168,17 @@ const FeuilleDeConcours = props => {
           <InfoConcours concoursData={concoursData} />
         </View>
         <View style={styleSheet.flexRowCenter}>
-          <ModalAthletePerAthlete
-            setModalVisible={setModalAthletePerAthlete}
-            modalVisible={modalAthletePerAthlete}
-          />
+          <ModalAthletePerAthlete refreshConcoursData={refreshConcoursData} />
           <ModalAddAthlete
+            initFormAddAthlete={initFormAddAthlete}
             modalVisible={modalAddAthlete}
-            setModalVisible={b => {
-              setFieldsAddAthtlete(initFormAddAthlete);
-              setModalAddAthlete(b);
-            }}
+            setModalVisible={setModalAddAthlete}
             fieldsAddAthtlete={fieldsAddAthtlete}
             setFieldsAddAthtlete={setFieldsAddAthtlete}
             concoursData={concoursData}
-            setHaveToRefresh={setHaveToRefresh}
+            refreshConcoursData={refreshConcoursData}
           />
           <ModalParam
-            setModalVisible={setModalParam}
-            modalVisible={modalParam}
             concoursData={concoursData}
             setConcoursData={setConcoursData}
             refreshConcoursData={refreshConcoursData}
@@ -200,12 +186,17 @@ const FeuilleDeConcours = props => {
         </View>
       </View>
       <TableConcoursBase
+        //Information du concours
         concoursData={concoursData}
         setConcoursData={setConcoursData}
+        //Pour reouvrir le modalAddAthlete avec les informations de l'athlète
         setModalAddAthlete={setModalAddAthlete}
-        setFieldsAddAthtlete={setFieldsAddAthtlete}
+        //Champs modalAddAthlete
         fieldsAddAthtlete={fieldsAddAthtlete}
-        haveToRefresh={haveToRefresh}
+        setFieldsAddAthtlete={setFieldsAddAthtlete}
+        //Pour refresh le tableau
+        haveToRefreshTable={haveToRefreshTable}
+        refreshConcoursData={refreshConcoursData}
       />
       <View style={[{paddingTop: 5, marginHorizontal: 5}]}>
         <Text style={[styleSheet.text]} numberOfLines={1} ellipsizeMode="tail">

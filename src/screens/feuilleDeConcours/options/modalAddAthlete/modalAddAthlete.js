@@ -17,28 +17,25 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import moment from 'moment';
 
 import i18n from 'i18next';
 import {Formik} from 'formik';
 import {showMessage} from 'react-native-flash-message';
 import {ValidatorsAddAthlete} from '../../../utils/validators';
 import {setFile} from '../../../../utils/myAsyncStorage';
-import {getStatusColor} from '../../../../utils/convertor';
+import {setDateFormat, setConcoursStatus} from '../../../../utils/convertor';
 
 const ModalAddAthlete = props => {
-  const setDateFormat = date => {
-    return moment(date, moment.ISO_8601).format('DD/MM/YYYY');
-  };
-
+  // Chaque athlete a des resultats avec un id
   const getLastIdResultat = () => {
     return Math.max(
       ...props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.map(
-        athlete => parseInt(athlete.$id),
+        resultat => parseInt(resultat.$id),
       ),
     );
   };
 
+  // Chauqe athlete a un NumCouloir qui correspond a l ordre de passage
   const getLastNumCouloir = () => {
     return Math.max(
       ...props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.map(
@@ -47,6 +44,7 @@ const ModalAddAthlete = props => {
     );
   };
 
+  //Comparaison pour ne pas ajouter deux fois le meme athlete
   const isAthleteExist = athlete => {
     return (
       props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.filter(
@@ -61,6 +59,7 @@ const ModalAddAthlete = props => {
     );
   };
 
+  //Rempli les informations de l athlete en JSON
   const setNewAthlete = (values, athlete) => {
     athlete.Athlete.Prenom =
       values.firstname.charAt(0).toUpperCase() + values.firstname.slice(1);
@@ -79,14 +78,14 @@ const ModalAddAthlete = props => {
     return athlete;
   };
 
-  const saveContent = async () => {
+  //Sauvegarde l athlete dans les donnees du concours avec async storage
+  const saveAthlete = async () => {
     props.concoursData._.nbAthlete =
       props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats?.length;
-    //Changement du statut du concours
-    if (props.concoursData._.statut === i18n.t('common:ready')) {
-      props.concoursData._.statut = i18n.t('common:in_progress');
-      props.concoursData._.statutColor = getStatusColor(
-        props.concoursData._.statut,
+    if (props.concoursData?._?.statut === i18n.t('common:ready')) {
+      props.concoursData = setConcoursStatus(
+        props.concoursData,
+        i18n.t('common:in_progress'),
       );
     }
     await setFile(
@@ -97,6 +96,7 @@ const ModalAddAthlete = props => {
 
   const handleSubmitForm = actions => {
     const values = props.fieldsAddAthtlete;
+    //Si formulaire ajout athlete
     if (values.firstname !== '') {
       var newAthlete = null;
       if (values.type === 'new') {
@@ -120,8 +120,11 @@ const ModalAddAthlete = props => {
           },
           NumCouloir: (getLastNumCouloir() + 1).toString(),
         };
+        //Initialisation du nouvel athlete
         newAthlete = setNewAthlete(values, newAthlete);
+        //S il n existe pas deja
         if (!isAthleteExist(newAthlete)) {
+          //Ajout du nouvel athlete
           props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.push(
             newAthlete,
           );
@@ -129,7 +132,8 @@ const ModalAddAthlete = props => {
           actions.resetForm({
             values: props.fieldsAddAthtlete,
           });
-          saveContent();
+          //Sauvegarde du concours
+          saveAthlete();
           showMessage({
             message: 'Athlète ajouté',
             type: 'success',
@@ -140,19 +144,23 @@ const ModalAddAthlete = props => {
             type: 'danger',
           });
         }
-      } else {
+      }
+      //Formulaire modification athlete
+      else {
+        //Mise a jour des donnees du bon athlete
         props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats[
           props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.findIndex(
             a => a.$id === props.fieldsAddAthtlete?.resultat.$id,
           )
         ] = setNewAthlete(values, props.fieldsAddAthtlete?.resultat);
-        saveContent();
+        //Sauvegarde du concours
+        saveAthlete();
         showMessage({
           message: 'Athlète modifié',
           type: 'success',
         });
       }
-      props.setHaveToRefresh(oldValue => !oldValue);
+      props.refreshConcoursData();
       props.setModalVisible(false);
     }
   };
@@ -197,8 +205,8 @@ const ModalAddAthlete = props => {
               ),
               1,
             );
-            saveContent();
-            props.setHaveToRefresh(oldValue => !oldValue);
+            saveAthlete();
+            props.refreshConcoursData();
             props.setModalVisible(false);
             showMessage({
               message: 'Athlète supprimé',
@@ -219,8 +227,9 @@ const ModalAddAthlete = props => {
     <MyModal
       modalVisible={props.modalVisible}
       setModalVisible={bool => {
-        if (!bool) {
-          props.setHaveToRefresh(oldValue => !oldValue);
+        if (bool) {
+          //Ouverture du modal et initialisation des champs du formulaire
+          props.setFieldsAddAthtlete(props.initFormAddAthlete);
         }
         props.setModalVisible(bool);
       }}

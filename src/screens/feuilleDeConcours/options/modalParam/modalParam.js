@@ -11,8 +11,14 @@ import {
 } from 'react-native';
 import i18n from 'i18next';
 import {setFile} from '../../../../utils/myAsyncStorage';
+import {setConcoursStatus} from '../../../../utils/convertor';
 
 const ModalParam = props => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // If params changed or not (to avoid unless saves)
+  const [hasChanged, setHasChanged] = useState(false);
+
   const [nbTries, setNbTries] = useState(props.concoursData?._?.nbTries);
   const [colPerfVisible, setColPerfVisible] = useState(
     props.concoursData?._?.colPerfVisible,
@@ -39,19 +45,23 @@ const ModalParam = props => {
         nbTries !== null ? (nbTries > 4 ? colMiddleRankVisible : false) : false,
     };
     data._ = Object.assign(data._, newValues);
-    await setFile(data?._?.id, JSON.stringify(data)).then(() =>
-      props.refreshConcoursData(),
-    );
+    //Mise à jour du statut du concours
+    if (data._?.statut === i18n.t('common:ready')) {
+      data = setConcoursStatus(data, i18n.t('common:in_progress'));
+    }
+    await setFile(data?._?.id, JSON.stringify(data));
   };
 
   return (
     <MyModal
-      modalVisible={props.modalVisible}
+      modalVisible={modalVisible}
       setModalVisible={bool => {
-        if (!bool) {
+        if (!bool && hasChanged) {
+          setHasChanged(false);
           saveParam();
+          props.refreshConcoursData();
         }
-        props.setModalVisible(bool);
+        setModalVisible(bool);
       }}
       buttonStyleView={[styleSheet.icon, {backgroundColor: colors.muted}]}
       minWidth={Platform.OS === 'windows' ? 300 : 0}
@@ -95,6 +105,7 @@ const ModalParam = props => {
                   <View style={{width: 100}}>
                     <MyDropdown
                       onValueChange={v => {
+                        setHasChanged(true);
                         setNbTries(v);
                       }}
                       data={['3', '4', '6'].map(v => ({
@@ -113,10 +124,16 @@ const ModalParam = props => {
             <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
               <MyCheckBox
                 isChecked={colFlagVisible}
-                setIsChecked={v => setColFlagVisible(v)}
+                setIsChecked={v => {
+                  setHasChanged(true);
+                  setColFlagVisible(v);
+                }}
               />
               <MyButton
-                onPress={() => setColFlagVisible(!colFlagVisible)}
+                onPress={() => {
+                  setHasChanged(true);
+                  setColFlagVisible(!colFlagVisible);
+                }}
                 content={
                   <Text style={styleSheet.text}>
                     {i18n.t('competition:col_flag_visible')}
@@ -127,10 +144,16 @@ const ModalParam = props => {
             <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
               <MyCheckBox
                 isChecked={colPerfVisible}
-                setIsChecked={v => setColPerfVisible(v)}
+                setIsChecked={v => {
+                  setHasChanged(true);
+                  setColPerfVisible(v);
+                }}
               />
               <MyButton
-                onPress={() => setColPerfVisible(!colPerfVisible)}
+                onPress={() => {
+                  setHasChanged(true);
+                  setColPerfVisible(!colPerfVisible);
+                }}
                 content={
                   <Text style={styleSheet.text}>
                     {i18n.t('competition:col_perf_visible')}
@@ -142,10 +165,16 @@ const ModalParam = props => {
               <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
                 <MyCheckBox
                   isChecked={colWindVisible}
-                  setIsChecked={v => setColWindVisible(v)}
+                  setIsChecked={v => {
+                    setHasChanged(true);
+                    setColWindVisible(v);
+                  }}
                 />
                 <MyButton
-                  onPress={() => setColWindVisible(!colWindVisible)}
+                  onPress={() => {
+                    setHasChanged(true);
+                    setColWindVisible(!colWindVisible);
+                  }}
                   content={
                     <Text style={styleSheet.text}>
                       {i18n.t('competition:col_wind_visible')}
@@ -161,12 +190,16 @@ const ModalParam = props => {
                   <MyCheckBox
                     disabled={false}
                     isChecked={colMiddleRankVisible}
-                    setIsChecked={v => setColMiddleRankVisible(v)}
+                    setIsChecked={v => {
+                      setHasChanged(true);
+                      setColMiddleRankVisible(v);
+                    }}
                   />
                   <MyButton
-                    onPress={() =>
-                      setColMiddleRankVisible(!colMiddleRankVisible)
-                    }
+                    onPress={() => {
+                      setHasChanged(true);
+                      setColMiddleRankVisible(!colMiddleRankVisible);
+                    }}
                     content={
                       <Text style={styleSheet.text}>
                         {i18n.t('competition:col_middle_rank_visible')}

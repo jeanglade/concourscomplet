@@ -5,7 +5,6 @@ import i18n from 'i18next';
 
 export const getAllKeys = async () => {
   try {
-    //await AsyncStorage.clear();
     const keys = await AsyncStorage.getAllKeys();
     return keys;
   } catch (e) {
@@ -79,7 +78,7 @@ export const saveEachSerie = async (content, addOneSerieDataTable) => {
         const codeConcours =
           newContentObject?.EpreuveConcoursComplet?.TourConcoursComplet
             ?.LstSerieConcoursComplet[0]?.CodeConcours + '.json';
-        if (codeConcours != '.json') {
+        if (codeConcours !== '.json') {
           const result = saveJsonFile(
             codeConcours,
             JSON.stringify(newContentObject),

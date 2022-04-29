@@ -10,55 +10,33 @@ import {
   Image,
 } from 'react-native';
 import i18n from 'i18next';
-import {getHauteurToTextValue} from '../../../../utils/convertor';
+import {
+  getHauteurToTextValue,
+  getMonteeDeBarre,
+  setConcoursStatus,
+} from '../../../../utils/convertor';
 import {setFile} from '../../../../utils/myAsyncStorage';
 
 const ModalFirstBar = props => {
+  const [modalVisible, setModalVisible] = useState(false);
+
   // If barres changed or not (to avoid unless saves)
   const [hasChanged, setHasChanged] = useState(false);
 
-  const getMonteeDeBarre = () => {
-    var res = [];
-    if (
-      props.concoursData.EpreuveConcoursComplet.hasOwnProperty('MonteesBarre')
-    ) {
-      for (
-        var i = 1;
-        i <
-        Object.keys(props.concoursData.EpreuveConcoursComplet.MonteesBarre)
-          .length;
-        i++
-      ) {
-        const nameBarre = 'Barre' + (i < 10 ? '0' : '') + i.toString();
-        if (
-          props.concoursData.EpreuveConcoursComplet.MonteesBarre.hasOwnProperty(
-            nameBarre,
-          )
-        ) {
-          res.push(
-            props.concoursData.EpreuveConcoursComplet.MonteesBarre[nameBarre],
-          );
-        }
-      }
-    }
-    return res;
-  };
+  //Montée de barre
+  const [barRises] = useState(getMonteeDeBarre(props.concoursData));
 
-  //Montée de barre classiques
-  const [barRises] = useState(getMonteeDeBarre());
-
-  //Si les premières barre ont changé - sauvegarde
+  //Sauvegarde
   const saveFirstBar = async () => {
-    if (hasChanged) {
-      setHasChanged(false);
-      await setFile(
-        props.concoursData?._?.id.toString(),
-        JSON.stringify(props.concoursData),
-      );
-      props.refreshConcoursData();
+    var data = props.concoursData;
+    //Mise à jour du statut du concours
+    if (data._?.statut === i18n.t('common:ready')) {
+      data = setConcoursStatus(data, i18n.t('common:in_progress'));
     }
+    await setFile(data._?.id.toString(), JSON.stringify(data));
   };
 
+  //Template de la ligne du tableau
   const Item = ({item, index}) => {
     const [firstB, setFirstB] = useState(parseInt(item.Athlete?.firstBar));
     const [poteaux, setPoteaux] = useState(
@@ -68,10 +46,12 @@ const ModalFirstBar = props => {
       <>
         <View style={styles.item}>
           <View style={styleSheet.flex1}>
+            {/* Athlète */}
             <Text style={[styleSheet.text]}>
               {item.Athlete?.Prenom} {item.Athlete?.Nom}
             </Text>
           </View>
+          {/* Liste des montees de barres */}
           <View style={{width: 130}}>
             <MyDropdown
               styleContainer={{}}
@@ -116,13 +96,14 @@ const ModalFirstBar = props => {
 
   return (
     <MyModal
-      modalVisible={props.modalVisible}
+      modalVisible={modalVisible}
       setModalVisible={bool => {
-        if (!bool) {
-          saveFirstBar();
+        if (!bool && hasChanged) {
           setHasChanged(false);
+          saveFirstBar();
+          props.refreshConcoursData();
         }
-        props.setModalVisible(bool);
+        setModalVisible(bool);
       }}
       buttonStyleView={styleSheet.icon}
       buttonTooltip={i18n.t('competition:first_bar_rise')}

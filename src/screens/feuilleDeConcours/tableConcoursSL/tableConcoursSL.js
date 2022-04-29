@@ -143,7 +143,7 @@ const TableConcoursSL = props => {
     props.setBestPerf(meilleurPerf);
     resultat.Performance = meilleurPerf;
     setMiddleBestPerf(calculBestPerf(props.resultat, 3));
-    if (result != '' && result !== null) {
+    if (result !== '' && result !== null) {
       newResultat.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats[
         index
       ] = resultat;
@@ -167,22 +167,30 @@ const TableConcoursSL = props => {
   };
 
   const onChangeTextValue = (resultat, numEssai, value) => {
-    resultat.LstEssais[numEssai].ValeurPerformance = value;
-    resultat.LstEssais[numEssai].SatutPerformance = value;
+    if (numEssai % 2 === 1) {
+      resultat.LstEssais[Math.floor(numEssai / 2)].Vent = value;
+    } else {
+      resultat.LstEssais[numEssai].ValeurPerformance = value;
+      resultat.LstEssais[numEssai].SatutPerformance = value;
+    }
   };
 
   const lstTextInput = [];
   const initValue = [];
-  for (var i = 0; i < 6; i++) {
+  for (var i = 0; i < 12; i++) {
     initValue.push(props.resultat.LstEssais[i].ValeurPerformance);
   }
   const [values, setValues] = useState(initValue);
-  for (var i = 0; i < 6; i++) {
+  for (var i = 0; i < 12; i++) {
     const indexH = i;
     lstTextInput.push(
       <View style={[styleSheet.flex1]}>
         <MyInput
-          textAlign={'center'}
+          placeholder={
+            indexH % 2 === 1
+              ? i18n.t('competition:performance').substring(0, 4) + '.'
+              : i18n.t('competition:wind')
+          }
           style={[
             {
               backgroundColor:

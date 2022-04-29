@@ -1,19 +1,21 @@
 import React from 'react';
 import {View} from 'react-native';
-import {colors, styleSheet} from '_config';
+import {colors} from '_config';
 import {MyInput} from '_components';
 import {getHauteurToTextValue} from '../../../utils/convertor';
 
 export const getHeaderTableSB = bars => {
-  var res = [];
-  bars.forEach(bar => {
-    res.push({
-      type: 'text',
-      width: 75,
-      text: getHauteurToTextValue(bar.toString()),
+  var result = [];
+  if (bars.length > 0) {
+    bars.forEach(bar => {
+      result.push({
+        type: 'text',
+        width: 75,
+        text: getHauteurToTextValue(bar.toString()),
+      });
     });
-  });
-  return res;
+  }
+  return result;
 };
 
 export const getColumnsVisibleSB = (bars, columnPerfVisible) => {

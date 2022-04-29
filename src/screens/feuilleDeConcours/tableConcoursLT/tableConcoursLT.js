@@ -3,7 +3,10 @@ import {Text, View} from 'react-native';
 import i18n from 'i18next';
 import {colors, styleSheet} from '_config';
 import {MyInput} from '_components';
-import {getHauteurToTextValue} from '../../../utils/convertor';
+import {
+  getHauteurToTextValue,
+  setConcoursStatus,
+} from '../../../utils/convertor';
 import {setFile} from '../../../utils/myAsyncStorage';
 
 export const getHeaderTableLT = () => {
@@ -25,7 +28,7 @@ export const getHeaderTableLT = () => {
     },
     {
       type: 'text',
-      width: 60,
+      width: 65,
       text: i18n.t('competition:performance').substring(0, 4) + '.',
     },
     {type: 'text', width: 40, text: i18n.t('competition:place')},
@@ -145,19 +148,40 @@ export const calculBestPlaceLT = (resultats, nbTries) => {
 
 const TableConcoursLT = props => {
   const calculBestPerf = (resultat, nbTries) => {
-    var res = resultat.LstEssais[0].ValeurPerformance;
-    if (res !== null && res !== '') {
-      for (var i = 1; i < nbTries; i++) {
-        const valeur = parseInt(
-          resultat.LstEssais[i].ValeurPerformance?.replace('m', ''),
-        );
-        if (valeur) {
-          res =
-            valeur >= parseInt(res?.replace('m', ''))
-              ? resultat.LstEssais[i].ValeurPerformance
-              : res;
-        }
+    var res = null;
+    for (var i = 1; i < nbTries; i++) {
+      const valeur = parseInt(
+        resultat.LstEssais[i].ValeurPerformance?.replace('m', ''),
+      );
+      if (valeur) {
+        res =
+          valeur >= parseInt(res?.replace('m', '')) || res === null
+            ? resultat.LstEssais[i].ValeurPerformance
+            : res;
       }
+    }
+
+    if (
+      resultat.LstEssais.map(v => v.ValeurPerformance).includes('X') &&
+      resultat.LstEssais.every(
+        v =>
+          v.ValeurPerformance === 'X' ||
+          v.ValeurPerformance === '' ||
+          v.ValeurPerformance === '-' ||
+          v.ValeurPerformance === null,
+      )
+    ) {
+      res = 'NM';
+    }
+    if (
+      resultat.LstEssais.every(
+        v =>
+          v.ValeurPerformance === '' ||
+          v.ValeurPerformance === null ||
+          v.ValeurPerformance === '-',
+      )
+    ) {
+      res = 'DNS';
     }
     return getHauteurToTextValue(res?.replace('m', ''));
   };
@@ -175,6 +199,22 @@ const TableConcoursLT = props => {
       props.listColumnVisible.includes(index)
       ? item
       : null;
+  };
+
+  const getNextAthlete = numE => {
+    var result = -1;
+    props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats.map(
+      (v, i) => {
+        if (
+          result === -1 &&
+          (v.LstEssais[numE].ValeurPerformance === '' ||
+            v.LstEssais[numE].ValeurPerformance === null)
+        ) {
+          result = i;
+        }
+      },
+    );
+    return result;
   };
 
   const saveEssai = async (resultat, numEssai, index) => {
@@ -205,15 +245,34 @@ const TableConcoursLT = props => {
       );
 
       if (essaiComplete) {
-        props.setEssaiEnCours(oldValue => oldValue + 1);
+        props.setEssaiEnCours(numEssai + 1);
+      }
+      props.setAthleteEnCours(
+        getNextAthlete(numEssai + (essaiComplete ? 1 : 0)),
+      );
+      props.setHaveToCalculPlace(oldValue => !oldValue);
+      //Mise à jour du statut du concours
+      if (props.concoursData._?.statut === i18n.t('common:ready')) {
+        var data = props.concoursData;
+        data = setConcoursStatus(data, i18n.t('common:in_progress'));
+        await setFile(data?._?.id, JSON.stringify(data));
+        props.refreshConcoursData();
       }
     }
-    props.setHaveToCalculPlace(oldValue => !oldValue);
   };
 
   const onChangeTextValue = (resultat, numEssai, value) => {
-    resultat.LstEssais[numEssai].ValeurPerformance = value;
-    resultat.LstEssais[numEssai].SatutPerformance = value;
+    var isValid = false;
+    const validValues = ['x', 'X', '-', 'r', 'R', '', null];
+    if (validValues.includes(value) || parseInt(value?.replace('m', ''))) {
+      isValid = true;
+      if (value === 'x' || value === 'R') {
+        value = value === 'R' ? value.toLowerCase() : value.toUpperCase();
+      }
+      resultat.LstEssais[numEssai].ValeurPerformance = value;
+      resultat.LstEssais[numEssai].SatutPerformance = value;
+    }
+    return isValid;
   };
 
   const lstTextInput = [];
@@ -233,17 +292,19 @@ const TableConcoursLT = props => {
               backgroundColor:
                 (props.resultat.LstEssais[indexH].ValeurPerformance === null ||
                   props.resultat.LstEssais[indexH].ValeurPerformance === '') &&
-                indexH + 1 === props.essaiEnCours
+                indexH === props.essaiEnCours
                   ? colors.white
                   : colors.gray_light,
               width: 70,
             },
           ]}
           onChange={v => {
-            setValues(oldValues =>
-              oldValues.map((val, ind) => (ind === indexH ? v : val)),
-            );
-            onChangeTextValue(props.resultat, indexH, v);
+            const isValid = onChangeTextValue(props.resultat, indexH, v);
+            if (isValid) {
+              setValues(oldValues =>
+                oldValues.map((val, ind) => (ind === indexH ? v : val)),
+              );
+            }
           }}
           value={values[indexH]}
           onBlur={() => {
@@ -266,7 +327,7 @@ const TableConcoursLT = props => {
       {verifyVisibility(lstTextInput[1], 1)}
       {verifyVisibility(lstTextInput[2], 2)}
       {verifyVisibility(
-        <View style={{width: 60}}>
+        <View style={{width: 60, marginStart: 5}}>
           <Text style={[styleSheet.text]}>{middleBestPerf}</Text>
         </View>,
         3,

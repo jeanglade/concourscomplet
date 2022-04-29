@@ -15,6 +15,9 @@
 // Includes from @react-native-community/netinfo
 #include <winrt/ReactNativeNetInfo.h>
 
+// Includes from @react-native-community/progress-view
+#include <winrt/progress_view.h>
+
 // Includes from @react-native-picker/picker
 #include <winrt/ReactNativePicker.h>
 
@@ -46,6 +49,8 @@ void RegisterAutolinkedNativeModulePackages(winrt::Windows::Foundation::Collecti
     packageProviders.Append(winrt::DateTimePicker::ReactPackageProvider());
     // IReactPackageProviders from @react-native-community/netinfo
     packageProviders.Append(winrt::ReactNativeNetInfo::ReactPackageProvider());
+    // IReactPackageProviders from @react-native-community/progress-view
+    packageProviders.Append(winrt::progress_view::ReactPackageProvider());
     // IReactPackageProviders from @react-native-picker/picker
     packageProviders.Append(winrt::ReactNativePicker::ReactPackageProvider());
     // IReactPackageProviders from react-native-blob-util

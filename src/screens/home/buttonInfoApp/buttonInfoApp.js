@@ -4,7 +4,6 @@ import {View, Text, Image} from 'react-native';
 import i18n from 'i18next';
 import {styleSheet} from '_config';
 import {MyButton} from '_components';
-import {clear} from '../../../utils/myAsyncStorage';
 
 const ButtonInfoApp = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -12,7 +11,6 @@ const ButtonInfoApp = () => {
     <>
       <MyButton
         onPress={() => {
-          //clear();
           setModalVisible(!modalVisible);
         }}
         content={

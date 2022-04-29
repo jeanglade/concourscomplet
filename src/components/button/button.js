@@ -24,7 +24,7 @@ const MyButton = props => {
       onPress={() => {
         setTooltipVisible(false);
         backCount++;
-        if (backCount == 2) {
+        if (backCount === 2) {
           clearTimeout(backTimer);
         } else {
           backTimer = setTimeout(() => {

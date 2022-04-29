@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {colors, styleSheet} from '_config';
 import {MyModal} from '_components';
 import {
@@ -10,13 +10,33 @@ import {
   Image,
 } from 'react-native';
 import i18n from 'i18next';
+import {setConcoursStatus} from '../../../../utils/convertor';
 
-const ModalAthletePerAthlete = props => {
+const ModalAthletePerAthlete = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // If athlete results has changed or not (to avoid unless saves)
+  const [hasChanged, setHasChanged] = useState(false);
+
+  const saveDatas = async () => {
+    var data = props.concoursData;
+    //Mise à jour du statut du concours
+    if (data._?.statut === i18n.t('common:ready')) {
+      data = setConcoursStatus(data, i18n.t('common:in_progress'));
+    }
+    await setFile(data?._?.id.toString(), JSON.stringify(data));
+  };
+
   return (
     <MyModal
-      modalVisible={props.modalVisible}
+      modalVisible={modalVisible}
       setModalVisible={bool => {
-        props.setModalVisible(bool);
+        if (!bool && hasChanged) {
+          setHasChanged(false);
+          saveDatas();
+          props.refreshConcoursData();
+        }
+        setModalVisible(bool);
       }}
       buttonStyleView={[
         styleSheet.icon,

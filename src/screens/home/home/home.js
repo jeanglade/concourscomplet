@@ -15,7 +15,7 @@ import {
   ModalChoiceCompetition,
 } from '_screens';
 import {styleSheet} from '_config';
-import {getStatusColor, getStatus} from '../../../utils/convertor';
+import {setConcoursStatus, getImageEpreuve} from '../../../utils/convertor';
 
 const Home = props => {
   //Tableau avec toutes les données concours complet
@@ -35,17 +35,6 @@ const Home = props => {
     return series;
   };
 
-  async function refreshData(tab, idComp = null) {
-    const competitions = getAllCompetitionsInfo(tab);
-    setTableData(tab);
-    setAllCompetitions(competitions);
-    setCompetition(
-      idComp == null
-        ? getLastCompetition(competitions)
-        : competitions.find(c => c?.idCompetition === idComp),
-    );
-  }
-
   function initData() {
     const tab = tableData;
     getAllSeries(tab).then(tabSeries => {
@@ -59,6 +48,17 @@ const Home = props => {
   useEffect(() => {
     initData();
   }, []);
+
+  async function refreshData(tab, idComp = null) {
+    const competitions = getAllCompetitionsInfo(tab);
+    setTableData(tab);
+    setAllCompetitions(competitions);
+    setCompetition(
+      idComp === null
+        ? getLastCompetition(competitions)
+        : competitions.find(c => c?.idCompetition === idComp),
+    );
+  }
 
   // Ajoute plusieurs concours
   const addSeriesDataTable = async keys => {
@@ -96,7 +96,7 @@ const Home = props => {
   const addOneSerieDataTable = async (key, data = null) => {
     var tab = tableData;
     if (key.match(/.+\.json/g)) {
-      if (data == null) {
+      if (data === null) {
         data = await getFile(key);
       }
 
@@ -116,61 +116,29 @@ const Home = props => {
     }
   };
 
-  const getImageEpreuve = epreuve => {
-    var res = '';
-    switch (true) {
-      case epreuve.includes('Hauteur'):
-        res = 'SautEnHauteur_Dark';
-        break;
-      case epreuve.includes('Perche'):
-        res = 'SautALaPerche_Dark';
-        break;
-      case epreuve.includes('Longueur'):
-        res = 'SautEnLongueur_Dark';
-        break;
-      case epreuve.includes('Triple saut'):
-        res = 'SautEnLongueur_Dark';
-        break;
-      case epreuve.includes('Poids'):
-        res = 'LancerDePoids_Dark';
-        break;
-      case epreuve.includes('Javelot'):
-        res = 'Javelot_Dark';
-        break;
-      case epreuve.includes('Marteau'):
-        res = 'LancerDeMarteau_Dark';
-        break;
-      case epreuve.includes('Disque'):
-        res = 'LancerDeDisque_Dark';
-        break;
-    }
-    return res;
-  };
-
   const getJsonValue = (jsonKey, jsonDefaultValue = '') => {
     return jsonKey ? jsonKey : jsonDefaultValue;
   };
 
   const getInfoSerie = async (key, data) => {
     try {
-      var infoConcours = JSON.parse(data);
+      var concoursData = JSON.parse(data);
       const dateConcours = getJsonValue(
-        infoConcours?.EpreuveConcoursComplet?.TourConcoursComplet
+        concoursData?.EpreuveConcoursComplet?.TourConcoursComplet
           ?.LstSerieConcoursComplet[0]?.DateHeureSerie,
-        infoConcours?.DateDebutCompetition,
+        concoursData?.DateDebutCompetition,
       );
       const epreuve =
-        getJsonValue(infoConcours?.EpreuveConcoursComplet?.Nom) +
+        getJsonValue(concoursData?.EpreuveConcoursComplet?.Nom) +
         ' ' +
-        getJsonValue(infoConcours?.EpreuveConcoursComplet?.Categorie) +
-        getJsonValue(infoConcours?.EpreuveConcoursComplet?.Sexe) +
+        getJsonValue(concoursData?.EpreuveConcoursComplet?.Categorie) +
+        getJsonValue(concoursData?.EpreuveConcoursComplet?.Sexe) +
         ' / ' +
         getJsonValue(
-          infoConcours?.EpreuveConcoursComplet?.TourConcoursComplet
+          concoursData?.EpreuveConcoursComplet?.TourConcoursComplet
             ?.LstSerieConcoursComplet[0]?.Libelle,
         );
-      const statut = getStatus(infoConcours);
-      infoConcours._ = {
+      concoursData._ = {
         id: key,
         date: dateConcours,
         dateInfo: moment(dateConcours?.toString(), moment.ISO_8601).format(
@@ -178,13 +146,13 @@ const Home = props => {
         ),
         epreuve: epreuve,
         imageEpreuve: getImageEpreuve(epreuve),
-        statut: statut,
-        statutColor: getStatusColor(statut),
+        statut: '',
+        statutColor: '',
         type: getJsonValue(
-          infoConcours?.EpreuveConcoursComplet?.CodeFamilleEpreuve,
+          concoursData?.EpreuveConcoursComplet?.CodeFamilleEpreuve,
         ),
         nbAthlete: getJsonValue(
-          infoConcours?.EpreuveConcoursComplet?.TourConcoursComplet
+          concoursData?.EpreuveConcoursComplet?.TourConcoursComplet
             ?.LstSerieConcoursComplet[0]?.LstResultats,
         ).length,
         nbTries: 6,
@@ -193,8 +161,10 @@ const Home = props => {
         colWindVisible: true,
         colMiddleRankVisible: true,
       };
-      await setFile(key, JSON.stringify(infoConcours));
-      return JSON.stringify(infoConcours);
+      //TODO gérer le status si le concours arrive déjà rempli
+      concoursData = setConcoursStatus(concoursData, i18n.t('common:ready'));
+      await setFile(key, JSON.stringify(concoursData));
+      return JSON.stringify(concoursData);
     } catch (e) {
       console.error(e);
     }

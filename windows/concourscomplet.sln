@@ -57,6 +57,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RNCNetInfoCPP", "..\node_mo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CheckboxWindows", "..\node_modules\@react-native-community\checkbox\windows\CheckboxWindows\CheckboxWindows.vcxproj", "{EAF81BEB-A159-4421-9B6D-E59C37828A57}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "progress-view", "..\node_modules\@react-native-community\progress-view\windows\progress-view\progress-view.vcxproj", "{CA54A654-5E81-44DC-AF3F-CF55EF5B493A}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\node_modules\react-native-windows\Microsoft.ReactNative.Cxx\Microsoft.ReactNative.Cxx.vcxitems*{0986a4db-8e72-4bb7-ae32-7d9df1758a9d}*SharedItemsImports = 4
@@ -303,6 +305,18 @@ Global
 		{EAF81BEB-A159-4421-9B6D-E59C37828A57}.Release|x64.Build.0 = Release|x64
 		{EAF81BEB-A159-4421-9B6D-E59C37828A57}.Release|x86.ActiveCfg = Release|Win32
 		{EAF81BEB-A159-4421-9B6D-E59C37828A57}.Release|x86.Build.0 = Release|Win32
+		{CA54A654-5E81-44DC-AF3F-CF55EF5B493A}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{CA54A654-5E81-44DC-AF3F-CF55EF5B493A}.Debug|ARM64.Build.0 = Debug|ARM64
+		{CA54A654-5E81-44DC-AF3F-CF55EF5B493A}.Debug|x64.ActiveCfg = Debug|x64
+		{CA54A654-5E81-44DC-AF3F-CF55EF5B493A}.Debug|x64.Build.0 = Debug|x64
+		{CA54A654-5E81-44DC-AF3F-CF55EF5B493A}.Debug|x86.ActiveCfg = Debug|Win32
+		{CA54A654-5E81-44DC-AF3F-CF55EF5B493A}.Debug|x86.Build.0 = Debug|Win32
+		{CA54A654-5E81-44DC-AF3F-CF55EF5B493A}.Release|ARM64.ActiveCfg = Release|ARM64
+		{CA54A654-5E81-44DC-AF3F-CF55EF5B493A}.Release|ARM64.Build.0 = Release|ARM64
+		{CA54A654-5E81-44DC-AF3F-CF55EF5B493A}.Release|x64.ActiveCfg = Release|x64
+		{CA54A654-5E81-44DC-AF3F-CF55EF5B493A}.Release|x64.Build.0 = Release|x64
+		{CA54A654-5E81-44DC-AF3F-CF55EF5B493A}.Release|x86.ActiveCfg = Release|Win32
+		{CA54A654-5E81-44DC-AF3F-CF55EF5B493A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

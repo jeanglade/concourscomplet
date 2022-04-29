@@ -6,15 +6,22 @@ import {
   Image,
   Dimensions,
   Platform,
+  useWindowDimensions,
 } from 'react-native';
 import i18n from 'i18next';
+import moment from 'moment';
+import Flag from 'react-native-flags';
+import {ProgressView} from '@react-native-community/progress-view';
+import {ProgressBar} from '@react-native-community/progress-bar-android';
+
+import {
+  getHauteurToTextValue,
+  getMonteeDeBarre,
+} from '../../../utils/convertor';
 import {colors, styleSheet} from '_config';
 import {MyDataTable, MyButton, MyDropdown} from '_components';
-import moment from 'moment';
 import {TableConcoursLT, TableConcoursSL, TableConcoursSB} from '_screens';
-import Flag from 'react-native-flags';
-import {getHauteurToTextValue} from '../../../utils/convertor';
-import {setFile, getFile} from '../../../utils/myAsyncStorage';
+import {setFile} from '../../../utils/myAsyncStorage';
 import {
   getHeaderTableLT,
   getColumnsVisibleLT,
@@ -36,6 +43,12 @@ const TableConcoursBase = props => {
       row => row.Athlete.Dossard?.toString(),
     ).length > 0,
   );
+  //Numero de la premiere colonne visible des performances
+  const [indexFirstColumnVisible, setIndexFirstColumnVisible] = useState(0);
+  //Montees de barre si le concours est de type SB
+  const [barRises, setBarRises] = useState(
+    getMonteeDeBarre(props.concoursData),
+  );
 
   //Tailles des minimums des colonnes de base (ordre, dossard, athlète, perf et place)
   const maxWidthBase =
@@ -48,10 +61,6 @@ const TableConcoursBase = props => {
     }
     return res;
   };
-  const [indexFirstColumnVisible, setIndexFirstColumnVisible] = useState(0);
-  const [numberOfColumnVisible, setNumberOfColumnVisible] = useState(
-    getNumberOfColumns(),
-  );
 
   const setColumnFixed = () => {
     return [
@@ -112,111 +121,85 @@ const TableConcoursBase = props => {
     ];
   };
 
-  const getMonteeDeBarre = () => {
-    var res = [];
-    if (
-      props.concoursData?._?.type === 'SB' &&
-      props.concoursData.EpreuveConcoursComplet.hasOwnProperty('MonteesBarre')
-    ) {
-      for (
-        var i = 1;
-        i <
-        Object.keys(props.concoursData.EpreuveConcoursComplet.MonteesBarre)
-          .length;
-        i++
-      ) {
-        const nameBarre = 'Barre' + (i < 10 ? '0' : '') + i.toString();
-        //Si barre existe
-        if (
-          props.concoursData.EpreuveConcoursComplet.MonteesBarre.hasOwnProperty(
-            nameBarre,
-          )
-        ) {
-          res.push(
-            props.concoursData.EpreuveConcoursComplet.MonteesBarre[nameBarre],
-          );
-        }
-      }
-    }
-    return res;
-  };
-
-  const [barRises, setBarRises] = useState(getMonteeDeBarre());
-
-  const refreshColumnsVisible = () => {
-    var res = [];
+  const refreshColumnsVisible = (onlyHeaders = false) => {
+    var result = [];
     if (props.concoursData?._?.type === 'LT') {
-      res = getColumnsVisibleLT(props.concoursData?._);
+      result = onlyHeaders
+        ? getHeaderTableLT()
+        : getColumnsVisibleLT(props.concoursData?._);
     }
     if (props.concoursData?._?.type === 'SL') {
-      res = getColumnsVisibleSL(props.concoursData?._);
+      result = onlyHeaders
+        ? getHeaderTableSL()
+        : getColumnsVisibleSL(props.concoursData?._);
     }
     if (props.concoursData?._?.type === 'SB') {
-      const bars = getMonteeDeBarre();
+      const bars = getMonteeDeBarre(props.concoursData);
       setBarRises(bars);
-      res = getColumnsVisibleSB(bars, props.concoursData?._?.colPerfVisible);
+      result = onlyHeaders
+        ? getHeaderTableSB(bars)
+        : getColumnsVisibleSB(bars, props.concoursData?._?.colPerfVisible);
     }
-    return res;
-  };
-
-  const [listColumnVisible, setListColumnVisible] = useState(() =>
-    refreshColumnsVisible(),
-  );
-
-  const refreshColumnsPerf = () => {
-    var res = [];
-    if (props.concoursData?._?.type === 'LT') {
-      res = getHeaderTableLT();
-    }
-    if (props.concoursData?._?.type === 'SL') {
-      res = getHeaderTableSL();
-    }
-    if (props.concoursData?._?.type === 'SB') {
-      const bars = getMonteeDeBarre();
-      setBarRises(bars);
-      res = getHeaderTableSB(bars);
-    }
-    return res;
+    return result;
   };
 
   const refreshPlace = (nbTries = 6) => {
-    var res = [];
+    var result = [];
     if (
       props.concoursData?._?.type === 'LT' ||
       props.concoursData?._?.type === 'SL'
     ) {
-      res = calculBestPlaceLT(
+      result = calculBestPlaceLT(
         props.concoursData.EpreuveConcoursComplet?.TourConcoursComplet
           ?.LstSerieConcoursComplet[0]?.LstResultats,
         nbTries,
       );
     }
     if (props.concoursData?._?.type === 'SB') {
-      res = calculBestPlaceSB();
+      result = calculBestPlaceSB();
     }
-    return res;
+    return result;
   };
 
-  const [columnBase, setColumnBase] = useState(() => setColumnFixed());
-  const [columnPerf, setColumnPerf] = useState(() => refreshColumnsPerf());
+  //En fonction de la largeur de la fenêtre, nombre de colonne visible des performances
+  const [numberOfColumnVisible, setNumberOfColumnVisible] = useState(
+    getNumberOfColumns(),
+  );
+  //En fonction du type de concours, du nombre de colonne visible et des filtres des colonnes (paramètres)
+  const [listColumnVisible, setListColumnVisible] = useState(() =>
+    refreshColumnsVisible(),
+  );
+  //Colonnes obligatoires et toujours visibles
+  const [columnBase] = useState(() => setColumnFixed());
+  //Colonnes des perfomances, change en fonction de listColumnVisible
+  const [columnPerf, setColumnPerf] = useState(() =>
+    refreshColumnsVisible(true),
+  );
+  //Liste des places intermediaires des athlètes
   const [middlePlace, setMiddlePlace] = useState(() => refreshPlace(3));
+  const [finalPlace, setFinalPlace] = useState(() => refreshPlace(6));
+  //Permet de refresh le classement des athlètes
   const [haveToCalculPlace, setHaveToCalculPlace] = useState(false);
 
   const getHeaders = (index = 0) => {
     const indexFirstColumPerf = 5;
+    //Si colonne dossard
     const countDossard = hasDossard ? 1 : 0;
+    //Si bouton precedent (lorsque toutes les colonnes ne sont pas visibles)
     const removePrevBtn =
       index === 0 || listColumnVisible.length < numberOfColumnVisible ? 1 : 0;
+    //Si bouton suivant (lorsque toutes les colonnes ne sont pas visibles)
     const removeNextBtn =
       index + numberOfColumnVisible === listColumnVisible.length ||
       listColumnVisible.length < numberOfColumnVisible
         ? 1
         : 0;
+    //Colonnes des perfomances
     const columnsVisible =
       numberOfColumnVisible < columnPerf.length
         ? listColumnVisible.slice(index, index + numberOfColumnVisible)
         : listColumnVisible;
-
+    //Si colonne poteaux (pour les concours SB-perche)
     const countPoteaux = props.concoursData?._?.epreuve.includes('Perche')
       ? 1
       : 0;
@@ -228,32 +211,74 @@ const TableConcoursBase = props => {
       .concat(columnBase.slice(indexFirstColumPerf + removeNextBtn));
   };
   const [headersTable, setHeadersTable] = useState(getHeaders());
-
-  useEffect(() => {
-    setNumberOfColumnVisible(getNumberOfColumns());
-  }, []);
+  //Si la fenêtre a changé de taille, on refresh le nombre de colonne visible
+  const [windowsIsResized, setWindowsIsResized] = useState(false);
 
   //Lors d'un changement de paramètres de la feuille de concours
   useEffect(() => {
+    //Mise à jour des colonnes perfomances visibles
     setListColumnVisible(refreshColumnsVisible());
-    setColumnPerf(refreshColumnsPerf());
+    //Pour concours SB, mise à jour des headers en fonction des barres (peuvent changer)
+    //Pour les concours LT et SL, les headers restent inchangés
+    if (props.concoursData?._?.type === 'SB') {
+      setColumnPerf(refreshColumnsVisible(true));
+    }
+    //Remise à 0 de la premiere colonne perfomance visible
     setIndexFirstColumnVisible(0);
-  }, [props.haveToRefresh]);
+  }, [props.haveToRefreshTable]);
 
+  //Met à jour les headers en fonction des colonnes visibles
   useEffect(() => {
-    setHeadersTable(getHeaders());
+    setHeadersTable(getHeaders(indexFirstColumnVisible));
   }, [listColumnVisible]);
 
+  //Met à jour les headers en fonction des actions Precedent/Suivant
   useEffect(() => {
     setHeadersTable(getHeaders(indexFirstColumnVisible));
   }, [indexFirstColumnVisible]);
 
   useEffect(() => {
     setMiddlePlace(refreshPlace(3));
+    setFinalPlace(refreshPlace(6));
   }, [haveToCalculPlace]);
 
-  const [athleteEnCours, setAthleteEnCours] = useState(0);
-  const [essaiEnCours, setEssaiEnCours] = useState(0);
+  useEffect(() => {
+    setNumberOfColumnVisible(getNumberOfColumns());
+    setHeadersTable(getHeaders(indexFirstColumnVisible));
+  }, [useWindowDimensions().width]);
+
+  const [essaiEnCours, setEssaiEnCours] = useState(() => {
+    var minEssai = -1;
+    props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats.map(
+      (resultat, i) => {
+        resultat.LstEssais.map((v, index) => {
+          if (v.ValeurPerformance === null || v.ValeurPerformance === '') {
+            if (minEssai === -1 || index < minEssai) {
+              minEssai = index;
+            }
+          }
+        });
+      },
+    );
+    return minEssai;
+  });
+
+  const [athleteEnCours, setAthleteEnCours] = useState(() => {
+    var minAthtlete = -1;
+    props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats.map(
+      (resultat, i) => {
+        if (
+          resultat.LstEssais[essaiEnCours].ValeurPerformance === null ||
+          resultat.LstEssais[essaiEnCours].ValeurPerformance === ''
+        ) {
+          if (minAthtlete === -1) {
+            minAthtlete = i;
+          }
+        }
+      },
+    );
+    return minAthtlete;
+  });
   /*const serie =
     props.concoursData.EpreuveConcoursComplet.TourConcoursComplet
       .LstSerieConcoursComplet[0];
@@ -261,28 +286,6 @@ const TableConcoursBase = props => {
   const NbSec_2ou3athletes = serie.NbSec_2ou3athletes?.toString();
   const NbSec_1athlete = serie.NbSec_1athlete?.toString();
   const NbSec_EssaiConsecutif = serie.NbSec_EssaiConsecutif?.toString();*/
-
-  const saveEssai = async (resultat, numEssai, index) => {
-    var newResultat = props.concoursData;
-    newResultat.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats[
-      index
-    ] = resultat;
-    props.setConcoursData(newResultat);
-    await setFile(props.concoursData?._?.id, JSON.stringify(newResultat));
-    if (
-      index ===
-      props.concoursData.EpreuveConcoursComplet.TourConcoursComplet
-        .LstSerieConcoursComplet[0].LstResultats.length -
-        1
-    ) {
-      setEssaiEnCours(numEssai + 1);
-    }
-  };
-
-  const onChangeTextValue = (resultat, numEssai, value) => {
-    resultat.LstEssais[numEssai - 1].ValeurPerformance = value;
-    resultat.LstEssais[numEssai - 1].SatutPerformance = value;
-  };
 
   const saveData = async () => {
     await setFile(
@@ -398,6 +401,7 @@ const TableConcoursBase = props => {
                       athleteEnCours === index
                         ? colors.ffa_blue_light
                         : colors.black,
+                    fontWeight: athleteEnCours === index ? 'bold' : 'normal',
                   },
                 ]}
                 numberOfLines={1}
@@ -478,8 +482,6 @@ const TableConcoursBase = props => {
                 index={index}
                 essaiEnCours={essaiEnCours}
                 athleteEnCours={athleteEnCours}
-                onChangeTextValue={onChangeTextValue}
-                saveEssai={saveEssai}
                 setConcoursData={props.setConcoursData}
                 setBestPerf={setBestPerf}
                 bestPerf={bestPerf}
@@ -490,8 +492,6 @@ const TableConcoursBase = props => {
                 ndex={index}
                 resultat={resultat}
                 athleteEnCours={athleteEnCours}
-                onChangeTextValue={onChangeTextValue}
-                saveEssai={saveEssai}
                 concoursData={props.concoursData}
                 essaiEnCours={essaiEnCours}
                 indexFirstColumnVisible={indexFirstColumnVisible}
@@ -510,19 +510,19 @@ const TableConcoursBase = props => {
                 index={index}
                 resultat={resultat}
                 athleteEnCours={athleteEnCours}
-                onChangeTextValue={onChangeTextValue}
-                saveEssai={saveEssai}
+                setAthleteEnCours={setAthleteEnCours}
                 concoursData={props.concoursData}
                 essaiEnCours={essaiEnCours}
+                setEssaiEnCours={setEssaiEnCours}
                 indexFirstColumnVisible={indexFirstColumnVisible}
                 numberOfColumnVisible={numberOfColumnVisible}
                 listColumnVisible={listColumnVisible}
                 setConcoursData={props.setConcoursData}
-                setEssaiEnCours={setEssaiEnCours}
                 setBestPerf={setBestPerf}
                 bestPerf={bestPerf}
                 middlePlace={middlePlace}
                 setHaveToCalculPlace={setHaveToCalculPlace}
+                refreshConcoursData={props.refreshConcoursData}
               />
             )}
 
@@ -552,7 +552,7 @@ const TableConcoursBase = props => {
             />
           </View>
           <View style={{width: 40}}>
-            <Text style={styleSheet.text}>{resultat.Place?.toString()}</Text>
+            <Text style={styleSheet.text}>{finalPlace[index]}</Text>
           </View>
         </View>
       </>
@@ -595,6 +595,15 @@ const TableConcoursBase = props => {
 
   return (
     <View style={[styles.containerCenter]}>
+      {windowsIsResized && (
+        <>
+          {Platform.OS === 'windows' ? (
+            <ProgressView isIndeterminate="true" />
+          ) : (
+            <ProgressBar />
+          )}
+        </>
+      )}
       <MyDataTable
         headerTable={headersTable}
         tableData={

@@ -11,88 +11,54 @@ import {
 } from 'react-native';
 import {setFile} from '../../../../utils/myAsyncStorage';
 import i18n from 'i18next';
-import {getHauteurToTextValue} from '../../../../utils/convertor';
+import {
+  getHauteurToTextValue,
+  getMonteeDeBarre,
+  setConcoursStatus,
+} from '../../../../utils/convertor';
 
 const ModalBar = props => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // If barres changed or not (to avoid unless saves)
+  const [hasChanged, setHasChanged] = useState(false);
+
   // Input state
   const [newBarRise, setNewBarRise] = useState(null);
   // Checkbox state
   const [isBarrage, setIsBarrage] = useState(false);
-  // If barres changed or not (to avoid unless saves)
-  const [hasChanged, setHasChanged] = useState(false);
-
-  const getMonteeDeBarre = (isListBarrage = false) => {
-    var res = [];
-    var isBarBarrage = false;
-    var lastBar = null;
-    if (
-      props.concoursData.EpreuveConcoursComplet.hasOwnProperty('MonteesBarre')
-    ) {
-      for (
-        var i = 1;
-        i <
-        Object.keys(props.concoursData.EpreuveConcoursComplet.MonteesBarre)
-          .length;
-        i++
-      ) {
-        const nameBarre = 'Barre' + (i < 10 ? '0' : '') + i.toString();
-        //Si barre existe
-        if (
-          props.concoursData.EpreuveConcoursComplet.MonteesBarre.hasOwnProperty(
-            nameBarre,
-          )
-        ) {
-          const newBar =
-            props.concoursData.EpreuveConcoursComplet.MonteesBarre[nameBarre];
-          //Les barres de barrage sont à partir d une baisse de hauteur
-          if (lastBar !== null && !isBarBarrage) {
-            isBarBarrage = lastBar > newBar;
-          }
-          //Si (chargement barres normales ET newBar PAS barrage) OU (chargement barres barrages ET newBar EST barrage)
-          if (
-            (!isListBarrage && !isBarBarrage) ||
-            (isListBarrage && isBarBarrage)
-          ) {
-            res.push(newBar);
-          }
-          lastBar = newBar;
-        }
-      }
-    }
-    return res;
-  };
 
   //Montée de barre classiques
-  const [barRises, setBarRises] = useState(getMonteeDeBarre());
+  const [barRises, setBarRises] = useState(
+    getMonteeDeBarre(props.concoursData, true, false),
+  );
   //Montée de barrers de barrage
   const [barRisesBarrage, setBarRisesBarrage] = useState(
-    getMonteeDeBarre(true),
+    getMonteeDeBarre(props.concoursData, false, true),
   );
 
   //Si les montées de barre ont changé - sauvegarde
   const saveMonteeDeBarre = async () => {
-    if (hasChanged) {
-      var res = {
-        $id: props.concoursData.EpreuveConcoursComplet.hasOwnProperty(
-          'MonteesBarre',
-        )
-          ? props.concoursData.EpreuveConcoursComplet.MonteesBarre.$id
-          : '1',
-      };
-      barRises.forEach((bar, index) => {
-        const i = index + 1;
-        res['Barre' + (i < 10 ? '0' : '') + i.toString()] = bar;
-      });
-      barRisesBarrage.forEach((bar, index) => {
-        const i = index + barRises.length + 1;
-        res['Barre' + (i < 10 ? '0' : '') + i.toString()] = bar;
-      });
-      props.concoursData.EpreuveConcoursComplet.MonteesBarre = res;
-      await setFile(
-        props.concoursData?._?.id.toString(),
-        JSON.stringify(props.concoursData),
-      );
+    var data = props.concoursData;
+    var resultBars = {
+      $id: data.EpreuveConcoursComplet.hasOwnProperty('MonteesBarre')
+        ? data.EpreuveConcoursComplet.MonteesBarre.$id
+        : '1',
+    };
+    barRises.forEach((bar, index) => {
+      const i = index + 1;
+      resultBars['Barre' + (i < 10 ? '0' : '') + i.toString()] = bar;
+    });
+    barRisesBarrage.forEach((bar, index) => {
+      const i = index + barRises.length + 1;
+      resultBars['Barre' + (i < 10 ? '0' : '') + i.toString()] = bar;
+    });
+    data.EpreuveConcoursComplet.MonteesBarre = resultBars;
+    //Mise à jour du statut du concours
+    if (data._?.statut === i18n.t('common:ready')) {
+      data = setConcoursStatus(data, i18n.t('common:in_progress'));
     }
+    await setFile(data?._?.id.toString(), JSON.stringify(data));
   };
 
   const addBarRise = () => {
@@ -162,14 +128,14 @@ const ModalBar = props => {
 
   return (
     <MyModal
-      modalVisible={props.modalVisible}
+      modalVisible={modalVisible}
       setModalVisible={bool => {
-        if (!bool) {
-          saveMonteeDeBarre();
+        if (!bool && hasChanged) {
           setHasChanged(false);
+          saveMonteeDeBarre();
           props.refreshConcoursData();
         }
-        props.setModalVisible(bool);
+        setModalVisible(bool);
       }}
       buttonStyleView={styleSheet.icon}
       buttonTooltip={i18n.t('competition:bar_rise')}
