@@ -100,19 +100,40 @@ export const getColumnsVisibleSL = _ => {
 
 const TableConcoursSL = props => {
   const calculBestPerf = (resultat, nbTries) => {
-    var res = resultat.LstEssais[0].ValeurPerformance;
-    if (res !== null && res !== '') {
-      for (var i = 1; i < nbTries; i++) {
-        const valeur = parseInt(
-          resultat.LstEssais[i].ValeurPerformance?.replace('m', ''),
-        );
-        if (valeur) {
-          res =
-            valeur >= parseInt(res?.replace('m', ''))
-              ? resultat.LstEssais[i].ValeurPerformance
-              : res;
-        }
+    var res = null;
+    for (var i = 0; i < nbTries; i++) {
+      const valeur = parseInt(
+        resultat.LstEssais[i].ValeurPerformance?.replace('m', ''),
+      );
+      if (valeur) {
+        res =
+          valeur >= parseInt(res?.replace('m', '')) || res === null
+            ? resultat.LstEssais[i].ValeurPerformance
+            : res;
       }
+    }
+
+    if (
+      resultat.LstEssais.map(v => v.ValeurPerformance).includes('X') &&
+      resultat.LstEssais.every(
+        v =>
+          v.ValeurPerformance === 'X' ||
+          v.ValeurPerformance === '' ||
+          v.ValeurPerformance === '-' ||
+          v.ValeurPerformance === null,
+      )
+    ) {
+      res = 'NM';
+    }
+    if (
+      resultat.LstEssais.every(
+        v =>
+          v.ValeurPerformance === '' ||
+          v.ValeurPerformance === null ||
+          v.ValeurPerformance === '-',
+      )
+    ) {
+      res = 'DNS';
     }
     return getHauteurToTextValue(res?.replace('m', ''));
   };
@@ -132,6 +153,22 @@ const TableConcoursSL = props => {
       : null;
   };
 
+  const getNextAthlete = numE => {
+    var result = -1;
+    props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats.map(
+      (v, i) => {
+        if (
+          result === -1 &&
+          (v.LstEssais[numE].ValeurPerformance === '' ||
+            v.LstEssais[numE].ValeurPerformance === null)
+        ) {
+          result = i;
+        }
+      },
+    );
+    return result;
+  };
+
   const saveEssai = async (resultat, numEssai, index) => {
     const result = resultat.LstEssais[numEssai].ValeurPerformance?.replace(
       'm',
@@ -139,11 +176,11 @@ const TableConcoursSL = props => {
     );
     var newResultat = props.concoursData;
     var essaiComplete = true;
-    const meilleurPerf = calculBestPerf(props.resultat, 6);
+    const meilleurPerf = calculBestPerf(resultat, 6);
     props.setBestPerf(meilleurPerf);
     resultat.Performance = meilleurPerf;
-    setMiddleBestPerf(calculBestPerf(props.resultat, 3));
-    if (result !== '' && result !== null) {
+    setMiddleBestPerf(calculBestPerf(resultat, 3));
+    if (result != '' && result !== null) {
       newResultat.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats[
         index
       ] = resultat;
@@ -160,25 +197,40 @@ const TableConcoursSL = props => {
       );
 
       if (essaiComplete) {
-        props.setEssaiEnCours(oldValue => oldValue + 1);
+        props.setEssaiEnCours(numEssai + 1);
+      }
+      props.setAthleteEnCours(
+        getNextAthlete(numEssai + (essaiComplete ? 1 : 0)),
+      );
+      props.setHaveToCalculPlace(oldValue => !oldValue);
+      //Mise à jour du statut du concours
+      if (props.concoursData._?.statut === i18n.t('common:ready')) {
+        var data = props.concoursData;
+        data = setConcoursStatus(data, i18n.t('common:in_progress'));
+        await setFile(data?._?.id, JSON.stringify(data));
+        props.refreshConcoursData();
       }
     }
-    props.setHaveToCalculPlace(oldValue => !oldValue);
   };
 
   const onChangeTextValue = (resultat, numEssai, value) => {
-    if (numEssai % 2 === 1) {
-      resultat.LstEssais[Math.floor(numEssai / 2)].Vent = value;
-    } else {
+    var isValid = false;
+    const validValues = ['x', 'X', '-', 'r', 'R', '', null];
+    if (validValues.includes(value) || parseInt(value?.replace('m', ''))) {
+      isValid = true;
+      if (value === 'x' || value === 'R') {
+        value = value === 'R' ? value.toLowerCase() : value.toUpperCase();
+      }
       resultat.LstEssais[numEssai].ValeurPerformance = value;
       resultat.LstEssais[numEssai].SatutPerformance = value;
     }
+    return isValid;
   };
 
   const lstTextInput = [];
   const initValue = [];
   for (var i = 0; i < 12; i++) {
-    initValue.push(props.resultat.LstEssais[i].ValeurPerformance);
+    initValue.push(props.resultat.LstEssais[i]?.ValeurPerformance);
   }
   const [values, setValues] = useState(initValue);
   for (var i = 0; i < 12; i++) {
@@ -187,15 +239,15 @@ const TableConcoursSL = props => {
       <View style={[styleSheet.flex1]}>
         <MyInput
           placeholder={
-            indexH % 2 === 1
+            indexH % 2 === 0
               ? i18n.t('competition:performance').substring(0, 4) + '.'
               : i18n.t('competition:wind')
           }
           style={[
             {
               backgroundColor:
-                (props.resultat.LstEssais[indexH].ValeurPerformance === null ||
-                  props.resultat.LstEssais[indexH].ValeurPerformance === '') &&
+                (props.resultat.LstEssais[indexH]?.ValeurPerformance === null ||
+                  props.resultat.LstEssais[indexH]?.ValeurPerformance === '') &&
                 indexH + 1 === props.essaiEnCours
                   ? colors.white
                   : colors.gray_light,

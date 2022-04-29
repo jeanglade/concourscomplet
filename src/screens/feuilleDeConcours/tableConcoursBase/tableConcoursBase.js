@@ -251,7 +251,7 @@ const TableConcoursBase = props => {
     var minEssai = -1;
     props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats.map(
       (resultat, i) => {
-        resultat.LstEssais.map((v, index) => {
+        resultat.LstEssais?.map((v, index) => {
           if (v.ValeurPerformance === null || v.ValeurPerformance === '') {
             if (minEssai === -1 || index < minEssai) {
               minEssai = index;
@@ -260,6 +260,9 @@ const TableConcoursBase = props => {
         });
       },
     );
+    if (minEssai === -1) {
+      minEssai = 0;
+    }
     return minEssai;
   });
 
@@ -267,16 +270,21 @@ const TableConcoursBase = props => {
     var minAthtlete = -1;
     props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats.map(
       (resultat, i) => {
-        if (
-          resultat.LstEssais[essaiEnCours].ValeurPerformance === null ||
-          resultat.LstEssais[essaiEnCours].ValeurPerformance === ''
-        ) {
-          if (minAthtlete === -1) {
-            minAthtlete = i;
+        if (resultat?.LstEssais?.length > essaiEnCours) {
+          if (
+            resultat?.LstEssais[essaiEnCours]?.ValeurPerformance === null ||
+            resultat?.LstEssais[essaiEnCours]?.ValeurPerformance === ''
+          ) {
+            if (minAthtlete === -1) {
+              minAthtlete = i;
+            }
           }
         }
       },
     );
+    if (minAthtlete === -1) {
+      minAthtlete = 0;
+    }
     return minAthtlete;
   });
   /*const serie =
@@ -476,12 +484,13 @@ const TableConcoursBase = props => {
               <TableConcoursSB
                 resultat={resultat}
                 bars={barRises}
+                athleteEnCours={athleteEnCours}
+                setAthleteEnCours={setAthleteEnCours}
                 listColumnVisible={listColumnVisible}
                 indexFirstColumnVisible={indexFirstColumnVisible}
                 numberOfColumnVisible={numberOfColumnVisible}
                 index={index}
                 essaiEnCours={essaiEnCours}
-                athleteEnCours={athleteEnCours}
                 setConcoursData={props.setConcoursData}
                 setBestPerf={setBestPerf}
                 bestPerf={bestPerf}
@@ -492,17 +501,19 @@ const TableConcoursBase = props => {
                 ndex={index}
                 resultat={resultat}
                 athleteEnCours={athleteEnCours}
+                setAthleteEnCours={setAthleteEnCours}
                 concoursData={props.concoursData}
                 essaiEnCours={essaiEnCours}
+                setEssaiEnCours={setEssaiEnCours}
                 indexFirstColumnVisible={indexFirstColumnVisible}
                 numberOfColumnVisible={numberOfColumnVisible}
                 listColumnVisible={listColumnVisible}
                 setConcoursData={props.setConcoursData}
-                setEssaiEnCours={setEssaiEnCours}
                 setBestPerf={setBestPerf}
                 bestPerf={bestPerf}
                 middlePlace={middlePlace}
                 setHaveToCalculPlace={setHaveToCalculPlace}
+                refreshConcoursData={props.refreshConcoursData}
               />
             )}
             {props.concoursData?._?.type === 'LT' && (
@@ -552,7 +563,9 @@ const TableConcoursBase = props => {
             />
           </View>
           <View style={{width: 40}}>
-            <Text style={styleSheet.text}>{finalPlace[index]}</Text>
+            <Text style={styleSheet.text}>
+              {props.concoursData?._?.type !== 'SB' ? finalPlace[index] : ''}
+            </Text>
           </View>
         </View>
       </>

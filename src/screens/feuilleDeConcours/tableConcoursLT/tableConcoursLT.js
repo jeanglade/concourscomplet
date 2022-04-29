@@ -71,13 +71,17 @@ const manageDuplicatePerf = perfs => {
   perfs.map((perf, index) => {
     perfs.map((perf2, index2) => {
       //S'ils sont différent et que leur meilleur performance est égale
-      if (index !== index2 && perf.valeur[0] === perf2.valeur[0]) {
+      if (
+        index !== index2 &&
+        index > index2 &&
+        perf.valeur[0] === perf2.valeur[0]
+      ) {
         const minPlace = Math.min(perf2.place, perf.place);
         //S'ils ont toutes les mêmes performances = ex aequos
 
         if (perf.valeur.every((v, i) => v === perf2.valeur[i])) {
           perf.place = minPlace;
-          //perf2.place = minPlace;
+          perf2.place = minPlace;
         } else {
           var i = 1;
           const maxLength = Math.max(perf.valeur.length, perf2.valeur.length);
@@ -86,6 +90,8 @@ const manageDuplicatePerf = perfs => {
             if (i === perf.valeur.length || i === perf2.valeur.length) {
               perf.place =
                 minPlace + (perf.valeur.length > perf2.valeur.length ? 0 : 1);
+              perf2.place =
+                minPlace + (perf.valeur.length < perf2.valeur.length ? 0 : 1);
             } else {
               if (perf.valeur[i] > perf2.valeur[i]) {
                 perf.place = minPlace;
@@ -127,7 +133,7 @@ export const calculBestPlaceLT = (resultats, nbTries) => {
     return {
       index: i,
       place: i,
-      valeur: perfs.sort((a, b) => (a.valeur < b.valeur ? 1 : -1)),
+      valeur: perfs.sort((a, b) => (a < b ? 1 : -1)),
     };
   });
   //Ordonne la liste en fonction de la permière performance
@@ -149,7 +155,7 @@ export const calculBestPlaceLT = (resultats, nbTries) => {
 const TableConcoursLT = props => {
   const calculBestPerf = (resultat, nbTries) => {
     var res = null;
-    for (var i = 1; i < nbTries; i++) {
+    for (var i = 0; i < nbTries; i++) {
       const valeur = parseInt(
         resultat.LstEssais[i].ValeurPerformance?.replace('m', ''),
       );
@@ -224,10 +230,10 @@ const TableConcoursLT = props => {
     );
     var newResultat = props.concoursData;
     var essaiComplete = true;
-    const meilleurPerf = calculBestPerf(props.resultat, 6);
+    const meilleurPerf = calculBestPerf(resultat, 6);
     props.setBestPerf(meilleurPerf);
     resultat.Performance = meilleurPerf;
-    setMiddleBestPerf(calculBestPerf(props.resultat, 3));
+    setMiddleBestPerf(calculBestPerf(resultat, 3));
     if (result != '' && result !== null) {
       newResultat.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats[
         index
