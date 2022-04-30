@@ -24,7 +24,9 @@ const ModalFirstBar = props => {
   const [hasChanged, setHasChanged] = useState(false);
 
   //Montée de barre
-  const [barRises] = useState(getMonteeDeBarre(props.concoursData));
+  const [barRises, setBarRises] = useState(
+    getMonteeDeBarre(props.concoursData),
+  );
 
   //Sauvegarde
   const saveFirstBar = async () => {
@@ -61,7 +63,7 @@ const ModalFirstBar = props => {
                 item.Athlete.firstBar = value;
                 setFirstB(parseInt(value.toString()));
               }}
-              data={barRises.map(v => ({
+              data={barRises?.map(v => ({
                 label: getHauteurToTextValue(v),
                 value: v,
               }))}
@@ -102,6 +104,8 @@ const ModalFirstBar = props => {
           setHasChanged(false);
           saveFirstBar();
           props.refreshConcoursData();
+        } else {
+          setBarRises(getMonteeDeBarre(props.concoursData));
         }
         setModalVisible(bool);
       }}
