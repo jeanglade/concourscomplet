@@ -52,7 +52,7 @@ const TableConcoursBase = props => {
 
   //Tailles des minimums des colonnes de base (ordre, dossard, athlète, perf et place)
   const maxWidthBase =
-    40 + 60 + 200 + 100 + 40 + (props.concoursData?._?.type === 'SB' ? 80 : 0);
+    40 + 60 + 250 + 100 + 40 + (props.concoursData?._?.type === 'SB' ? 80 : 0);
   const getNumberOfColumns = () => {
     var res = 1;
     const sizeAvailable = Dimensions.get('window').width - maxWidthBase;
@@ -69,6 +69,7 @@ const TableConcoursBase = props => {
         type: 'text',
         width: 60,
         text: i18n.t('competition:number'),
+        style: styleSheet.flexRowCenter,
       },
       {
         type: 'text',
@@ -112,11 +113,13 @@ const TableConcoursBase = props => {
         type: 'text',
         width: 100,
         text: i18n.t('competition:performance'),
+        style: styleSheet.flexRowCenter,
       },
       {
         type: 'text',
         width: 40,
         text: i18n.t('competition:place'),
+        style: styleSheet.flexRowCenter,
       },
     ];
   };
@@ -340,11 +343,15 @@ const TableConcoursBase = props => {
       <>
         <View style={styles.item}>
           <View style={{width: 40}}>
-            <Text style={[styleSheet.text]}>{order}</Text>
+            <Text style={[styleSheet.text, styleSheet.textCenter]}>
+              {order}
+            </Text>
           </View>
           {hasDossard && (
             <View style={{width: 60}}>
-              <Text style={[styleSheet.text]}>{dossard}</Text>
+              <Text style={[styleSheet.text, styleSheet.textCenter]}>
+                {dossard}
+              </Text>
             </View>
           )}
           <View style={[{width: 250}]}>
@@ -563,7 +570,7 @@ const TableConcoursBase = props => {
             />
           </View>
           <View style={{width: 40}}>
-            <Text style={styleSheet.text}>
+            <Text style={[styleSheet.text, styleSheet.textCenter]}>
               {props.concoursData?._?.type !== 'SB' ? finalPlace[index] : ''}
             </Text>
           </View>

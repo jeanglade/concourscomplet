@@ -231,8 +231,18 @@ const TableCompetition = props => {
         headerTable={[
           {type: 'text', flex: 2, text: i18n.t('common:date')},
           {type: 'text', flex: 5, text: i18n.t('common:discipline')},
-          {type: 'text', flex: 1, text: i18n.t('common:status')},
-          {type: 'text', flex: 2, text: i18n.t('common:actions')},
+          {
+            type: 'text',
+            flex: 1,
+            text: i18n.t('common:status'),
+            style: styleSheet.flexRowCenter,
+          },
+          {
+            type: 'text',
+            flex: 2,
+            text: i18n.t('common:actions'),
+            style: styleSheet.flexRowCenter,
+          },
         ]}
         tableData={tableDataFilter()}
         renderItem={({item, index}) => {

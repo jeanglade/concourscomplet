@@ -15,37 +15,49 @@ export const getHeaderTableLT = () => {
       type: 'text',
       width: 75,
       text: i18n.t('competition:first'),
+      style: styleSheet.flexRowCenter,
     },
     {
       type: 'text',
       width: 75,
       text: i18n.t('competition:second'),
+      style: styleSheet.flexRowCenter,
     },
     {
       type: 'text',
       width: 75,
       text: i18n.t('competition:third'),
+      style: styleSheet.flexRowCenter,
     },
     {
       type: 'text',
       width: 65,
       text: i18n.t('competition:performance').substring(0, 4) + '.',
+      style: styleSheet.flexRowCenter,
     },
-    {type: 'text', width: 40, text: i18n.t('competition:place')},
+    {
+      type: 'text',
+      width: 40,
+      text: i18n.t('competition:place'),
+      style: styleSheet.flexRowCenter,
+    },
     {
       type: 'text',
       width: 75,
       text: i18n.t('competition:fourth'),
+      style: styleSheet.flexRowCenter,
     },
     {
       type: 'text',
       width: 75,
       text: i18n.t('competition:fifth'),
+      style: styleSheet.flexRowCenter,
     },
     {
       type: 'text',
       width: 75,
       text: i18n.t('competition:sixth'),
+      style: styleSheet.flexRowCenter,
     },
   ];
 };
@@ -334,13 +346,15 @@ const TableConcoursLT = props => {
       {verifyVisibility(lstTextInput[2], 2)}
       {verifyVisibility(
         <View style={{width: 60, marginStart: 5}}>
-          <Text style={[styleSheet.text]}>{middleBestPerf}</Text>
+          <Text style={[styleSheet.text, styleSheet.textCenter]}>
+            {middleBestPerf}
+          </Text>
         </View>,
         3,
       )}
       {verifyVisibility(
         <View style={{width: 40}}>
-          <Text style={[styleSheet.text]}>
+          <Text style={[styleSheet.text, styleSheet.textCenter]}>
             {props.middlePlace[props.index]}
           </Text>
         </View>,

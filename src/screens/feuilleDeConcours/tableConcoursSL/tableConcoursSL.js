@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Text, View} from 'react-native';
+import {Text, View, StyleSheet} from 'react-native';
 import i18n from 'i18next';
 import {colors, styleSheet} from '_config';
 import {MyInput} from '_components';
@@ -12,67 +12,49 @@ export const getHeaderTableSL = () => {
       type: 'text',
       flex: 1,
       text: i18n.t('competition:first'),
-    },
-    {
-      type: 'text',
-      flex: 1,
-      text: i18n.t('competition:first') + ' ' + i18n.t('competition:wind'),
+      style: styleSheet.flexRowCenter,
     },
     {
       type: 'text',
       flex: 1,
       text: i18n.t('competition:second'),
-    },
-    {
-      type: 'text',
-      flex: 1,
-      text: i18n.t('competition:second') + ' ' + i18n.t('competition:wind'),
+      style: styleSheet.flexRowCenter,
     },
     {
       type: 'text',
       flex: 1,
       text: i18n.t('competition:third'),
-    },
-    {
-      type: 'text',
-      flex: 1,
-      text: i18n.t('competition:third') + ' ' + i18n.t('competition:wind'),
+      style: styleSheet.flexRowCenter,
     },
     {
       type: 'text',
       width: 60,
       text: i18n.t('competition:performance').substring(0, 4) + '.',
+      style: styleSheet.flexRowCenter,
     },
-    {type: 'text', width: 40, text: i18n.t('competition:place')},
+    {
+      type: 'text',
+      width: 40,
+      text: i18n.t('competition:place'),
+      style: styleSheet.flexRowCenter,
+    },
     {
       type: 'text',
       flex: 1,
       text: i18n.t('competition:fourth'),
-    },
-    {
-      type: 'text',
-      flex: 1,
-      text: i18n.t('competition:fourth') + ' ' + i18n.t('competition:wind'),
+      style: styleSheet.flexRowCenter,
     },
     {
       type: 'text',
       flex: 1,
       text: i18n.t('competition:fifth'),
-    },
-    {
-      type: 'text',
-      flex: 1,
-      text: i18n.t('competition:fifth') + ' ' + i18n.t('competition:wind'),
+      style: styleSheet.flexRowCenter,
     },
     {
       type: 'text',
       flex: 1,
       text: i18n.t('competition:sixth'),
-    },
-    {
-      type: 'text',
-      flex: 1,
-      text: i18n.t('competition:sixth') + ' ' + i18n.t('competition:wind'),
+      style: styleSheet.flexRowCenter,
     },
   ];
 };
@@ -265,7 +247,7 @@ const TableConcoursSL = props => {
             setValues(oldValues =>
               oldValues.map((val, ind) =>
                 ind === indexH && val !== null
-                  ? getHauteurToTextValue(val.replace('m', ''))
+                  ? getHauteurToTextValue(val?.replace('m', ''))
                   : val,
               ),
             );
@@ -276,34 +258,56 @@ const TableConcoursSL = props => {
   }
   return (
     <>
-      {verifyVisibility(lstTextInput[0], 0)}
-      {verifyVisibility(lstTextInput[1], 1)}
-      {verifyVisibility(lstTextInput[2], 2)}
-      {verifyVisibility(lstTextInput[3], 3)}
-      {verifyVisibility(lstTextInput[4], 4)}
-      {verifyVisibility(lstTextInput[5], 5)}
+      <View style={styles.columnCentered}>
+        {verifyVisibility(lstTextInput[0], 0)}
+        {verifyVisibility(lstTextInput[1], 0)}
+      </View>
+      <View style={styles.columnCentered}>
+        {verifyVisibility(lstTextInput[2], 1)}
+        {verifyVisibility(lstTextInput[3], 1)}
+      </View>
+      <View style={styles.columnCentered}>
+        {verifyVisibility(lstTextInput[4], 2)}
+        {verifyVisibility(lstTextInput[5], 2)}
+      </View>
       {verifyVisibility(
         <View style={{width: 60}}>
-          <Text style={[styleSheet.text]}>{middleBestPerf}</Text>
+          <Text style={[styleSheet.text, styleSheet.textCenter]}>
+            {middleBestPerf}
+          </Text>
         </View>,
-        6,
+        3,
       )}
       {verifyVisibility(
         <View style={{width: 40}}>
-          <Text style={[styleSheet.text]}>
+          <Text style={[styleSheet.text, styleSheet.textCenter]}>
             {props.middlePlace[props.index]}
           </Text>
         </View>,
-        7,
+        4,
       )}
-      {verifyVisibility(lstTextInput[6], 8)}
-      {verifyVisibility(lstTextInput[7], 9)}
-      {verifyVisibility(lstTextInput[8], 10)}
-      {verifyVisibility(lstTextInput[9], 11)}
-      {verifyVisibility(lstTextInput[10], 12)}
-      {verifyVisibility(lstTextInput[11], 13)}
+      <View style={styles.columnCentered}>
+        {verifyVisibility(lstTextInput[6], 5)}
+        {verifyVisibility(lstTextInput[7], 5)}
+      </View>
+      <View style={styles.columnCentered}>
+        {verifyVisibility(lstTextInput[8], 6)}
+        {verifyVisibility(lstTextInput[9], 6)}
+      </View>
+      <View style={styles.columnCentered}>
+        {verifyVisibility(lstTextInput[10], 7)}
+        {verifyVisibility(lstTextInput[11], 7)}
+      </View>
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  columnCentered: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default TableConcoursSL;

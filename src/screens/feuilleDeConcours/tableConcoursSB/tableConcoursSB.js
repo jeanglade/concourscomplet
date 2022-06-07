@@ -12,6 +12,7 @@ export const getHeaderTableSB = bars => {
         type: 'text',
         width: 75,
         text: getHauteurToTextValue(bar?.toString()),
+        style: styleSheet.flexRowCenter,
       });
     });
   }
