@@ -37,23 +37,35 @@ const ModalBar = props => {
     getMonteeDeBarre(props.concoursData, false, true),
   );
 
+  const getGuid = async (resultBars, bar) => {
+    const result = resultBars.find(item => item.bar === bar);
+    return result ? result.guid : null;
+  };
+
   //Si les montées de barre ont changé - sauvegarde
   const saveMonteeDeBarre = async () => {
-    var data = props.concoursData;
-    var resultBars = {
-      $id: data.EpreuveConcoursComplet.hasOwnProperty('MonteesBarre')
-        ? data.EpreuveConcoursComplet.MonteesBarre.$id
-        : '1',
-    };
+    var concours =
+      props.concoursData.EpreuveConcoursComplet.TourConcoursComplet
+        .LstSerieConcoursComplet[0];
+    var resultBars = [];
+    if (concours.hasOwnProperty('LstMonteesBarre')) {
+      resultBars = concours.LstMonteesBarre;
+    }
     barRises.forEach((bar, index) => {
-      const i = index + 1;
-      resultBars['Barre' + (i < 10 ? '0' : '') + i.toString()] = bar;
+      resultBars[index] = {
+        GuidBarre: getGuid(resultBars, bar),
+        Valeur: bar,
+        Ordre: index + 1,
+      };
     });
     barRisesBarrage.forEach((bar, index) => {
-      const i = index + barRises.length + 1;
-      resultBars['Barre' + (i < 10 ? '0' : '') + i.toString()] = bar;
+      resultBars[index + barRises.length] = {
+        GuidBarre: getGuid(resultBars, bar),
+        Valeur: bar,
+        Ordre: index + barRises.length + 1,
+      };
     });
-    data.EpreuveConcoursComplet.MonteesBarre = resultBars;
+    concours.LstMonteesBarre = resultBars;
     //Mise à jour du statut du concours
     if (data._?.statut === i18n.t('common:ready')) {
       data = setConcoursStatus(data, i18n.t('common:in_progress'));

@@ -61,18 +61,15 @@ export const getHeaderTableSL = () => {
 
 export const getColumnsVisibleSL = _ => {
   var columnsVisible = [];
-  for (var i = 0; i < 14; i += 2) {
-    if (i === 6) {
+  for (var i = 0; i < 7; i++) {
+    if (i === 3) {
       if (_?.colPerfVisible && _?.colMiddleRankVisible) {
-        columnsVisible.push(6, 7);
+        columnsVisible.push(3, 4);
       }
     } else {
-      if (i < 6 || (i === 8 && _?.nbTries > 3) || (i > 8 && _?.nbTries > 4)) {
+      if (i < 3 || (i === 5 && _?.nbTries > 3) || (i > 5 && _?.nbTries > 4)) {
         if (_?.colPerfVisible) {
           columnsVisible.push(i);
-        }
-        if (_?.colWindVisible) {
-          columnsVisible.push(i + 1);
         }
       }
     }
@@ -260,15 +257,15 @@ const TableConcoursSL = props => {
     <>
       <View style={styles.columnCentered}>
         {verifyVisibility(lstTextInput[0], 0)}
-        {verifyVisibility(lstTextInput[1], 0)}
+        {props.concoursData._.colWindVisible && lstTextInput[1]}
       </View>
       <View style={styles.columnCentered}>
-        {verifyVisibility(lstTextInput[2], 1)}
-        {verifyVisibility(lstTextInput[3], 1)}
+        {verifyVisibility(lstTextInput[2], 2)}
+        {props.concoursData._.colWindVisible && lstTextInput[3]}
       </View>
       <View style={styles.columnCentered}>
-        {verifyVisibility(lstTextInput[4], 2)}
-        {verifyVisibility(lstTextInput[5], 2)}
+        {verifyVisibility(lstTextInput[4], 4)}
+        {props.concoursData._.colWindVisible && lstTextInput[5]}
       </View>
       {verifyVisibility(
         <View style={{width: 60}}>
@@ -276,7 +273,7 @@ const TableConcoursSL = props => {
             {middleBestPerf}
           </Text>
         </View>,
-        3,
+        6,
       )}
       {verifyVisibility(
         <View style={{width: 40}}>
@@ -284,19 +281,19 @@ const TableConcoursSL = props => {
             {props.middlePlace[props.index]}
           </Text>
         </View>,
-        4,
+        7,
       )}
       <View style={styles.columnCentered}>
-        {verifyVisibility(lstTextInput[6], 5)}
-        {verifyVisibility(lstTextInput[7], 5)}
+        {verifyVisibility(lstTextInput[6], 8)}
+        {props.concoursData._.colWindVisible && lstTextInput[7]}
       </View>
       <View style={styles.columnCentered}>
-        {verifyVisibility(lstTextInput[8], 6)}
-        {verifyVisibility(lstTextInput[9], 6)}
+        {verifyVisibility(lstTextInput[8], 10)}
+        {props.concoursData._.colWindVisible && lstTextInput[9]}
       </View>
       <View style={styles.columnCentered}>
-        {verifyVisibility(lstTextInput[10], 7)}
-        {verifyVisibility(lstTextInput[11], 7)}
+        {verifyVisibility(lstTextInput[10], 12)}
+        {props.concoursData._.colWindVisible && lstTextInput[11]}
       </View>
     </>
   );

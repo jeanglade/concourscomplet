@@ -89,41 +89,31 @@ export const getMonteeDeBarre = (
   var resultBar = [];
   var isBarBarrage = false;
   var tempLastBar = null;
+  var concours =
+    concoursData.EpreuveConcoursComplet.TourConcoursComplet
+      .LstSerieConcoursComplet[0];
   //Si le concours a des barres (SB)
   if (
     concoursData?._?.type === 'SB' &&
-    concoursData.EpreuveConcoursComplet.hasOwnProperty('MonteesBarre')
+    concours.hasOwnProperty('LstMonteesBarre')
   ) {
-    for (
-      var i = 1;
-      i < Object.keys(concoursData.EpreuveConcoursComplet.MonteesBarre).length;
-      i++
-    ) {
-      const nameBarre = 'Barre' + (i < 10 ? '0' : '') + i.toString();
-      //Si barre existe
-      if (
-        concoursData.EpreuveConcoursComplet.MonteesBarre.hasOwnProperty(
-          nameBarre,
-        )
-      ) {
-        const newBar =
-          concoursData.EpreuveConcoursComplet.MonteesBarre[nameBarre];
-        //Les barres de barrage sont à partir d une baisse de hauteur
-        if (tempLastBar !== null && !isBarBarrage) {
-          isBarBarrage = tempLastBar > newBar;
-        }
-        //Si (chargement barres normales ET newBar PAS barrage) OU
-        // (chargement barres barrages ET newBar EST barrage) OU
-        // (chargement de toutes les barres)
-        if (
-          (onlyClassicBar && !isBarBarrage) ||
-          (onlyBarrageBar && isBarBarrage) ||
-          (!onlyClassicBar && !onlyBarrageBar)
-        ) {
-          resultBar.push(newBar);
-        }
-        tempLastBar = newBar;
+    for (var i = 1; i < Object.keys(concours.LstMonteesBarre).length; i++) {
+      const newBar = concours.LstMonteesBarre[i].Valeur;
+      //Les barres de barrage sont à partir d une baisse de hauteur
+      if (tempLastBar !== null && !isBarBarrage) {
+        isBarBarrage = tempLastBar > newBar;
       }
+      //Si (chargement barres normales ET newBar PAS barrage) OU
+      // (chargement barres barrages ET newBar EST barrage) OU
+      // (chargement de toutes les barres)
+      if (
+        (onlyClassicBar && !isBarBarrage) ||
+        (onlyBarrageBar && isBarBarrage) ||
+        (!onlyClassicBar && !onlyBarrageBar)
+      ) {
+        resultBar.push(newBar);
+      }
+      tempLastBar = newBar;
     }
   }
   return resultBar;
