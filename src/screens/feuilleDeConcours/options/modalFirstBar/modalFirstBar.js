@@ -11,8 +11,8 @@ import {
 } from 'react-native';
 import i18n from 'i18next';
 import {
-  getHauteurToTextValue,
-  getMonteeDeBarre,
+  convertHauteurToString,
+  getAllMonteesDeBarre,
   setConcoursStatus,
 } from '../../../../utils/convertor';
 import {setFile} from '../../../../utils/myAsyncStorage';
@@ -25,7 +25,7 @@ const ModalFirstBar = props => {
 
   //Montée de barre
   const [barRises, setBarRises] = useState(
-    getMonteeDeBarre(props.concoursData),
+    getAllMonteesDeBarre(props.concoursData),
   );
 
   //Sauvegarde
@@ -64,7 +64,7 @@ const ModalFirstBar = props => {
                 setFirstB(parseInt(value.toString()));
               }}
               data={barRises?.map(v => ({
-                label: getHauteurToTextValue(v),
+                label: convertHauteurToString(v),
                 value: v,
               }))}
               selectedValue={firstB}
@@ -81,12 +81,10 @@ const ModalFirstBar = props => {
                     index
                   ].Athlete.poteaux = value;
                 }}
-                data={['0', '10', '20', '30', '40', '50', '60', '70', '80'].map(
-                  v => ({
-                    label: v,
-                    value: v,
-                  }),
-                )}
+                data={[...Array(16).keys()].map(v => ({
+                  label: (v * 5).toString(),
+                  value: (v * 5).toString(),
+                }))}
                 selectedValue={poteaux}
               />
             </View>
@@ -105,7 +103,7 @@ const ModalFirstBar = props => {
           saveFirstBar();
           props.refreshConcoursData();
         } else {
-          setBarRises(getMonteeDeBarre(props.concoursData));
+          setBarRises(getAllMonteesDeBarre(props.concoursData));
         }
         setModalVisible(bool);
       }}

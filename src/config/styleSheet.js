@@ -51,6 +51,9 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  flexColumn: {
+    flexDirection: 'column',
+  },
   flexRow: {
     flexDirection: 'row',
   },

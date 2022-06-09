@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, FlatList} from 'react-native';
-import {styleSheet, colors} from '_config';
+import {styleSheet} from '_config';
 import {MyButton} from '_components';
 
 const MyDataTable = props => {
@@ -8,7 +8,7 @@ const MyDataTable = props => {
     <View style={[styleSheet.flex1, {marginTop: 20}]}>
       <View
         style={[styleSheet.flexRow, {marginHorizontal: 10, paddingBottom: 5}]}>
-        {props.headerTable.map((item, index) => {
+        {props.headerTable.map(item => {
           var res = null;
           if (item?.type === 'text') {
             res = (

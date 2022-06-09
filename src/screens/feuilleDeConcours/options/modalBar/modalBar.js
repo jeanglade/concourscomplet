@@ -11,9 +11,10 @@ import {
 } from 'react-native';
 import {setFile} from '../../../../utils/myAsyncStorage';
 import i18n from 'i18next';
+import uuid from 'react-native-uuid';
 import {
-  getHauteurToTextValue,
-  getMonteeDeBarre,
+  convertHauteurToString,
+  getAllMonteesDeBarre,
   setConcoursStatus,
 } from '../../../../utils/convertor';
 
@@ -30,16 +31,16 @@ const ModalBar = props => {
 
   //Montée de barre classiques
   const [barRises, setBarRises] = useState(
-    getMonteeDeBarre(props.concoursData, true, false),
+    getAllMonteesDeBarre(props.concoursData, true, false),
   );
   //Montée de barrers de barrage
   const [barRisesBarrage, setBarRisesBarrage] = useState(
-    getMonteeDeBarre(props.concoursData, false, true),
+    getAllMonteesDeBarre(props.concoursData, false, true),
   );
 
   const getGuid = async (resultBars, bar) => {
     const result = resultBars.find(item => item.bar === bar);
-    return result ? result.guid : null;
+    return result ? result.guid : uuid.v4();
   };
 
   //Si les montées de barre ont changé - sauvegarde
@@ -119,7 +120,7 @@ const ModalBar = props => {
               styleSheet.text,
               index >= barRises?.length && {color: colors.ffa_blue_light},
             ]}>
-            {getHauteurToTextValue(item)}
+            {convertHauteurToString(item)}
           </Text>
         </View>
         <View style={[styleSheet.flexRow, styleSheet.flex1]}>

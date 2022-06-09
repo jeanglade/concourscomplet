@@ -2,27 +2,84 @@ import {colors} from '_config';
 import i18n from 'i18next';
 import moment from 'moment';
 
-export const setDateFormat = date => {
+export const convertDateFormat = date => {
   return moment(date, moment.ISO_8601).format('DD/MM/YYYY');
 };
 
-export const getHauteurToTextValue = value => {
-  var res = value;
-  if (res !== undefined && res !== null) {
-    if (parseInt(value) || value === '0') {
-      if (value.toString().length === 1) {
-        value = '00' + value.toString();
-      }
-      if (value.toString().length === 2) {
-        value = '0' + value.toString();
-      }
-      res = value.toString().slice(0, -2) + 'm' + value.toString().slice(-2);
-    }
+export const convertHauteurToString = value => {
+  var res = value?.toString()?.replace('m', '');
+  if (parseInt(res) || res === '0') {
+    const length = res.toString().length;
+    res = (length === 1 ? '00' : length === 2 ? '0' : '') + res.toString();
+    res = res.toString().slice(0, -2) + 'm' + res.toString().slice(-2);
+  }
+  console.log('convertHauteurToString', res?.toString());
+  return res != undefined ? res.toString() : null;
+};
+
+export const convertStringToHauteur = value => {
+  return new Number(value?.toString().replace('m', ''));
+};
+
+export const convertVentToString = value => {
+  var text = parseFloat(value?.toString()?.replace('+', ''));
+  return isNaN(text)
+    ? null
+    : text > 0
+    ? '+' + text.toString()
+    : text.toString();
+};
+
+export const convertStringToVent = value => {
+  var vent = parseFloat(value?.toString()?.replace('+', ''));
+  return isNaN(vent) ? null : vent;
+};
+
+export const convertAthleteStatus = statut => {
+  var res = new Number('0');
+  switch (statut) {
+    case 'DNF':
+      res = 99999991;
+      break;
+    case 'DQ':
+      res = 99999992;
+      break;
+    case 'DNS':
+      res = 99999993;
+      break;
+    case 'NM':
+      res = 99999994;
+      break;
+    case 'NP':
+      res = 99999995;
+      break;
   }
   return res;
 };
 
-export const getStatusColor = statut => {
+export const convertStatusAthlete = statut => {
+  var res = new String('');
+  switch (statut) {
+    case 99999991:
+      res = 'DNF';
+      break;
+    case 99999992:
+      res = 'DQ';
+      break;
+    case 99999993:
+      res = 'DNS';
+      break;
+    case 99999994:
+      res = 'NM';
+      break;
+    case 99999995:
+      res = 'NP';
+      break;
+  }
+  return res;
+};
+
+export const convertStatusColor = statut => {
   var res = colors.black;
   switch (statut) {
     case i18n.t('common:ready'):
@@ -46,11 +103,11 @@ export const setConcoursStatus = (
   newStatus = i18n.t('common:in_progress'),
 ) => {
   concoursData._.statut = newStatus;
-  concoursData._.statutColor = getStatusColor(newStatus);
+  concoursData._.statutColor = convertStatusColor(newStatus);
   return concoursData;
 };
 
-export const getImageEpreuve = epreuve => {
+export const convertEpreuveToImage = epreuve => {
   var res = '';
   switch (true) {
     case epreuve.includes('Hauteur'):
@@ -81,7 +138,7 @@ export const getImageEpreuve = epreuve => {
   return res;
 };
 
-export const getMonteeDeBarre = (
+export const getAllMonteesDeBarre = (
   concoursData,
   onlyClassicBar = false,
   onlyBarrageBar = false,
@@ -97,7 +154,7 @@ export const getMonteeDeBarre = (
     concoursData?._?.type === 'SB' &&
     concours.hasOwnProperty('LstMonteesBarre')
   ) {
-    for (var i = 1; i < Object.keys(concours.LstMonteesBarre).length; i++) {
+    for (var i = 0; i < concours.LstMonteesBarre.length; i++) {
       const newBar = concours.LstMonteesBarre[i].Valeur;
       //Les barres de barrage sont à partir d une baisse de hauteur
       if (tempLastBar !== null && !isBarBarrage) {

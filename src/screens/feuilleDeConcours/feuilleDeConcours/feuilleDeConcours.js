@@ -42,6 +42,7 @@ const FeuilleDeConcours = props => {
   //Toutes les saisies utilisateur changent cette variable et la sauvegarde avec asyncStorage
   //Met à jour concoursData depuis la sauvegarde
   const refreshConcoursData = async () => {
+    console.log('feuilleDeConcours > refreshConcoursData');
     const value = await getFile(concoursData?._?.id);
     setConcoursData(JSON.parse(value));
     setHaveToRefreshTable(oldValue => !oldValue);
@@ -50,6 +51,7 @@ const FeuilleDeConcours = props => {
   //Avec le useEffect permet de mettre à jour le titre pour le status du concours et le tableau <TableConcoursBase>
   const [haveToRefreshTable, setHaveToRefreshTable] = useState(false);
   useEffect(() => {
+    console.log('feuilleDeConcours > useEffect');
     props.navigation.setOptions({
       header: ({}) => {
         return (

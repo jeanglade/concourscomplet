@@ -4,7 +4,7 @@ import i18n from 'i18next';
 import {colors, styleSheet} from '_config';
 import {MyInput} from '_components';
 import {
-  getHauteurToTextValue,
+  convertHauteurToString,
   setConcoursStatus,
 } from '../../../utils/convertor';
 import {setFile} from '../../../utils/myAsyncStorage';
@@ -130,12 +130,13 @@ export const calculBestPlaceLT = (resultats, nbTries) => {
   var perfsAthlete = resultats.map((v, i) => {
     var perfs = [];
     //Si la meilleur performance est définie (= un chiffre)
-    if (isNaN(parseInt(v.Performance?.replace('m', '')))) {
+    console.log(v.Performance);
+    if (isNaN(parseInt(v.Performance))) {
       perfs = [-1];
     } else {
       v.LstEssais.map((essai, index) => {
-        if (index < nbTries && essai.ValeurPerformance !== undefined) {
-          const perf = parseInt(essai.ValeurPerformance?.replace('m', ''));
+        if (index < nbTries && essai.PerfValue !== undefined) {
+          const perf = parseInt(essai.PerfValue);
           if (!isNaN(perf)) {
             perfs.push(perf);
           }
@@ -148,6 +149,7 @@ export const calculBestPlaceLT = (resultats, nbTries) => {
       valeur: perfs.sort((a, b) => (a < b ? 1 : -1)),
     };
   });
+
   //Ordonne la liste en fonction de la permière performance
   perfsAthlete = perfsAthlete.sort((a, b) =>
     a.valeur[0] < b.valeur[0] ? 1 : -1,
@@ -160,48 +162,43 @@ export const calculBestPlaceLT = (resultats, nbTries) => {
   perfsAthlete = manageDuplicatePerf(perfsAthlete);
   //Ordonne les places en fonction de la liste des athlètes
   perfsAthlete = perfsAthlete.sort((a, b) => (a.index > b.index ? 1 : -1));
-  //Retourne un tableau avec les places
-  return perfsAthlete.map((v, i) => v.place);
+  //Retourne un tableau avec les places si l'athlete a au moins une performance
+  return perfsAthlete.map((v, i) => (v.valeur == -1 ? '' : v.place));
 };
 
 const TableConcoursLT = props => {
   const calculBestPerf = (resultat, nbTries) => {
     var res = null;
     for (var i = 0; i < nbTries; i++) {
-      const valeur = parseInt(
-        resultat.LstEssais[i].ValeurPerformance?.replace('m', ''),
-      );
+      const valeur = parseInt(resultat.LstEssais[i].PerfValue?.toString());
       if (valeur) {
         res =
-          valeur >= parseInt(res?.replace('m', '')) || res === null
-            ? resultat.LstEssais[i].ValeurPerformance
+          valeur >= parseInt(res) || res === null
+            ? resultat.LstEssais[i].PerfValue
             : res;
       }
     }
 
     if (
-      resultat.LstEssais.map(v => v.ValeurPerformance).includes('X') &&
+      resultat.LstEssais.map(v => v.PerfValue).includes('X') &&
       resultat.LstEssais.every(
         v =>
-          v.ValeurPerformance === 'X' ||
-          v.ValeurPerformance === '' ||
-          v.ValeurPerformance === '-' ||
-          v.ValeurPerformance === null,
+          v.PerfValue === 'X' ||
+          v.PerfValue === '' ||
+          v.PerfValue === '-' ||
+          v.PerfValue === null,
       )
     ) {
       res = 'NM';
     }
     if (
       resultat.LstEssais.every(
-        v =>
-          v.ValeurPerformance === '' ||
-          v.ValeurPerformance === null ||
-          v.ValeurPerformance === '-',
+        v => v.PerfValue === '' || v.PerfValue === null || v.PerfValue === '-',
       )
     ) {
       res = 'DNS';
     }
-    return getHauteurToTextValue(res?.replace('m', ''));
+    return convertHauteurToString(res?.replace('m', ''));
   };
 
   const [middleBestPerf, setMiddleBestPerf] = useState(
@@ -225,8 +222,8 @@ const TableConcoursLT = props => {
       (v, i) => {
         if (
           result === -1 &&
-          (v.LstEssais[numE].ValeurPerformance === '' ||
-            v.LstEssais[numE].ValeurPerformance === null)
+          (v.LstEssais[numE].PerfValue === '' ||
+            v.LstEssais[numE].PerfValue === null)
         ) {
           result = i;
         }
@@ -236,10 +233,7 @@ const TableConcoursLT = props => {
   };
 
   const saveEssai = async (resultat, numEssai, index) => {
-    const result = resultat.LstEssais[numEssai].ValeurPerformance?.replace(
-      'm',
-      '',
-    );
+    const result = resultat.LstEssais[numEssai].PerfValue?.replace('m', '');
     var newResultat = props.concoursData;
     var essaiComplete = true;
     const meilleurPerf = calculBestPerf(resultat, 6);
@@ -254,8 +248,8 @@ const TableConcoursLT = props => {
       newResultat.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats.map(
         (v, i) => {
           if (
-            v.LstEssais[numEssai].ValeurPerformance === null ||
-            v.LstEssais[numEssai].ValeurPerformance === ''
+            v.LstEssais[numEssai].PerfValue === null ||
+            v.LstEssais[numEssai].PerfValue === ''
           ) {
             essaiComplete = false;
           }
@@ -287,8 +281,8 @@ const TableConcoursLT = props => {
       if (value === 'x' || value === 'R') {
         value = value === 'R' ? value.toLowerCase() : value.toUpperCase();
       }
-      resultat.LstEssais[numEssai].ValeurPerformance = value;
-      resultat.LstEssais[numEssai].SatutPerformance = value;
+      resultat.LstEssais[numEssai].PerfValue = value;
+      resultat.LstEssais[numEssai].PerfStatus = value;
     }
     return isValid;
   };
@@ -296,7 +290,7 @@ const TableConcoursLT = props => {
   const lstTextInput = [];
   const initValue = [];
   for (var i = 0; i < 6; i++) {
-    initValue.push(props.resultat.LstEssais[i].ValeurPerformance);
+    initValue.push(props.resultat.LstEssais[i].PerfValue);
   }
   const [values, setValues] = useState(initValue);
   for (var i = 0; i < 6; i++) {
@@ -308,8 +302,8 @@ const TableConcoursLT = props => {
           style={[
             {
               backgroundColor:
-                (props.resultat.LstEssais[indexH].ValeurPerformance === null ||
-                  props.resultat.LstEssais[indexH].ValeurPerformance === '') &&
+                (props.resultat.LstEssais[indexH].PerfValue === null ||
+                  props.resultat.LstEssais[indexH].PerfValue === '') &&
                 indexH === props.essaiEnCours
                   ? colors.white
                   : colors.gray_light,
@@ -330,7 +324,7 @@ const TableConcoursLT = props => {
             setValues(oldValues =>
               oldValues.map((val, ind) =>
                 ind === indexH && val !== null
-                  ? getHauteurToTextValue(val.replace('m', ''))
+                  ? convertHauteurToString(val.replace('m', ''))
                   : val,
               ),
             );

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {View} from 'react-native';
 import {colors} from '_config';
 import {MyInput} from '_components';
-import {getHauteurToTextValue} from '../../../utils/convertor';
+import {convertHauteurToString} from '../../../utils/convertor';
 
 export const getHeaderTableSB = bars => {
   var result = [];
@@ -11,7 +11,7 @@ export const getHeaderTableSB = bars => {
       result.push({
         type: 'text',
         width: 75,
-        text: getHauteurToTextValue(bar?.toString()),
+        text: convertHauteurToString(bar?.toString()),
         style: styleSheet.flexRowCenter,
       });
     });
@@ -33,24 +33,21 @@ const TableConcoursSB = props => {
     const count = props.bars.length;
     for (var i = 0; i < count; i++) {
       if (
-        resultat.LstEssais[i].ValeurPerformance !== null &&
-        resultat.LstEssais[i].ValeurPerformance !== ''
+        resultat.LstEssais[i].PerfValue !== null &&
+        resultat.LstEssais[i].PerfValue !== ''
       ) {
-        if (resultat.LstEssais[i].ValeurPerformance?.toString().includes('O'))
+        if (resultat.LstEssais[i].PerfValue?.toString().includes('O'))
           res = props.bars[i];
       }
     }
     if (
       resultat.LstEssais.every(
-        v =>
-          v.ValeurPerformance === '' ||
-          v.ValeurPerformance === null ||
-          v.ValeurPerformance === '-',
+        v => v.PerfValue === '' || v.PerfValue === null || v.PerfValue === '-',
       )
     ) {
       res = 'DNS';
     }
-    return getHauteurToTextValue(res?.replace('m', ''));
+    return convertHauteurToString(res?.replace('m', ''));
   };
 
   const verifyVisibility = (item, index) => {
@@ -65,10 +62,7 @@ const TableConcoursSB = props => {
   };
 
   const saveEssai = async (resultat, numEssai, index) => {
-    const result = resultat.LstEssais[numEssai].ValeurPerformance?.replace(
-      'm',
-      '',
-    );
+    const result = resultat.LstEssais[numEssai].PerfValue?.replace('m', '');
     var newResultat = props.concoursData;
     var essaiComplete = true;
     const meilleurPerf = calculBestPerf(resultat);
@@ -82,8 +76,8 @@ const TableConcoursSB = props => {
       newResultat.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats.map(
         (v, i) => {
           if (
-            v.LstEssais[numEssai].ValeurPerformance === null ||
-            v.LstEssais[numEssai].ValeurPerformance === ''
+            v.LstEssais[numEssai].PerfValue === null ||
+            v.LstEssais[numEssai].PerfValue === ''
           ) {
             essaiComplete = false;
           }
@@ -118,8 +112,8 @@ const TableConcoursSB = props => {
             ? value.toUpperCase()
             : value.toLowerCase();
       }
-      resultat.LstEssais[numEssai].ValeurPerformance = value;
-      resultat.LstEssais[numEssai].SatutPerformance = value;
+      resultat.LstEssais[numEssai].PerfValue = value;
+      resultat.LstEssais[numEssai].PerfStatus = value;
     }
     return isValid;
   };
@@ -128,7 +122,7 @@ const TableConcoursSB = props => {
   const initValue = [];
   const count = props.bars.length;
   for (var i = 0; i < count; i++) {
-    initValue.push(props.resultat.LstEssais[i].ValeurPerformance);
+    initValue.push(props.resultat.LstEssais[i].PerfValue);
   }
   const [values, setValues] = useState(initValue);
   for (var i = 0; i < count; i++) {
@@ -140,8 +134,8 @@ const TableConcoursSB = props => {
           style={[
             {
               backgroundColor:
-                (props.resultat.LstEssais[indexH].ValeurPerformance === null ||
-                  props.resultat.LstEssais[indexH].ValeurPerformance === '') &&
+                (props.resultat.LstEssais[indexH].PerfValue === null ||
+                  props.resultat.LstEssais[indexH].PerfValue === '') &&
                 indexH === props.essaiEnCours
                   ? colors.white
                   : colors.gray_light,
@@ -162,7 +156,7 @@ const TableConcoursSB = props => {
             setValues(oldValues =>
               oldValues.map((val, ind) =>
                 ind === indexH && val !== null
-                  ? getHauteurToTextValue(val.replace('m', ''))
+                  ? convertHauteurToString(val.replace('m', ''))
                   : val,
               ),
             );

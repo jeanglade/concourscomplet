@@ -21,20 +21,15 @@ import {
 import i18n from 'i18next';
 import {Formik} from 'formik';
 import {showMessage} from 'react-native-flash-message';
+import uuid from 'react-native-uuid';
 import {ValidatorsAddAthlete} from '../../../utils/validators';
 import {setFile} from '../../../../utils/myAsyncStorage';
-import {setDateFormat, setConcoursStatus} from '../../../../utils/convertor';
+import {
+  convertDateFormat,
+  setConcoursStatus,
+} from '../../../../utils/convertor';
 
 const ModalAddAthlete = props => {
-  // Chaque athlete a des resultats avec un id
-  const getLastIdResultat = () => {
-    return Math.max(
-      ...props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.map(
-        resultat => parseInt(resultat.$id),
-      ),
-    );
-  };
-
   // Chauqe athlete a un NumCouloir qui correspond a l ordre de passage
   const getLastNumCouloir = () => {
     return Math.max(
@@ -73,7 +68,7 @@ const ModalAddAthlete = props => {
         : '';
     athlete.Athlete.Licence = values.licence_number;
     athlete.Athlete.Nationalite = 'FRA';
-    athlete.Athlete.DateNaissance = setDateFormat(values.birthDate);
+    athlete.Athlete.DateNaissance = convertDateFormat(values.birthDate);
     athlete.Athlete.Dossard = values.dossard;
     return athlete;
   };
@@ -100,13 +95,10 @@ const ModalAddAthlete = props => {
     if (values.firstname !== '') {
       var newAthlete = null;
       if (values.type === 'new') {
-        const lastId = getLastIdResultat();
         newAthlete = {
-          $id: (lastId + 1).toString(),
-          GuidResultat: '',
+          GuidResultat: uuid.v4(),
           Athlete: {
-            $id: (lastId + 2).toString(),
-            GuidParticipant: '',
+            GuidParticipant: uuid.v4(),
             Prenom: '',
             Nom: '',
             Categorie: '',

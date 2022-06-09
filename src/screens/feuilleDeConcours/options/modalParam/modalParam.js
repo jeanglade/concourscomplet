@@ -26,8 +26,11 @@ const ModalParam = props => {
   const [colFlagVisible, setColFlagVisible] = useState(
     props.concoursData?._?.colFlagVisible,
   );
-  const [colWindVisible, setColWindVisible] = useState(
-    props.concoursData?._?.colWindVisible,
+  const [fieldWindVisible, setFieldWindVisible] = useState(
+    props.concoursData?._?.fieldWindVisible,
+  );
+  const [fieldPerfVisible, setFieldPerfVisible] = useState(
+    props.concoursData?._?.fieldPerfVisible,
   );
   const [colMiddleRankVisible, setColMiddleRankVisible] = useState(
     props.concoursData?._?.colMiddleRankVisible,
@@ -40,7 +43,8 @@ const ModalParam = props => {
       nbTries: nbTries !== null ? nbTries : oldValues.nbTries,
       colPerfVisible: colPerfVisible,
       colFlagVisible: colFlagVisible,
-      colWindVisible: colWindVisible,
+      fieldWindVisible: colPerfVisible && fieldWindVisible,
+      fieldPerfVisible: colPerfVisible && fieldPerfVisible,
       colMiddleRankVisible:
         nbTries !== null ? (nbTries > 4 ? colMiddleRankVisible : false) : false,
     };
@@ -161,27 +165,49 @@ const ModalParam = props => {
                 }
               />
             </View>
-            {props.concoursData?._?.type === 'SL' && (
-              <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
-                <MyCheckBox
-                  isChecked={colWindVisible}
-                  setIsChecked={v => {
-                    setHasChanged(true);
-                    setColWindVisible(v);
-                  }}
-                />
-                <MyButton
-                  onPress={() => {
-                    setHasChanged(true);
-                    setColWindVisible(!colWindVisible);
-                  }}
-                  content={
-                    <Text style={styleSheet.text}>
-                      {i18n.t('competition:col_wind_visible')}
-                    </Text>
-                  }
-                />
-              </View>
+            {props.concoursData?._?.type === 'SL' && colPerfVisible && (
+              <>
+                <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
+                  <MyCheckBox
+                    isChecked={fieldWindVisible}
+                    setIsChecked={v => {
+                      setHasChanged(true);
+                      setFieldWindVisible(v);
+                    }}
+                  />
+                  <MyButton
+                    onPress={() => {
+                      setHasChanged(true);
+                      setFieldWindVisible(!fieldWindVisible);
+                    }}
+                    content={
+                      <Text style={styleSheet.text}>
+                        {i18n.t('competition:field_wind_visible')}
+                      </Text>
+                    }
+                  />
+                </View>
+                <View style={[styleSheet.flexRow, {alignItems: 'center'}]}>
+                  <MyCheckBox
+                    isChecked={fieldPerfVisible}
+                    setIsChecked={v => {
+                      setHasChanged(true);
+                      setFieldPerfVisible(v);
+                    }}
+                  />
+                  <MyButton
+                    onPress={() => {
+                      setHasChanged(true);
+                      setFieldPerfVisible(!fieldPerfVisible);
+                    }}
+                    content={
+                      <Text style={styleSheet.text}>
+                        {i18n.t('competition:field_perf_visible')}
+                      </Text>
+                    }
+                  />
+                </View>
+              </>
             )}
             {props.concoursData?._?.type !== 'SB' &&
               nbTries > 4 &&

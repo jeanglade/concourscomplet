@@ -29,8 +29,9 @@ export default {
   hauteur: 'Hauteur',
   nb_tries: "Nombre d'essais",
   nb_athletes: "Nombre d'athlètes",
-  col_wind_visible: 'Colonnes du vent visible',
-  col_perf_visible: 'Colonnes des performances visible',
+  field_wind_visible: 'Champs du vent visibles',
+  field_perf_visible: 'Champs des performances visibles',
+  col_perf_visible: 'Colonnes des performances visibles',
   col_flag_visible: 'Drapeaux des nationalités visibles',
   col_middle_rank_visible:
     'Colonnes des places/performances interméidiares visibles',

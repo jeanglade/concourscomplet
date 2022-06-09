@@ -10,7 +10,7 @@ const maxHeightField = 55;
 
 const MyDateTimePicker = props => {
   const [dateTimePickerVisible, setDateTimePickerVisible] = useState(false);
-  const setDateFormat = date => {
+  const convertDateFormat = date => {
     return moment(date, moment.ISO_8601).format('DD/MM/YYYY');
   };
 
@@ -28,13 +28,13 @@ const MyDateTimePicker = props => {
                     styleSheet.text,
                     {
                       color:
-                        setDateFormat(props.value).toString() !==
-                        setDateFormat(new Date()).toString()
+                        convertDateFormat(props.value).toString() !==
+                        convertDateFormat(new Date()).toString()
                           ? colors.black
                           : colors.muted,
                     },
                   ]}>
-                  {setDateFormat(props.value)}
+                  {convertDateFormat(props.value)}
                 </Text>
                 {dateTimePickerVisible && (
                   <DateTimePicker

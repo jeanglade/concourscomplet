@@ -15,7 +15,10 @@ import {
   ModalChoiceCompetition,
 } from '_screens';
 import {styleSheet} from '_config';
-import {setConcoursStatus, getImageEpreuve} from '../../../utils/convertor';
+import {
+  setConcoursStatus,
+  convertEpreuveToImage,
+} from '../../../utils/convertor';
 
 const Home = props => {
   //Tableau avec toutes les données concours complet
@@ -145,7 +148,7 @@ const Home = props => {
           i18n.language === 'fr' ? 'DD/MM/YYYY - HH:mm' : 'MM/DD/YYYY - HH:mm',
         ),
         epreuve: epreuve,
-        imageEpreuve: getImageEpreuve(epreuve),
+        imageEpreuve: convertEpreuveToImage(epreuve),
         statut: '',
         statutColor: '',
         type: getJsonValue(
@@ -158,7 +161,8 @@ const Home = props => {
         nbTries: 6,
         colPerfVisible: true,
         colFlagVisible: false,
-        colWindVisible: true,
+        fieldWindVisible: true,
+        fieldPerfVisible: true,
         colMiddleRankVisible: true,
       };
       //TODO gérer le status si le concours arrive déjà rempli

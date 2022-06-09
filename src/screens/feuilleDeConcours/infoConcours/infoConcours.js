@@ -2,7 +2,7 @@ import React from 'react';
 import {styleSheet} from '_config';
 import {View, Text} from 'react-native';
 import i18n from 'i18next';
-import {getHauteurToTextValue} from '../../../utils/convertor';
+import {convertHauteurToString} from '../../../utils/convertor';
 import MyButton from '../../../components/button/button';
 
 const InfoConcours = props => {
@@ -41,7 +41,7 @@ const InfoConcours = props => {
               content={
                 <Text style={[styleSheet.text, {marginHorizontal: 5}]}>
                   {i18n.t('competition:short_perf_minima')}{' '}
-                  {getHauteurToTextValue(
+                  {convertHauteurToString(
                     props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.PerfMinima?.toString(),
                   )}
                 </Text>

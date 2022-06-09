@@ -13,10 +13,11 @@ import moment from 'moment';
 import Flag from 'react-native-flags';
 import {ProgressView} from '@react-native-community/progress-view';
 import {ProgressBar} from '@react-native-community/progress-bar-android';
+import uuid from 'react-native-uuid';
 
 import {
-  getHauteurToTextValue,
-  getMonteeDeBarre,
+  convertHauteurToString,
+  getAllMonteesDeBarre,
 } from '../../../utils/convertor';
 import {colors, styleSheet} from '_config';
 import {MyDataTable, MyButton, MyDropdown} from '_components';
@@ -38,31 +39,37 @@ import {
 } from '../tableConcoursSB/tableConcoursSB';
 
 const TableConcoursBase = props => {
+  //Montees de barre si le concours est de type SB
+  const [barRises, setBarRises] = useState(
+    getAllMonteesDeBarre(props.concoursData),
+  );
+
   const [hasDossard] = useState(
     props.concoursData?.EpreuveConcoursComplet?.TourConcoursComplet?.LstSerieConcoursComplet[0]?.LstResultats.filter(
       row => row.Athlete.Dossard?.toString(),
     ).length > 0,
   );
-  //Numero de la premiere colonne visible des performances
-  const [indexFirstColumnVisible, setIndexFirstColumnVisible] = useState(0);
-  //Montees de barre si le concours est de type SB
-  const [barRises, setBarRises] = useState(
-    getMonteeDeBarre(props.concoursData),
-  );
 
-  //Tailles des minimums des colonnes de base (ordre, dossard, athlète, perf et place)
+  //#region Gestion colonnes du tableau
+  //Num de la 1ere colonne des performances visible
+  const [indexFirstColumnVisible, setIndexFirstColumnVisible] = useState(0);
+
+  //Largeurs minimals des colonnes fixes (ordre, dossard, athlète, perf et place + poteaux si SB)
   const maxWidthBase =
     40 + 60 + 250 + 100 + 40 + (props.concoursData?._?.type === 'SB' ? 80 : 0);
+
+  //Nombre de colonne non fixes (1er essai, 2eme essai, 3eme essai, ...) pouvant être affichées
   const getNumberOfColumns = () => {
-    var res = 1;
+    var nbCol = 1;
     const sizeAvailable = Dimensions.get('window').width - maxWidthBase;
     if (sizeAvailable > 0) {
-      res = Math.floor(sizeAvailable / 75); //75 size of cell in table
+      nbCol = Math.floor(sizeAvailable / 75); //75 size of cell in table
     }
-    return res;
+    return nbCol;
   };
 
   const setColumnFixed = () => {
+    console.log('TableConcoursBase > setColumnFixed');
     return [
       {type: 'text', width: 40, text: i18n.t('competition:order')},
       {
@@ -125,6 +132,8 @@ const TableConcoursBase = props => {
   };
 
   const refreshColumnsVisible = (onlyHeaders = false) => {
+    console.log('TableConcoursBase > refreshColumnsVisible', onlyHeaders);
+
     var result = [];
     if (props.concoursData?._?.type === 'LT') {
       result = onlyHeaders
@@ -137,7 +146,7 @@ const TableConcoursBase = props => {
         : getColumnsVisibleSL(props.concoursData?._);
     }
     if (props.concoursData?._?.type === 'SB') {
-      const bars = getMonteeDeBarre(props.concoursData);
+      const bars = getAllMonteesDeBarre(props.concoursData);
       setBarRises(bars);
       result = onlyHeaders
         ? getHeaderTableSB(bars)
@@ -146,7 +155,61 @@ const TableConcoursBase = props => {
     return result;
   };
 
+  //En fonction de la largeur de la fenêtre, nombre de colonne visible des performances
+  const [numberOfColumnVisible, setNumberOfColumnVisible] = useState(
+    getNumberOfColumns(),
+  );
+  //En fonction du type de concours, du nombre de colonne visible et des filtres des colonnes (paramètres)
+  const [listColVisible, setListColVisible] = useState(() =>
+    refreshColumnsVisible().slice(
+      props.indexFirstColumnVisible,
+      props.indexFirstColumnVisible + props.numberOfColumnVisible,
+    ),
+  );
+  //Colonnes obligatoires et toujours visibles
+  const [columnBase] = useState(() => setColumnFixed());
+  //Colonnes des perfomances, change en fonction de listColVisible
+  const [columnPerf, setColumnPerf] = useState(() =>
+    refreshColumnsVisible(true),
+  );
+
+  const getHeaders = (index = 0) => {
+    const indexFirstColumPerf = 5;
+    //Si colonne dossard
+    const countDossard = hasDossard ? 1 : 0;
+    //Si bouton precedent (lorsque toutes les colonnes ne sont pas visibles)
+    const removePrevBtn =
+      index === 0 || listColVisible.length < numberOfColumnVisible ? 1 : 0;
+    //Si bouton suivant (lorsque toutes les colonnes ne sont pas visibles)
+    const removeNextBtn =
+      index + numberOfColumnVisible === listColVisible.length ||
+      listColVisible.length < numberOfColumnVisible
+        ? 1
+        : 0;
+    //Colonnes des perfomances
+    const columnsVisible = props.concoursData?._?.colPerfVisible
+      ? listColVisible
+      : [];
+    //Si colonne poteaux (pour les concours SB-perche)
+    const countPoteaux = props.concoursData?._?.epreuve.includes('Perche')
+      ? 1
+      : 0;
+    return columnBase
+      .slice(0, 1 + countDossard)
+      .concat(columnBase.slice(2, 3 + countPoteaux))
+      .concat(columnBase.slice(4, indexFirstColumPerf - removePrevBtn))
+      .concat(columnsVisible.map(i => columnPerf[i]))
+      .concat(columnBase.slice(indexFirstColumPerf + removeNextBtn));
+  };
+  const [headersTable, setHeadersTable] = useState(getHeaders());
+  //Si la fenêtre a changé de taille, on refresh le nombre de colonne visible
+  const [windowsIsResized] = useState(false);
+  //#endregion
+
+  //#region Gestion du classement et meilleurs perfs
   const refreshPlace = (nbTries = 6) => {
+    console.log('TableConcoursBase > refreshPlace');
+
     var result = [];
     if (
       props.concoursData?._?.type === 'LT' ||
@@ -164,63 +227,19 @@ const TableConcoursBase = props => {
     return result;
   };
 
-  //En fonction de la largeur de la fenêtre, nombre de colonne visible des performances
-  const [numberOfColumnVisible, setNumberOfColumnVisible] = useState(
-    getNumberOfColumns(),
-  );
-  //En fonction du type de concours, du nombre de colonne visible et des filtres des colonnes (paramètres)
-  const [listColumnVisible, setListColumnVisible] = useState(() =>
-    refreshColumnsVisible(),
-  );
-  //Colonnes obligatoires et toujours visibles
-  const [columnBase] = useState(() => setColumnFixed());
-  //Colonnes des perfomances, change en fonction de listColumnVisible
-  const [columnPerf, setColumnPerf] = useState(() =>
-    refreshColumnsVisible(true),
-  );
   //Liste des places intermediaires des athlètes
   const [middlePlace, setMiddlePlace] = useState(() => refreshPlace(3));
   const [finalPlace, setFinalPlace] = useState(() => refreshPlace(6));
   //Permet de refresh le classement des athlètes
   const [haveToCalculPlace, setHaveToCalculPlace] = useState(false);
+  //#endregion
 
-  const getHeaders = (index = 0) => {
-    const indexFirstColumPerf = 5;
-    //Si colonne dossard
-    const countDossard = hasDossard ? 1 : 0;
-    //Si bouton precedent (lorsque toutes les colonnes ne sont pas visibles)
-    const removePrevBtn =
-      index === 0 || listColumnVisible.length < numberOfColumnVisible ? 1 : 0;
-    //Si bouton suivant (lorsque toutes les colonnes ne sont pas visibles)
-    const removeNextBtn =
-      index + numberOfColumnVisible === listColumnVisible.length ||
-      listColumnVisible.length < numberOfColumnVisible
-        ? 1
-        : 0;
-    //Colonnes des perfomances
-    const columnsVisible =
-      numberOfColumnVisible < columnPerf.length
-        ? listColumnVisible.slice(index, index + numberOfColumnVisible)
-        : listColumnVisible;
-    //Si colonne poteaux (pour les concours SB-perche)
-    const countPoteaux = props.concoursData?._?.epreuve.includes('Perche')
-      ? 1
-      : 0;
-    return columnBase
-      .slice(0, 1 + countDossard)
-      .concat(columnBase.slice(2, 3 + countPoteaux))
-      .concat(columnBase.slice(4, indexFirstColumPerf - removePrevBtn))
-      .concat(columnsVisible.map(i => columnPerf[i]))
-      .concat(columnBase.slice(indexFirstColumPerf + removeNextBtn));
-  };
-  const [headersTable, setHeadersTable] = useState(getHeaders());
-  //Si la fenêtre a changé de taille, on refresh le nombre de colonne visible
-  const [windowsIsResized, setWindowsIsResized] = useState(false);
-
+  //#region useEffect
   //Lors d'un changement de paramètres de la feuille de concours
   useEffect(() => {
+    console.log('TableConcoursBase > useEffect1');
     //Mise à jour des colonnes perfomances visibles
-    setListColumnVisible(refreshColumnsVisible());
+    setListColVisible(refreshColumnsVisible());
     //Pour concours SB, mise à jour des headers en fonction des barres (peuvent changer)
     //Pour les concours LT et SL, les headers restent inchangés
     if (props.concoursData?._?.type === 'SB') {
@@ -232,30 +251,42 @@ const TableConcoursBase = props => {
 
   //Met à jour les headers en fonction des colonnes visibles
   useEffect(() => {
+    console.log('TableConcoursBase > useEffect2');
+
     setHeadersTable(getHeaders(indexFirstColumnVisible));
-  }, [listColumnVisible]);
+  }, [listColVisible]);
 
   //Met à jour les headers en fonction des actions Precedent/Suivant
   useEffect(() => {
+    console.log('TableConcoursBase > useEffect3');
+
     setHeadersTable(getHeaders(indexFirstColumnVisible));
   }, [indexFirstColumnVisible]);
 
   useEffect(() => {
+    console.log('TableConcoursBase > useEffect4');
+
     setMiddlePlace(refreshPlace(3));
     setFinalPlace(refreshPlace(6));
   }, [haveToCalculPlace]);
 
   useEffect(() => {
+    console.log('TableConcoursBase > useEffect5');
+
     setNumberOfColumnVisible(getNumberOfColumns());
     setHeadersTable(getHeaders(indexFirstColumnVisible));
   }, [useWindowDimensions().width]);
+
+  //#endregion
+
+  //#region Gestion des données en cours
 
   const [essaiEnCours, setEssaiEnCours] = useState(() => {
     var minEssai = -1;
     props.concoursData.EpreuveConcoursComplet.TourConcoursComplet.LstSerieConcoursComplet[0].LstResultats.map(
       (resultat, i) => {
         resultat.LstEssais?.map((v, index) => {
-          if (v.ValeurPerformance === null || v.ValeurPerformance === '') {
+          if (v.PerfValue === null || v.PerfValue === '') {
             if (minEssai === -1 || index < minEssai) {
               minEssai = index;
             }
@@ -275,8 +306,8 @@ const TableConcoursBase = props => {
       (resultat, i) => {
         if (resultat?.LstEssais?.length > essaiEnCours) {
           if (
-            resultat?.LstEssais[essaiEnCours]?.ValeurPerformance === null ||
-            resultat?.LstEssais[essaiEnCours]?.ValeurPerformance === ''
+            resultat?.LstEssais[essaiEnCours]?.PerfValue === null ||
+            resultat?.LstEssais[essaiEnCours]?.PerfValue === ''
           ) {
             if (minAthtlete === -1) {
               minAthtlete = i;
@@ -290,6 +321,8 @@ const TableConcoursBase = props => {
     }
     return minAthtlete;
   });
+  //#endregion
+
   /*const serie =
     props.concoursData.EpreuveConcoursComplet.TourConcoursComplet
       .LstSerieConcoursComplet[0];
@@ -299,6 +332,7 @@ const TableConcoursBase = props => {
   const NbSec_EssaiConsecutif = serie.NbSec_EssaiConsecutif?.toString();*/
 
   const saveData = async () => {
+    console.log('TableConcoursBase > saveData');
     await setFile(
       props.concoursData?._?.id,
       JSON.stringify(props.concoursData),
@@ -306,13 +340,12 @@ const TableConcoursBase = props => {
   };
 
   const Item = ({
-    id,
+    index,
+    resultat,
     order,
     dossard,
     athleteName,
     athleteInfo,
-    resultat,
-    index,
   }) => {
     if (
       resultat.LstEssais === undefined ||
@@ -323,12 +356,12 @@ const TableConcoursBase = props => {
       const count = props.concoursData?._?.type === 'SB' ? barRises.length : 6;
       for (var i = 0; i < count; i++) {
         resultat.LstEssais.push({
-          GuidCompetition: props.concoursData.GuidCompetition,
-          GuidResultat: resultat.GuidResultat,
-          GuidEssai: '',
-          NumEssai: i + 1,
-          ValeurPerformance: null,
-          SatutPerformance: null,
+          GuidEssai: uuid.v4(),
+          OrdreEssai: i + 1,
+          PerfValue: null,
+          PerfStatus: null,
+          Vent: null,
+          Barre: '',
         });
       }
     }
@@ -447,7 +480,7 @@ const TableConcoursBase = props => {
                       color: colors.ffa_blue_dark,
                     },
                   ]}>
-                  {getHauteurToTextValue(resultat?.Athlete?.firstBar)}{' '}
+                  {convertHauteurToString(resultat?.Athlete?.firstBar)}{' '}
                 </Text>
               )}
             </View>
@@ -493,7 +526,7 @@ const TableConcoursBase = props => {
                 bars={barRises}
                 athleteEnCours={athleteEnCours}
                 setAthleteEnCours={setAthleteEnCours}
-                listColumnVisible={listColumnVisible}
+                listColVisible={listColVisible}
                 indexFirstColumnVisible={indexFirstColumnVisible}
                 numberOfColumnVisible={numberOfColumnVisible}
                 index={index}
@@ -505,20 +538,15 @@ const TableConcoursBase = props => {
             )}
             {props.concoursData?._?.type === 'SL' && (
               <TableConcoursSL
-                ndex={index}
-                resultat={resultat}
-                athleteEnCours={athleteEnCours}
+                index={index} // index de l'athlete dans la liste des résultats
+                resultat={resultat} // résultats de l'athlete
+                concoursData={props.concoursData} // toutes les informations du concours
+                listColVisible={listColVisible} //colonnes visibles dans le tableau
                 setAthleteEnCours={setAthleteEnCours}
-                concoursData={props.concoursData}
                 essaiEnCours={essaiEnCours}
                 setEssaiEnCours={setEssaiEnCours}
-                indexFirstColumnVisible={indexFirstColumnVisible}
-                numberOfColumnVisible={numberOfColumnVisible}
-                listColumnVisible={listColumnVisible}
-                setConcoursData={props.setConcoursData}
-                setBestPerf={setBestPerf}
-                bestPerf={bestPerf}
                 middlePlace={middlePlace}
+                setBestPerf={setBestPerf}
                 setHaveToCalculPlace={setHaveToCalculPlace}
                 refreshConcoursData={props.refreshConcoursData}
               />
@@ -534,7 +562,7 @@ const TableConcoursBase = props => {
                 setEssaiEnCours={setEssaiEnCours}
                 indexFirstColumnVisible={indexFirstColumnVisible}
                 numberOfColumnVisible={numberOfColumnVisible}
-                listColumnVisible={listColumnVisible}
+                listColVisible={listColVisible}
                 setConcoursData={props.setConcoursData}
                 setBestPerf={setBestPerf}
                 bestPerf={bestPerf}
@@ -590,7 +618,6 @@ const TableConcoursBase = props => {
     athleteInfo += item.Athlete.Club?.toString();
     result = (
       <Item
-        id={item.id}
         order={item.NumCouloir?.toString()}
         dossard={item.Athlete.Dossard?.toString()}
         athleteName={
